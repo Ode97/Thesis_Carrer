@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Chest : PushObject
+public class Chest : InteractableObject
 {
     public InventoryObject inventoryObject;
     private Animator animator;
@@ -20,9 +20,8 @@ public class Chest : PushObject
     }
 
     override
-    public void Interaction(Vector3 point)
+    public void Interaction()
     {
-        base.Interaction(point);
         animator.SetTrigger("open");
     }
 
@@ -33,5 +32,25 @@ public class Chest : PushObject
         var effect = Instantiate(pickupEffect, transform);
         var pos = transform.position;
         effect.transform.position = new Vector3(pos.x, pos.y + 3f, pos.z);
+    }
+
+    public override void WaterInteraction()
+    {
+        
+    }
+
+    public override void FireInteraction()
+    {
+        
+    }
+
+    public override void AirInteraction(Vector3 force)
+    {
+        
+    }
+
+    public override void EarthInteraction(GameObject obj, Vector3 pos)
+    {
+        
     }
 }

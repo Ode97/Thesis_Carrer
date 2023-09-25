@@ -4,11 +4,33 @@ using UnityEngine;
 
 public enum Element { None, Air, Fire, Water, Earth }
 
-public class MagicElement : MonoBehaviour
+public abstract class MagicElement : MonoBehaviour
 {
-    public Element element;
     public Color color;
     public GameObject aurea;
-    public Vector3 pos;
+    protected Vector3 pos;
+    protected InteractableObject interactableObject;
+    public GameObject SpecialAttack;
+    public GameObject BaseAttack;
+    protected Character character;
 
+    private void Start()
+    {
+        character = GameManager.instance.character;
+    }
+    public abstract void ApplyEffect();
+    public void SetObject(InteractableObject obj)
+    {
+        interactableObject = obj;
+    }
+
+    public void SetPosition(Vector3 p)
+    {
+        pos = p;
+    }
+
+    public InteractableObject GetObject()
+    {
+        return interactableObject;
+    }
 }

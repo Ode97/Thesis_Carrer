@@ -13,6 +13,18 @@ public class Movment : MonoBehaviour
     public GameObject targetIndicator;
     private ParticleSystem ps;
 
+
+    public float speed = 5;
+    public float gravity = -9.18f;
+    public float jumpHeight = 3f;
+
+    public Transform groundCheck;
+    public float groundDistance = 0.4f;
+    public LayerMask groundMask;
+
+    Vector3 velocity;
+    bool isGrounded;
+
     private void Start()
     {
         characterAnimator = GetComponent<Animator>();
@@ -38,8 +50,30 @@ public class Movment : MonoBehaviour
             if (isWalking)
             {
                 RotateCharacter(targetPosition);
+
+                isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
+
+                /*if (isGrounded && velocity.y < 0)
+                {
+                    velocity.y = -2f;
+                }*/
+
+
+
+                Vector3 moveDirection = (targetPosition - transform.position).normalized;
+
+
+                Vector3 move = moveDirection * speed * Time.deltaTime;
+                transform.position = Vector3.MoveTowards(transform.position, targetPosition, move.magnitude);
+
+
+
+                //velocity.y += gravity * Time.deltaTime;
+
+                
             }
         }
+        
     }
 
     public void Move(Vector3 point)

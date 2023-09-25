@@ -45,7 +45,6 @@ public class Character : MonoBehaviour
             Destroy(aurea.gameObject);
             activeElement = false;
         }
-        Debug.Log(nAureas);
     }
 
     public void MoveToDestination(Vector3 point)
@@ -76,8 +75,17 @@ public class Character : MonoBehaviour
         return actualElement;
     }
 
-    public void SetMagicPoint(Vector3 pos)
+    public void Interaction(RaycastHit hit)
     {
-        actualElement.pos = pos;
+        InteractableObject obj = hit.collider.gameObject.GetComponent<InteractableObject>();
+        if (activeElement)
+        {
+            actualElement.SetObject(obj);
+            actualElement.SetPosition(hit.point);
+            actualElement.ApplyEffect();
+        }
+        else
+            obj.Interaction();
     }
+
 }

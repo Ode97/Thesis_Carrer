@@ -4,15 +4,35 @@ using UnityEngine;
 
 public class AirElement : MagicElement
 {
-    // Start is called before the first frame update
-    void Start()
+    public float power;
+    private bool clicked = true;
+    public Vector3 destination;
+
+    override
+    public void ApplyEffect()
     {
+
+        clicked = false;
+        
         
     }
 
-    // Update is called once per frame
-    void Update()
+    private void FixedUpdate()
     {
-        
+        if (Input.GetMouseButtonDown(0) && !clicked)
+        {
+            clicked = true;
+
+            // Cast a ray from the mouse position into the scene
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            Physics.Raycast(ray, out hit, Mathf.Infinity);
+
+            var direction = (hit.point - interactableObject.transform.position).normalized;
+
+            Vector3 force = direction * power;
+
+            interactableObject.AirInteraction(force);
+        }
     }
 }

@@ -4,15 +4,11 @@ using UnityEngine;
 
 public class EarthElement : MagicElement
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public GameObject tree;
 
-    // Update is called once per frame
-    void Update()
+    override
+    public void ApplyEffect()
     {
-        
+        interactableObject.EarthInteraction(tree, pos);
     }
 }

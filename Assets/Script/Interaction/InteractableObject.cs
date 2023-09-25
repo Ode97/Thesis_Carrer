@@ -16,5 +16,13 @@ public abstract class InteractableObject : MonoBehaviour
         
     }
 
-    public abstract void Interaction(Vector3 point);
+    public abstract void Interaction();
+
+    public abstract void WaterInteraction();
+
+    public abstract void FireInteraction();
+
+    public abstract void AirInteraction(Vector3 force);
+
+    public abstract void EarthInteraction(GameObject obj, Vector3 pos);
 }

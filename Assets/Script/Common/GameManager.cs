@@ -9,6 +9,8 @@ public class GameManager : MonoBehaviour
 {
     public Character character;
     public GameMode actualMode = GameMode.Movment;
+    [SerializeField]
+    public MainCameraFollow camera_mode;
     
 
     // Start is called before the first frame update
@@ -41,15 +43,15 @@ public class GameManager : MonoBehaviour
             // Cast a ray from the mouse position into the scene
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
-
+            string[] layerNames = new string[] { "Terrain", "InteractableObject" };
+            Physics.Raycast(ray, out hit, Mathf.Infinity);
+            
+            var layer = hit.collider.gameObject.layer;
             if (actualMode == GameMode.Movment)
             {
-                if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("InteractableObject")))
+                if (layer == LayerMask.NameToLayer("Terrain"))
                 {
-                    return;
-                }
-                if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("Terrain")))
-                {
+                    
 
                     character.MoveToDestination(hit.point);
                     return;
@@ -58,10 +60,11 @@ public class GameManager : MonoBehaviour
             else if (actualMode == GameMode.Interaction)
             {
 
-                string[] layerNames = new string[] {"Terrain",  "InteractableObject"};
-                if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask(layerNames)))
+                if (layer == LayerMask.NameToLayer("Terrain") || layer == LayerMask.NameToLayer("InteractableObject"))
                 {
-                    hit.collider.gameObject.GetComponent<InteractableObject>().Interaction(hit.point);
+                    
+                    character.Interaction(hit);
+                    
                     return;
                 }
             }
@@ -76,6 +79,7 @@ public class GameManager : MonoBehaviour
     public void SetMode(GameMode mode)
     {
         actualMode = mode;
+        camera_mode.SetMode(mode);
     }
 
     

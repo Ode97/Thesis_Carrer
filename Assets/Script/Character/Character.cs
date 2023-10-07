@@ -11,12 +11,12 @@ public class Character : MonoBehaviour
     private GameObject aurea;
 
     private MagicElement actualElement;
+    private InteractableObject obj;
 
     private Movment movment;
     private Animator animator;
     private bool activeElement = false;
-    private bool stopAurea = false;
-    private int nAureas = 0;
+    
 
     // Start is called before the first frame update
     void Start()
@@ -28,19 +28,15 @@ public class Character : MonoBehaviour
     void Update()
     {
 
-        if (!stopAurea && activeElement)
-        {
-            nAureas++;
-            StartCoroutine(StopAurea());
-        }
+        
     }
 
-    public IEnumerator StopAurea()
+    
+
+    public void StopImmediateAurea()
     {
-        stopAurea = true;
-        yield return new WaitForSeconds(10);
-        nAureas--;
-        if (nAureas == 0)
+        
+        if (aurea != null)
         {
             Destroy(aurea.gameObject);
             activeElement = false;
@@ -57,10 +53,14 @@ public class Character : MonoBehaviour
         if(aurea != null)
             Destroy(aurea.gameObject);
 
-        
+        if (actualElement != null && element == actualElement)
+        {
+            actualElement = null;
+            activeElement = false;
+            return;
+        }
         activeElement = true;
 
-        stopAurea = false;
         aurea = Instantiate(element.aurea, transform);
         actualElement = element;
     }
@@ -75,17 +75,45 @@ public class Character : MonoBehaviour
         return actualElement;
     }
 
+    public void SetObject(InteractableObject obj)
+    {
+        this.obj = obj;
+        //Debug.Log(obj.gameObject.name);
+    }
+
+    public InteractableObject GetObject()
+    {
+        return obj;
+    }
+
     public void Interaction(RaycastHit hit)
     {
-        InteractableObject obj = hit.collider.gameObject.GetComponent<InteractableObject>();
         if (activeElement)
-        {
+        {           
             actualElement.SetObject(obj);
             actualElement.SetPosition(hit.point);
             actualElement.ApplyEffect();
         }
         else
+        {
             obj.Interaction();
+        }
     }
 
+    public void MoveCharacter(Vector3 pos, Vector3 move)
+    {
+        if(onMoveableSurface)
+            transform.position = Vector3.MoveTowards(transform.position, pos, move.magnitude);
+    }
+
+    private bool onMoveableSurface = false;
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.collider.gameObject.GetComponent<Air>())
+        {
+            onMoveableSurface = true;
+        }
+        else
+            onMoveableSurface = false;
+    }
 }

@@ -7,6 +7,7 @@
 //// Unity Asset Store: https://assetstore.unity.com/publishers/49258
 /////////////////////////////////////////////
 
+#if UNITY_EDITOR 
 using UnityEngine;
 using System.Collections;
 using UnityEditor;
@@ -16,12 +17,12 @@ public class customButton : Editor
 {
     public override void OnInspectorGUI()
     {
-        
+
         ModulesShaker myScript = (ModulesShaker)target;
 
         GUILayout.Label("Choose gender:");
 
-        myScript.gender_idx = EditorGUILayout.Popup(myScript.gender_idx, myScript.Gender);       
+        myScript.gender_idx = EditorGUILayout.Popup(myScript.gender_idx, myScript.Gender);
 
         if (GUILayout.Button("Set all elements by numeration"))
         {
@@ -41,5 +42,6 @@ public class customButton : Editor
         DrawDefaultInspector();
 
     }
-
 }
+
+#endif

@@ -1,66 +1,113 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class MainCameraFollow : MonoBehaviour
 {
-    public Transform targetRot;  // The character's transform to follow
-    public Transform targetPos;
-    public Vector3 offset_int;  // Offset between the camera and the character
+    public Transform target;  // The character's transform to follow
+   // public Transform targetPos;
+    public Vector3 offset_move;  // Offset between the camera and the character
     public Vector3 offset_view;
     private Vector3 offset;
     public float rotationSpeed = 5;
     public float positionSpeed = 5;
 
-    private void Start()
+    public float rotationSpeedView = 5.0f;
+    private CameraMode mode;
+
+    private void Awake()
     {
-        offset = offset_int;
+        offset = offset_move;
+        mode = CameraMode.Movment;
         ChangePos();
 
     }
 
     void Update()
     {
-        ChangePos();
-       
-        
+        if (mode == CameraMode.View)
+            View();
+        else
+            ChangePos();
     }
 
     private void ChangePos()
     {
-        Vector3 desiredPosition = targetPos.position - (targetRot.rotation * offset);
-        //Vector3 desiredPosition = targetPos.position - offset;
 
-        // Calcola la direzione corrente della telecamera
-        Vector3 currentDirection = transform.forward;
+        Quaternion desiredRotation = Quaternion.LookRotation(target.position - transform.position, Vector3.up);
+        transform.rotation = Quaternion.Slerp(transform.rotation, desiredRotation, rotationSpeed * Time.deltaTime);
 
-        // Calcola la direzione desiderata della telecamera
-        Vector3 desiredDirection = (desiredPosition - transform.position).normalized;
+        //transform.LookAt(target);
 
-        // Calcola il coseno dell'angolo tra le due direzioni
-        float angleCosine = Vector3.Dot(currentDirection, desiredDirection);
+        SetPosition();
+
+    }
+
+    private void View() 
+    {
+
+        SetPosition();
+            
+        // Ottieni la posizione del mouse
+        Vector3 mousePosition = Input.mousePosition;
+        // Ottieni le dimensioni dello schermo
+        float screenWidth = Screen.width;
+        float screenHeight = Screen.height;
+
+        // Calcola la percentuale di spostamento del mouse rispetto al bordo dello schermo
+        float mouseXPercentage = mousePosition.x / screenWidth;
+        float mouseYPercentage = mousePosition.y / screenHeight;
+
+        // Imposta le soglie per attivare lo spostamento della camera quando il mouse si avvicina ai bordi
+        float edgeThreshold = 0.1f; // Valore da regolare in base alla sensibilità desiderata
+
+      
+
+        // Calcola l'angolo di rotazione solo se il mouse è vicino ai bordi
+        if (mouseXPercentage < edgeThreshold || mouseXPercentage > 1 - edgeThreshold ||
+            mouseYPercentage < edgeThreshold || mouseYPercentage > 1 - edgeThreshold)
+        {
+
+            // Calcola la differenza tra la posizione del mouse e la posizione centrale dello schermo
+            float mouseXDelta = mouseXPercentage - 0.5f;
+            float mouseYDelta = - mouseYPercentage + 0.5f;
+
+            // Imposta l'angolo di rotazione intorno agli assi X e Z rispetto alla posizione corrente della camera
+            float pitch = 90.0f * mouseYDelta;
+            float yaw = 90.0f * mouseXDelta;
+
+            // Applica la rotazione alla camera
+            transform.RotateAround(transform.position, Vector3.up, yaw * rotationSpeedView * Time.deltaTime);
+            transform.RotateAround(transform.position, transform.right, pitch * rotationSpeedView * Time.deltaTime);
+        }
+        
+    }
+
+
+    
+
+    private void SetPosition()
+    {
+        
+        //Vector3 desiredPosition = targetP + (target.rotation * offset);
+        Vector3 desiredPosition = target.position + offset;
 
         // Interpolazione della posizione desiderata della telecamera
         transform.position = Vector3.Lerp(transform.position, desiredPosition, positionSpeed * Time.deltaTime);
-
-        // Controlla se l'angolo di direzione è maggiore di un certo valore (ad esempio, 0.95 corrisponde a circa 18 gradi)
-        if (angleCosine < 1.5f)
-        {
-
-            // Interpolazione della rotazione desiderata della telecamera
-            Quaternion desiredRotation = Quaternion.LookRotation(targetPos.position - transform.position, Vector3.up);
-            transform.rotation = Quaternion.Slerp(transform.rotation, desiredRotation, rotationSpeed * Time.deltaTime);
-         }
     }
 
-    public void SetMode(GameMode mode)
+    public void SetMode(CameraMode newMode)
     {
-        if (mode == GameMode.Movment || mode == GameMode.Interaction)
+        mode = newMode;
+        if (mode == CameraMode.Movment)
         {
-            offset = offset_int;
+            offset = offset_move;
             return;
         }
-
+        
         offset = offset_view;
+        transform.rotation = Quaternion.LookRotation(target.forward);
+        transform.Rotate(target.position, Quaternion.Angle(transform.rotation, target.rotation));
     }
 }

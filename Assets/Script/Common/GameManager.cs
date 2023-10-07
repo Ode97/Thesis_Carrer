@@ -2,15 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
 using UnityEngine;
+using static UnityEditor.Experimental.GraphView.GraphView;
+using Unity.Burst.CompilerServices;
+using Unity.VisualScripting;
 
-public enum GameMode { Movment, View, Interaction}
+public enum CameraMode { Movment, View}
 
 public class GameManager : MonoBehaviour
 {
     public Character character;
-    public GameMode actualMode = GameMode.Movment;
+    private CameraMode actualMode = CameraMode.Movment;
     [SerializeField]
-    public MainCameraFollow camera_mode;
+    private MainCameraFollow cameraHandler;
+    private bool interaction = false;
+    private bool justChanged = false;
+    private List<InteractableObject> objs = new List<InteractableObject>();
+    public bool stopLogic = false;
     
 
     // Start is called before the first frame update
@@ -28,59 +35,121 @@ public class GameManager : MonoBehaviour
         // Start is called before the first frame update
     void Start()
     {
-        
+        var t = FindObjectOfType<Terrain>();
+        SetObject(t.GetComponent<InteractableObject>());
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && !stopLogic)
         {
             if (EventSystem.current.IsPointerOverGameObject()) {
                 return;
             }
 
-            // Cast a ray from the mouse position into the scene
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
-            string[] layerNames = new string[] { "Terrain", "InteractableObject" };
             Physics.Raycast(ray, out hit, Mathf.Infinity);
-            
-            var layer = hit.collider.gameObject.layer;
-            if (actualMode == GameMode.Movment)
-            {
-                if (layer == LayerMask.NameToLayer("Terrain"))
-                {
-                    
 
-                    character.MoveToDestination(hit.point);
-                    return;
+            // Cast a ray from the mouse position into the scene
+            if (hit.collider != null)
+            {
+                
+                var layer = hit.collider.gameObject.layer;
+                
+                if (interaction)
+                {
+                    if (layer == LayerMask.NameToLayer("Terrain") || layer == LayerMask.NameToLayer("InteractableObject"))
+                    {
+                        character.Interaction(hit);
+                        return;
+                    }
                 }
-            }
-            else if (actualMode == GameMode.Interaction)
-            {
 
-                if (layer == LayerMask.NameToLayer("Terrain") || layer == LayerMask.NameToLayer("InteractableObject"))
+                if (actualMode == CameraMode.Movment)
                 {
-                    
-                    character.Interaction(hit);
-                    
-                    return;
+                    if (layer == LayerMask.NameToLayer("Terrain"))
+                    {
+
+
+                        character.MoveToDestination(hit.point);
+                        return;
+                    }
+
+                }
+                else
+                {
+
                 }
             }
         }
     }
 
+    public void SetObject(InteractableObject obj)
+    {
+        if (!stopLogic) 
+        { 
+            //Debug.Log(obj.name);
+            if (!justChanged )
+            {
+                //Debug.Log("a" + obj.name);
+
+                justChanged = true;
+                character.SetObject(obj);
+                //StartCoroutine(EndSelect());
+            }
+            else if(!objs.Contains(obj))
+                objs.Add(obj);
+        }
+
+        return;
+    }
+
+    public void SetInteraction(bool interaction)
+    {
+        this.interaction = interaction;
+        if(!interaction)
+            character.StopImmediateAurea();
+    }
+
+    public bool IsInteraction()
+    {
+        return interaction;
+    }
+
+    /*private IEnumerator EndSelect()
+    {
+        yield return new WaitForSeconds(0.3f);
+        EndSelection();
+    }*/
+
+    public void EndSelection()
+    {
+        if (objs.Count > 0)
+        {
+            character.SetObject(objs[objs.Count - 1]);
+            objs.Clear();            
+        }
+        else 
+            justChanged = false;
+    }
+
+
     public void SetElement(MagicElement element)
     {
-        character.SetActualElement(element);
+        if(interaction)
+            character.SetActualElement(element);
     }
 
-    public void SetMode(GameMode mode)
+    public void SetMode(CameraMode mode)
     {
         actualMode = mode;
-        camera_mode.SetMode(mode);
+        cameraHandler.SetMode(mode);
     }
 
-    
+    public void MoveCharacter(Vector3 pos, Vector3 move)
+    {
+        character.MoveCharacter(pos, move);
+    }
 }

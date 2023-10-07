@@ -3,20 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
-public class ChangeGameMode : MonoBehaviour
+public class ChangeGameMode : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
-    private GameMode[] modes = new GameMode[3];
+    private CameraMode[] modes = new CameraMode[2];
     private int i = 0;
     private TextMeshProUGUI text;
+    private bool interaction = false;
+    public bool mode = false;
     // Start is called before the first frame update
     void Start()
     {
-        modes[0] = GameMode.Movment;
-        modes[1] = GameMode.Interaction;
-        modes[2] = GameMode.View;
+        modes[0] = CameraMode.Movment;
+        //modes[1] = GameMode.Interaction;
+        modes[1] = CameraMode.View;
         text = GetComponentInChildren<TextMeshProUGUI>();
-        text.text = modes[i].ToString();
     }
 
     // Update is called once per frame
@@ -31,8 +33,32 @@ public class ChangeGameMode : MonoBehaviour
         if (i == modes.Length) {
             i = 0;
         }
-
         GameManager.instance.SetMode(modes[i]);
         text.text = modes[i].ToString();
+    }
+
+    public void InteractionMode()
+    {
+        interaction = !interaction;
+        if (interaction)
+            text.text = "Interaction\nOn";
+        else
+            text.text = "Interaction\nOff";
+
+        GameManager.instance.SetInteraction(interaction);
+        
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if(mode)
+            ChangeMode();
+        else
+            InteractionMode();
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        
     }
 }

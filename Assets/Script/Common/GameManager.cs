@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
 using UnityEngine;
-using static UnityEditor.Experimental.GraphView.GraphView;
+//using static UnityEditor.Experimental.GraphView.GraphView;
 using Unity.Burst.CompilerServices;
 using Unity.VisualScripting;
 
@@ -42,6 +42,16 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        if (character.isActiveElement())
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            if(Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("Enemy"))) {
+                //Debug.Log(hit.collider.gameObject.name);
+                character.enemyTarget = hit.collider.GetComponentInParent<Enemy>();
+            }
+        }
+
         if (Input.GetMouseButtonDown(0) && !stopLogic)
         {
             if (EventSystem.current.IsPointerOverGameObject()) {

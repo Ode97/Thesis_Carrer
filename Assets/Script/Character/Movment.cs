@@ -58,15 +58,10 @@ public class Movment : MonoBehaviour
                     velocity.y = -2f;
                 }*/
 
-
-
                 Vector3 moveDirection = (targetPosition - transform.position).normalized;
-
 
                 Vector3 move = moveDirection * speed * Time.deltaTime;
                 transform.position = Vector3.MoveTowards(transform.position, targetPosition, move.magnitude);
-
-
 
                 //velocity.y += gravity * Time.deltaTime;
 

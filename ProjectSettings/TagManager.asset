@@ -12,9 +12,9 @@ TagManager:
   - Water
   - UI
   - InteractableObject
-  - 
-  - 
-  - 
+  - Protagonist
+  - Enemy
+  - Bullet
   - 
   - 
   - 

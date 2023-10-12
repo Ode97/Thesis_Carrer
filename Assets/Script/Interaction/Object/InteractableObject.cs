@@ -38,7 +38,7 @@ public abstract class InteractableObject : MonoBehaviour
     {
         if (GameManager.instance.IsInteraction() && !on)
         {
-            Debug.Log("add: " + name);
+            //Debug.Log("add: " + name);
             on = true;
             GameManager.instance.SetObject(this);
         }

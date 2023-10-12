@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4864415195900330762}
   - component: {fileID: 6771892899573996962}
   - component: {fileID: 447297904207900917}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: CircleSparks
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4848,7 +4848,10 @@ GameObject:
   - component: {fileID: 4659087304275547816}
   - component: {fileID: 8724466350249207100}
   - component: {fileID: 2481766069617989408}
-  m_Layer: 0
+  - component: {fileID: 5907901206919323659}
+  - component: {fileID: 9109210313808747555}
+  - component: {fileID: 1809898345133379235}
+  m_Layer: 9
   m_Name: Portal gray 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9726,6 +9729,66 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
+--- !u!54 &5907901206919323659
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4752457369876416285}
+  serializedVersion: 4
+  m_Mass: 0.1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!65 &9109210313808747555
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4752457369876416285}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.8402, y: 2.053209, z: 0.21422982}
+  m_Center: {x: 0, y: -0.014947057, z: 0.0077234507}
+--- !u!114 &1809898345133379235
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4752457369876416285}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab55b55b4fe00b645b0536bba50d3113, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6850881341963794030
 GameObject:
   m_ObjectHideFlags: 0
@@ -9737,7 +9800,7 @@ GameObject:
   - component: {fileID: 6795722603191461851}
   - component: {fileID: 7490789582410241103}
   - component: {fileID: 4365720402379613779}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Distortion
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14623,7 +14686,7 @@ GameObject:
   - component: {fileID: 8296008523452323995}
   - component: {fileID: 8007065210249244909}
   - component: {fileID: 6281903417119555169}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Smoke
   m_TagString: Untagged
   m_Icon: {fileID: 0}

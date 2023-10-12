@@ -25,4 +25,9 @@ public class Spot : MonoBehaviour
             enigmaChecker.WinnerCheck(g.GetComponent<EnigmaObj>().code);
         }
     }
+
+    private void OnTriggerExit(Collider other)
+    {
+        enigmaChecker.NotOnSpot();
+    }
 }

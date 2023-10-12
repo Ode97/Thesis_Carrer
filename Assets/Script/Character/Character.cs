@@ -1,6 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
+using static UnityEngine.GraphicsBuffer;
 
 public class Character : MonoBehaviour
 {
@@ -16,22 +20,56 @@ public class Character : MonoBehaviour
     private Movment movment;
     private Animator animator;
     private bool activeElement = false;
-    
+    private GameObject[] hearts;
+    public Enemy enemyTarget;
+    private bool attacking = false;
+    private Canvas canvas;
+    private float space = 60;
+
 
     // Start is called before the first frame update
     void Start()
     {
+        animator = GetComponent<Animator>();
         movment = GetComponent<Movment>();
+        hearts = new GameObject[health];
+        
+        canvas = FindObjectOfType<Canvas>();
+        Reset();
+    }
+
+    private void Reset()
+    {
+        var h = Resources.Load<GameObject>("life");
+        health = 3;
+        for (int i = 0; i < health; i++)
+        {
+            hearts[i] = Instantiate(h, new Vector3(30 + space * i, Screen.height - 30, 0), Quaternion.identity, canvas.transform);
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-
-        
+        if(health <= 0)
+        {
+            StartCoroutine(Dead());
+            
+        }
+        Attack();
     }
 
-    
+    private IEnumerator Dead()
+    {
+        GameManager.instance.stopLogic = true;
+        animator.SetTrigger("Die");
+        yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName("Die01_Stay_SwordAndShield"));
+        GameManager.instance.stopLogic = true;
+        animator.ResetTrigger("Die");
+        yield return new WaitForSeconds(3);
+        Reset();
+        animator.Play("Idle_Battle_SwordAndShield");
+    }
 
     public void StopImmediateAurea()
     {
@@ -100,6 +138,34 @@ public class Character : MonoBehaviour
         }
     }
 
+    public void Attack()
+    {
+        
+        if (activeElement && enemyTarget && !attacking)
+        {
+            StartCoroutine(AttackRoutine());
+        }
+        
+    }
+
+    private IEnumerator AttackRoutine()
+    {
+        attacking = true;
+        yield return new WaitForSeconds(1);
+        if (activeElement && enemyTarget)
+        {
+            Vector3 velocityBullet = enemyTarget.transform.position - transform.position;
+            var b = Instantiate(actualElement.BaseAttack, transform.position + new Vector3(0, 3, 0), Quaternion.identity, transform);
+            b.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+            Quaternion desiredRotation = Quaternion.LookRotation(velocityBullet.normalized, Vector3.up) * Quaternion.Euler(90, 0, 0);
+            b.transform.localRotation = desiredRotation;
+
+            b.GetComponent<Rigidbody>().velocity = velocityBullet.normalized * 10;
+            
+        }
+        attacking = false;
+    }
+
     public void MoveCharacter(Vector3 pos, Vector3 move)
     {
         if(onMoveableSurface)
@@ -115,5 +181,11 @@ public class Character : MonoBehaviour
         }
         else
             onMoveableSurface = false;
+
+        if (collision.collider.gameObject.GetComponentInParent<Enemy>() && health > 0)
+        {
+            health -= 1;
+            Destroy(hearts[health]);
+        }   
     }
 }

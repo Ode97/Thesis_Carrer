@@ -6,7 +6,7 @@ public class Air : InteractableObject
 {
 
     private Vector3 destination;
-    public Vector3 direction;
+    private Vector3 direction;
 
 
     // Start is called before the first frame update

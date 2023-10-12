@@ -7,10 +7,11 @@ public class EnigmaPosition : Enigma
     public GameObject obstacle;
     public int[] combination;
     private int i = 0;
+    private Animator animator;
 
     void Start()
     {
-       
+       animator = obstacle.GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -22,12 +23,21 @@ public class EnigmaPosition : Enigma
     override
     public void WinnerCheck(int code)
     {
-        if (code == combination[i])
+        if (i < combination.Length && code == combination[i])
         {
-            obstacle.SetActive(false);
+            //obstacle.SetActive(false);
+            
+            animator.SetTrigger("onSpot");
+            
             i++;
         } else
             i = 0;
+    }
+
+    override
+    public void NotOnSpot()
+    {
+        animator.SetTrigger("free");
     }
 
 

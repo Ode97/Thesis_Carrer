@@ -47,9 +47,21 @@ public class Movment : MonoBehaviour
                 targetIndicator.SetActive(false);
             }
 
+            
+
             if (isWalking)
             {
                 RotateCharacter(targetPosition);
+                RaycastHit hit;
+                Vector3 origin = transform.position + Vector3.up;
+                if (Physics.Raycast(origin, transform.forward, out hit, 3, LayerMask.GetMask("Terrain")))
+                {
+                    // Do something to prevent movement along the wall or mountain.
+                    Debug.Log("ostacolo");
+                    return;
+                }
+
+                
 
                 isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
 
@@ -64,13 +76,18 @@ public class Movment : MonoBehaviour
                 transform.position = Vector3.MoveTowards(transform.position, targetPosition, move.magnitude);
 
                 //velocity.y += gravity * Time.deltaTime;
-
                 
+
             }
         }
         
     }
-
+    #if UNITY_EDITOR
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawLine(transform.position + Vector3.up, transform.position + transform.forward * 3 + Vector3.up);
+    }
+    #endif
     public void Move(Vector3 point)
     {
         targetPosition = point;

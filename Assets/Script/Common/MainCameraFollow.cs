@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public class MainCameraFollow : MonoBehaviour
 {
@@ -15,6 +16,7 @@ public class MainCameraFollow : MonoBehaviour
 
     public float rotationSpeedView = 5.0f;
     private CameraMode mode;
+    private Quaternion lastRotation;
 
     private void Awake()
     {
@@ -62,36 +64,49 @@ public class MainCameraFollow : MonoBehaviour
         // Imposta le soglie per attivare lo spostamento della camera quando il mouse si avvicina ai bordi
         float edgeThreshold = 0.1f; // Valore da regolare in base alla sensibilità desiderata
 
-      
+        // Calcola la differenza tra la posizione del mouse e la posizione centrale dello schermo
+        float mouseXDelta = mouseXPercentage - 0.5f;
+        float mouseYDelta = -mouseYPercentage + 0.5f;
 
-        // Calcola l'angolo di rotazione solo se il mouse è vicino ai bordi
-        if (mouseXPercentage < edgeThreshold || mouseXPercentage > 1 - edgeThreshold ||
-            mouseYPercentage < edgeThreshold || mouseYPercentage > 1 - edgeThreshold)
-        {
-
-            // Calcola la differenza tra la posizione del mouse e la posizione centrale dello schermo
-            float mouseXDelta = mouseXPercentage - 0.5f;
-            float mouseYDelta = - mouseYPercentage + 0.5f;
-
-            // Imposta l'angolo di rotazione intorno agli assi X e Z rispetto alla posizione corrente della camera
-            float pitch = 90.0f * mouseYDelta;
-            float yaw = 90.0f * mouseXDelta;
-
-            // Applica la rotazione alla camera
-            transform.RotateAround(transform.position, Vector3.up, yaw * rotationSpeedView * Time.deltaTime);
-            transform.RotateAround(transform.position, transform.right, pitch * rotationSpeedView * Time.deltaTime);
-        }
+        // Imposta l'angolo di rotazione intorno agli assi X e Z rispetto alla posizione corrente della camera
+        float pitch = 90.0f * mouseYDelta;
+        float yaw = 90.0f * mouseXDelta;
         
+        // Calcola l'angolo di rotazione solo se il mouse è vicino ai bordi
+        if (mouseYPercentage < edgeThreshold || mouseYPercentage > 1 - edgeThreshold)
+        {
+            if (transform.rotation.eulerAngles.x > 300 || transform.rotation.eulerAngles.x < 60)
+                transform.RotateAround(target.transform.position, transform.right, pitch * rotationSpeedView * Time.deltaTime);
+            else
+            {
+                transform.rotation = lastRotation;
+                Debug.Log(lastRotation.eulerAngles);
+            }
+        }
+        else if(mouseXPercentage < edgeThreshold || mouseXPercentage > 1 - edgeThreshold)
+        {
+            
+            target.transform.RotateAround(target.transform.position, Vector3.up, yaw * rotationSpeedView * Time.deltaTime);
+            transform.rotation = Quaternion.Euler(transform.eulerAngles.x, target.transform.eulerAngles.y, transform.eulerAngles.z);
+        }
+
+        if (transform.rotation.eulerAngles.x > 300 || transform.rotation.eulerAngles.x < 60)
+            lastRotation = transform.rotation;
     }
+
 
 
     
 
     private void SetPosition()
     {
-        
+        Vector3 desiredPosition;
+        if (mode == CameraMode.View)
+        {
+            desiredPosition = target.position + (target.rotation * offset);
+        }else
         //Vector3 desiredPosition = targetP + (target.rotation * offset);
-        Vector3 desiredPosition = target.position + offset;
+            desiredPosition = target.position + offset;
 
         // Interpolazione della posizione desiderata della telecamera
         transform.position = Vector3.Lerp(transform.position, desiredPosition, positionSpeed * Time.deltaTime);

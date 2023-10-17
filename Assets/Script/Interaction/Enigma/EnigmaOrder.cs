@@ -39,9 +39,4 @@ public class EnigmaOrder : Enigma
         yield return new WaitForSeconds(0.5f);
         EventManager.TriggerEvent("WrongFireEnigma");
     }
-
-    public override void NotOnSpot()
-    {
-        throw new System.NotImplementedException();
-    }
 }

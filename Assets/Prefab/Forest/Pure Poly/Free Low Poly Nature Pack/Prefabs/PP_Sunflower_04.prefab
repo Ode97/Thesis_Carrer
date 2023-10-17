@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 4400482160171448049}
   - component: {fileID: 6919011243008595}
   - component: {fileID: -629010212180607024}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: PP_Sunflower_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -122,7 +122,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   code: 1
   removeRb: 0
-  type: 0
+  element: 0
 --- !u!54 &-629010212180607024
 Rigidbody:
   m_ObjectHideFlags: 0

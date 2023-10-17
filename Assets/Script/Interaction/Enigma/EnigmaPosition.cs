@@ -25,19 +25,11 @@ public class EnigmaPosition : Enigma
     {
         if (i < combination.Length && code == combination[i])
         {
-            //obstacle.SetActive(false);
-            
-            animator.SetTrigger("onSpot");
+            obstacle.SetActive(false);
             
             i++;
         } else
             i = 0;
-    }
-
-    override
-    public void NotOnSpot()
-    {
-        animator.SetTrigger("free");
     }
 
 

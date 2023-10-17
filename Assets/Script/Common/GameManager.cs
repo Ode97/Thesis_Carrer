@@ -40,7 +40,7 @@ public class GameManager : MonoBehaviour
     }
 
     // Update is called once per frame
-    void FixedUpdate()
+    void Update()
     {
         if (character.isActiveElement())
         {
@@ -54,7 +54,9 @@ public class GameManager : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0) && !stopLogic)
         {
+            
             if (EventSystem.current.IsPointerOverGameObject()) {
+                
                 return;
             }
 
@@ -70,6 +72,7 @@ public class GameManager : MonoBehaviour
                 
                 if (interaction)
                 {
+                   
                     if (layer == LayerMask.NameToLayer("Terrain") || layer == LayerMask.NameToLayer("InteractableObject"))
                     {
                         character.Interaction(hit);
@@ -79,9 +82,10 @@ public class GameManager : MonoBehaviour
 
                 if (actualMode == CameraMode.Movment)
                 {
+                   
+
                     if (layer == LayerMask.NameToLayer("Terrain"))
                     {
-
 
                         character.MoveToDestination(hit.point);
                         return;

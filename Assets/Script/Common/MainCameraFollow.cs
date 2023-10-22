@@ -50,48 +50,51 @@ public class MainCameraFollow : MonoBehaviour
     {
 
         SetPosition();
-            
-        // Ottieni la posizione del mouse
-        Vector3 mousePosition = Input.mousePosition;
-        // Ottieni le dimensioni dello schermo
-        float screenWidth = Screen.width;
-        float screenHeight = Screen.height;
 
-        // Calcola la percentuale di spostamento del mouse rispetto al bordo dello schermo
-        float mouseXPercentage = mousePosition.x / screenWidth;
-        float mouseYPercentage = mousePosition.y / screenHeight;
-
-        // Imposta le soglie per attivare lo spostamento della camera quando il mouse si avvicina ai bordi
-        float edgeThreshold = 0.1f; // Valore da regolare in base alla sensibilità desiderata
-
-        // Calcola la differenza tra la posizione del mouse e la posizione centrale dello schermo
-        float mouseXDelta = mouseXPercentage - 0.5f;
-        float mouseYDelta = -mouseYPercentage + 0.5f;
-
-        // Imposta l'angolo di rotazione intorno agli assi X e Z rispetto alla posizione corrente della camera
-        float pitch = 90.0f * mouseYDelta;
-        float yaw = 90.0f * mouseXDelta;
-        
-        // Calcola l'angolo di rotazione solo se il mouse è vicino ai bordi
-        if (mouseYPercentage < edgeThreshold || mouseYPercentage > 1 - edgeThreshold)
+        if (!GameManager.instance.IsInteraction())
         {
-            if (transform.rotation.eulerAngles.x > 300 || transform.rotation.eulerAngles.x < 60)
-                transform.RotateAround(target.transform.position, transform.right, pitch * rotationSpeedView * Time.deltaTime);
-            else
+            // Ottieni la posizione del mouse
+            Vector3 mousePosition = Input.mousePosition;
+            // Ottieni le dimensioni dello schermo
+            float screenWidth = Screen.width;
+            float screenHeight = Screen.height;
+
+            // Calcola la percentuale di spostamento del mouse rispetto al bordo dello schermo
+            float mouseXPercentage = mousePosition.x / screenWidth;
+            float mouseYPercentage = mousePosition.y / screenHeight;
+
+            // Imposta le soglie per attivare lo spostamento della camera quando il mouse si avvicina ai bordi
+            float edgeThreshold = 0.1f; // Valore da regolare in base alla sensibilità desiderata
+
+            // Calcola la differenza tra la posizione del mouse e la posizione centrale dello schermo
+            float mouseXDelta = mouseXPercentage - 0.5f;
+            float mouseYDelta = -mouseYPercentage + 0.5f;
+
+            // Imposta l'angolo di rotazione intorno agli assi X e Z rispetto alla posizione corrente della camera
+            float pitch = 90.0f * mouseYDelta;
+            float yaw = 90.0f * mouseXDelta;
+
+            // Calcola l'angolo di rotazione solo se il mouse è vicino ai bordi
+            if (mouseYPercentage < edgeThreshold || mouseYPercentage > 1 - edgeThreshold)
             {
-                transform.rotation = lastRotation;
-                Debug.Log(lastRotation.eulerAngles);
+                if (transform.rotation.eulerAngles.x > 300 || transform.rotation.eulerAngles.x < 60)
+                    transform.RotateAround(target.transform.position, transform.right, pitch * rotationSpeedView * Time.deltaTime);
+                else
+                {
+                    transform.rotation = lastRotation;
+                    Debug.Log(lastRotation.eulerAngles);
+                }
             }
-        }
-        else if(mouseXPercentage < edgeThreshold || mouseXPercentage > 1 - edgeThreshold)
-        {
-            
-            target.transform.RotateAround(target.transform.position, Vector3.up, yaw * rotationSpeedView * Time.deltaTime);
-            transform.rotation = Quaternion.Euler(transform.eulerAngles.x, target.transform.eulerAngles.y, transform.eulerAngles.z);
-        }
+            else if (mouseXPercentage < edgeThreshold || mouseXPercentage > 1 - edgeThreshold)
+            {
 
-        if (transform.rotation.eulerAngles.x > 300 || transform.rotation.eulerAngles.x < 60)
-            lastRotation = transform.rotation;
+                target.transform.RotateAround(target.transform.position, Vector3.up, yaw * rotationSpeedView * Time.deltaTime);
+                transform.rotation = Quaternion.Euler(transform.eulerAngles.x, target.transform.eulerAngles.y, transform.eulerAngles.z);
+            }
+
+            if (transform.rotation.eulerAngles.x > 300 || transform.rotation.eulerAngles.x < 60)
+                lastRotation = transform.rotation;
+        }
     }
 
 

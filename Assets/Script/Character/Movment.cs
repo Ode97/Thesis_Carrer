@@ -32,6 +32,7 @@ public class Movment : MonoBehaviour
         ps.Pause();
         targetIndicator.SetActive(false);
     }
+
     private void Update()
     {
         if (targetPosition != null)
@@ -45,23 +46,19 @@ public class Movment : MonoBehaviour
                 characterAnimator.SetTrigger("Idle");
                 ps.Pause();
                 targetIndicator.SetActive(false);
-            }
-
-            
+            }           
 
             if (isWalking)
             {
                 RotateCharacter(targetPosition);
                 RaycastHit hit;
-                Vector3 origin = transform.position + Vector3.up;
-                if (Physics.Raycast(origin, transform.forward, out hit, 3, LayerMask.GetMask("Terrain")))
+                Vector3 origin = transform.position + Vector3.up * 2;
+                if (Physics.Raycast(origin, transform.forward, out hit, 4))
                 {
                     // Do something to prevent movement along the wall or mountain.
                     Debug.Log("ostacolo");
                     return;
                 }
-
-                
 
                 isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
 
@@ -77,15 +74,14 @@ public class Movment : MonoBehaviour
 
                 //velocity.y += gravity * Time.deltaTime;
                 
-
             }
-        }
-        
+        }        
     }
+
     #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
-        Gizmos.DrawLine(transform.position + Vector3.up, transform.position + transform.forward * 3 + Vector3.up);
+        Gizmos.DrawLine(transform.position + Vector3.up * 2, transform.position + transform.forward * 4 + Vector3.up * 2);
     }
     #endif
     public void Move(Vector3 point)
@@ -102,7 +98,13 @@ public class Movment : MonoBehaviour
     private void RotateCharacter(Vector3 targetPosition)
     {
         Vector3 direction = (targetPosition - transform.position).normalized;
-        Quaternion lookRotation = Quaternion.LookRotation(direction);
-        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * rotationSpeed);
+        direction.y = 0;
+        if(direction != Vector3.zero)
+        {
+            Quaternion lookRotation = Quaternion.LookRotation(direction);
+            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * rotationSpeed);
+        }
+       
+
     }
 }

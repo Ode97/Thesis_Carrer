@@ -21,9 +21,10 @@ public class Earth : InteractableObject
     {
         var t = Instantiate(obj, transform);
         t.transform.position = pos;
-        t.transform.localScale = new Vector3(11, 11, 11);
+        //t.transform.localScale = new Vector3(11, 11, 11);
         t.transform.LookAt(GameManager.instance.character.transform);
-        GetComponent<EnigmaObj>()?.Interaction(Element.Earth);
+        //GetComponent<EnigmaObj>()?.Interaction(Element.Earth);
+        transform.GetComponent<Spot>()?.EnigmaSolve(obj);
 
         return true;
     }

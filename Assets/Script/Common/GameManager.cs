@@ -48,7 +48,7 @@ public class GameManager : MonoBehaviour
             RaycastHit hit;
             if(Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("Enemy"))) {
                 //Debug.Log(hit.collider.gameObject.name);
-                character.enemyTarget = hit.collider.GetComponentInParent<Enemy>();
+                character.SetEnemy(hit.collider.GetComponentInParent<Enemy>());
             }
         }
 
@@ -162,8 +162,8 @@ public class GameManager : MonoBehaviour
         cameraHandler.SetMode(mode);
     }
 
-    public void MoveCharacter(Vector3 pos, Vector3 move)
+    public void MoveCharacter(Vector3 pos, Vector3 move, GameObject obj)
     {
-        character.MoveCharacter(pos, move);
+        character.MoveCharacter(pos, move, obj);
     }
 }

@@ -4,12 +4,17 @@ using UnityEngine;
 
 public class EnigmaObj : MonoBehaviour
 {
-    public int code = 0;
+    
     public bool removeRb = false;
     private Enigma enigmaChecker;
     public Element element = Element.None;
 
-    private void Start()
+    
+
+    public int value = 0;
+    
+
+    private void Awake()
     {
         enigmaChecker = transform.parent.GetComponent<Enigma>();
 
@@ -17,12 +22,24 @@ public class EnigmaObj : MonoBehaviour
             GetComponent<Rigidbody>().isKinematic = true;
     }
 
+    public void SetEnigmaChecker(Enigma enigma)
+    {
+        enigmaChecker = enigma;
+    }
+
     public void Interaction(Element interactionElement)
     {
-        
-        if(interactionElement == element)
-            enigmaChecker.WinnerCheck(code);
 
+        if (interactionElement == element) {
+            if (enigmaChecker.position)
+                enigmaChecker.ElementPositionCheck(value);
+            if (enigmaChecker.order)
+                enigmaChecker.OrderCheck(value);
+            if (enigmaChecker.activation)
+            {
+                enigmaChecker.ActiveAllCheck();
+            }
+        }
     }
 
 }

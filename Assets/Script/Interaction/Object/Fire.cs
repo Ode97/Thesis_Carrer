@@ -9,7 +9,7 @@ public class Fire : InteractableObject
     // Start is called before the first frame update
     void Start()
     {
-        EventManager.StartListening("WrongFireEnigma", CloseFire);
+        EventManager.StartListening("WrongFireEnigma1", CloseFire);
         fireParticle = transform.GetChild(0).gameObject;
     }
 

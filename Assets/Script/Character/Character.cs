@@ -21,10 +21,10 @@ public class Character : MonoBehaviour
     private Animator animator;
     private bool activeElement = false;
     private GameObject[] hearts;
-    public Enemy enemyTarget;
+    private Enemy enemyTarget;
     private bool attacking = false;
     private Canvas canvas;
-    private float space = 60;
+    private float space = 110;
 
 
     // Start is called before the first frame update
@@ -42,9 +42,21 @@ public class Character : MonoBehaviour
     {
         var h = Resources.Load<GameObject>("life");
         health = 3;
+
+        Vector2 canvasSize = canvas.GetComponent<RectTransform>().sizeDelta;
+
         for (int i = 0; i < health; i++)
         {
-            hearts[i] = Instantiate(h, new Vector3(30 + space * i, Screen.height - 30, 0), Quaternion.identity, canvas.transform);
+            GameObject heart = Instantiate(h, Vector3.zero, Quaternion.identity, canvas.transform);
+            RectTransform rt = heart.GetComponent<RectTransform>();
+
+            // Calculate the position based on canvas size
+            float posX = -canvasSize.x / 2 + space * i + 65;
+            float posY = -canvasSize.y / 2 + 65;
+
+            rt.anchoredPosition = new Vector2(posX, -posY); // Negative y to account for Unity's UI system
+
+            hearts[i] = heart;
         }
     }
 
@@ -69,6 +81,11 @@ public class Character : MonoBehaviour
         yield return new WaitForSeconds(3);
         Reset();
         animator.Play("Idle_Battle_SwordAndShield");
+    }
+
+    public void SetEnemy(Enemy e)
+    {
+        enemyTarget = e;
     }
 
     public void StopImmediateAurea()
@@ -166,18 +183,20 @@ public class Character : MonoBehaviour
         attacking = false;
     }
 
-    public void MoveCharacter(Vector3 pos, Vector3 move)
+    public void MoveCharacter(Vector3 pos, Vector3 move, GameObject obj)
     {
-        if(onMoveableSurface)
+        if(onMoveableSurface && obj == movableObj)
             transform.position = Vector3.MoveTowards(transform.position, pos, move.magnitude);
     }
 
     private bool onMoveableSurface = false;
+    private GameObject movableObj;
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.collider.gameObject.GetComponent<Air>())
         {
             onMoveableSurface = true;
+            movableObj = collision.collider.gameObject;
         }
         else
             onMoveableSurface = false;

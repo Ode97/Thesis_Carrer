@@ -5,8 +5,7 @@ using UnityEngine;
 public class EnigmaObj : MonoBehaviour
 {
     
-    public bool removeRb = false;
-    private Enigma enigmaChecker;
+    public Enigma enigmaChecker;
     public Element element = Element.None;
 
     
@@ -16,10 +15,10 @@ public class EnigmaObj : MonoBehaviour
 
     private void Awake()
     {
-        enigmaChecker = transform.parent.GetComponent<Enigma>();
+        
+        enigmaChecker = transform.parent?.GetComponent<Enigma>();
 
-        if (removeRb)
-            GetComponent<Rigidbody>().isKinematic = true;
+        
     }
 
     public void SetEnigmaChecker(Enigma enigma)

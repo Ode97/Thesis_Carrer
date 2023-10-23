@@ -161,9 +161,4 @@ public class GameManager : MonoBehaviour
         actualMode = mode;
         cameraHandler.SetMode(mode);
     }
-
-    public void MoveCharacter(Vector3 pos, Vector3 move, GameObject obj)
-    {
-        character.MoveCharacter(pos, move, obj);
-    }
 }

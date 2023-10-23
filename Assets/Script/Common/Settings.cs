@@ -49,4 +49,10 @@ public class Settings : MonoBehaviour
         mainCanvas.enabled = false;
     }
 
+    public void CloseEarthMenu()
+    {
+        earthPanel.SetActive(false);
+        mainCanvas.enabled = true;
+    }
+
 }

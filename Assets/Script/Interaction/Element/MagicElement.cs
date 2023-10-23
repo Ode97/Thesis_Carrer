@@ -6,13 +6,14 @@ public enum Element { None, Air, Fire, Water, Earth }
 
 public abstract class MagicElement : MonoBehaviour
 {
-    public Color color;
+    //public Color color;
     public GameObject aurea;
     protected Vector3 objectPosition;
     protected InteractableObject interactableObject;
     public GameObject SpecialAttack;
     public GameObject BaseAttack;
     protected Character character;
+    public Element element;
 
     private void Start()
     {

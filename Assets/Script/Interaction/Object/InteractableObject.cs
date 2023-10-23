@@ -9,12 +9,17 @@ public abstract class InteractableObject : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        outline = gameObject.AddComponent<Outline>();
+        
+        if(!GetComponent<Outline>())
+            outline = gameObject.AddComponent<Outline>();
+        else
+            outline = gameObject.GetComponent<Outline>();
 
         outline.OutlineMode = Outline.Mode.OutlineAll;
         outline.OutlineColor = Color.yellow;
         outline.OutlineWidth = 5f;
         outline.enabled = false;
+        
     }
 
     // Update is called once per frame

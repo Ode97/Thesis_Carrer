@@ -38,9 +38,7 @@ public class Air : InteractableObject
 
             direction = moveDirection * rb.mass * 10;
             rb.AddForce(direction, ForceMode.Force);
-            //transform.position = Vector3.MoveTowards(transform.position, destination, direction.magnitude);
-
-            //GameManager.instance.MoveCharacter(destination, direction, gameObject);
+            
 
         }
 

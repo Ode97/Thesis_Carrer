@@ -25,6 +25,7 @@ public class Character : MonoBehaviour
     private bool attacking = false;
     private Canvas canvas;
     private float space = 110;
+    private GameObject water;
 
 
     // Start is called before the first frame update
@@ -63,6 +64,11 @@ public class Character : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (water)
+        {
+            WaterRespawn();
+        }
+
         if(health <= 0)
         {
             StartCoroutine(Dead());
@@ -165,10 +171,12 @@ public class Character : MonoBehaviour
         
     }
 
+    public float bulletVelocity = 10;
+    public float attackSpeed = 5;
     private IEnumerator AttackRoutine()
     {
         attacking = true;
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(10 / attackSpeed);
         if (activeElement && enemyTarget)
         {
             Vector3 velocityBullet = enemyTarget.transform.position - transform.position;
@@ -177,34 +185,59 @@ public class Character : MonoBehaviour
             Quaternion desiredRotation = Quaternion.LookRotation(velocityBullet.normalized, Vector3.up) * Quaternion.Euler(90, 0, 0);
             b.transform.localRotation = desiredRotation;
 
-            b.GetComponent<Rigidbody>().velocity = velocityBullet.normalized * 10;
-            
+            b.GetComponent<Rigidbody>().velocity = velocityBullet.normalized * bulletVelocity;
+
         }
         attacking = false;
     }
 
-    public void MoveCharacter(Vector3 pos, Vector3 move, GameObject obj)
-    {
-        if(onMoveableSurface && obj == movableObj)
-            transform.position = Vector3.MoveTowards(transform.position, pos, move.magnitude);
-    }
-
-    private bool onMoveableSurface = false;
-    private GameObject movableObj;
+    private Vector3 checkpoint;
     private void OnCollisionEnter(Collision collision)
-    {
-        if (collision.collider.gameObject.GetComponent<Air>())
-        {
-            onMoveableSurface = true;
-            movableObj = collision.collider.gameObject;
-        }
-        else
-            onMoveableSurface = false;
+    {       
 
         if (collision.collider.gameObject.GetComponentInParent<Enemy>() && health > 0)
         {
             health -= 1;
             Destroy(hearts[health]);
-        }   
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        Debug.Log(other.gameObject);
+        if (other.gameObject.GetComponent<WaterObj>())
+        {
+            Debug.Log("aa");
+            water = other.gameObject;
+        }
+    }
+
+    public void SetCheckpoint(Vector3 point)
+    {
+        Debug.Log("checkpoint");
+        checkpoint = point;
+    }
+
+    private void WaterRespawn()
+    {
+        
+        Debug.Log("on water");
+        if (transform.position.y < water.transform.position.y - 5)
+        {
+
+            StartCoroutine(Respawn());
+        }
+        else if(transform.position.y > water.transform.position.y + 2)
+        {
+            water = null;
+            Debug.Log("over water");
+        }
+    }
+
+    private IEnumerator Respawn()
+    {
+        yield return new WaitForSeconds(2);
+        transform.position = checkpoint;
+
     }
 }

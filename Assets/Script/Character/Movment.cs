@@ -56,8 +56,11 @@ public class Movment : MonoBehaviour
                 if (Physics.Raycast(origin, transform.forward, out hit, 4))
                 {
                     // Do something to prevent movement along the wall or mountain.
-                    Debug.Log("ostacolo");
-                    return;
+                    if (hit.collider.gameObject.layer != LayerMask.NameToLayer("Checkpoint"))
+                    {
+                        Debug.Log("ostacolo");
+                        return;
+                    }
                 }
 
                 isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);

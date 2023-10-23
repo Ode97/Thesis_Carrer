@@ -13,6 +13,7 @@ public class Enemy : MonoBehaviour
     private Animator animator;
     public float health = 1;
     private Character character;
+    public Element lowElement;
     
     
     // Start is called before the first frame update
@@ -328,10 +329,14 @@ public class Enemy : MonoBehaviour
     {
         if (collision.collider.gameObject.layer == LayerMask.NameToLayer("Bullet"))
         {
-            hit = true;
-            health -= 1;
-            Destroy(collision.gameObject);
-            
+            if (lowElement == collision.collider.gameObject.GetComponent<MagicAttack>().element)
+            {
+                hit = true;
+                health -= 1;
+                Destroy(collision.gameObject);
+            }else
+                Destroy(collision.gameObject);
+
         }
     }
 }

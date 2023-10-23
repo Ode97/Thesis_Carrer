@@ -18,7 +18,7 @@ public class FloatingObject : MonoBehaviour
     {
         if (water && transform.position.y - water.transform.position.y < 0.3)
         {
-            rb.AddForce(transform.up * waterForce, ForceMode.Force);
+            rb.AddForce(water.transform.up * waterForce, ForceMode.Force);
         }
     }
 

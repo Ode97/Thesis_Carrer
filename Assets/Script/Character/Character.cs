@@ -23,7 +23,8 @@ public class Character : MonoBehaviour
     private GameObject[] hearts;
     private Enemy enemyTarget;
     private bool attacking = false;
-    private Canvas canvas;
+    [SerializeField]
+    private Canvas mainCanvas;
     private float space = 110;
     private GameObject water;
 
@@ -35,7 +36,6 @@ public class Character : MonoBehaviour
         movment = GetComponent<Movment>();
         hearts = new GameObject[health];
         
-        canvas = FindObjectOfType<Canvas>();
         Reset();
     }
 
@@ -44,11 +44,11 @@ public class Character : MonoBehaviour
         var h = Resources.Load<GameObject>("life");
         health = 3;
 
-        Vector2 canvasSize = canvas.GetComponent<RectTransform>().sizeDelta;
+        Vector2 canvasSize = mainCanvas.GetComponent<RectTransform>().sizeDelta;
 
         for (int i = 0; i < health; i++)
         {
-            GameObject heart = Instantiate(h, Vector3.zero, Quaternion.identity, canvas.transform);
+            GameObject heart = Instantiate(h, Vector3.zero, Quaternion.identity, mainCanvas.transform);
             RectTransform rt = heart.GetComponent<RectTransform>();
 
             // Calculate the position based on canvas size
@@ -74,7 +74,8 @@ public class Character : MonoBehaviour
             StartCoroutine(Dead());
             
         }
-        Attack();
+        if(enemyTarget)
+            Attack();
     }
 
     private IEnumerator Dead()
@@ -86,6 +87,7 @@ public class Character : MonoBehaviour
         animator.ResetTrigger("Die");
         yield return new WaitForSeconds(3);
         Reset();
+        Respawn();
         animator.Play("Idle_Battle_SwordAndShield");
     }
 
@@ -114,12 +116,21 @@ public class Character : MonoBehaviour
         if(aurea != null)
             Destroy(aurea.gameObject);
 
+
+        if (activeAttack)
+        {
+            Destroy(activeAttack);
+        }
+
         if (actualElement != null && element == actualElement)
         {
             actualElement = null;
             activeElement = false;
             return;
         }
+
+        
+
         activeElement = true;
 
         aurea = Instantiate(element.aurea, transform);
@@ -161,14 +172,22 @@ public class Character : MonoBehaviour
         }
     }
 
+    private GameObject activeAttack;
     public void Attack()
     {
         
-        if (activeElement && enemyTarget && !attacking)
+        if (activeElement && enemyTarget && !attacking && !activeAttack)
         {
-            StartCoroutine(AttackRoutine());
+            //StartCoroutine(AttackRoutine());
+            activeAttack = Instantiate(actualElement.BaseAttack, transform.position + new Vector3(0, 3, 0) + transform.forward * 3, Quaternion.identity);
+
         }
-        
+        else
+        {
+            //Vector3 velocityBullet = enemyTarget.transform.position - transform.position;
+            //Quaternion desiredRotation = Quaternion.LookRotation(velocityBullet.normalized, Vector3.up);
+            activeAttack.transform.LookAt(enemyTarget.transform);
+        }
     }
 
     public float bulletVelocity = 10;
@@ -180,8 +199,8 @@ public class Character : MonoBehaviour
         if (activeElement && enemyTarget)
         {
             Vector3 velocityBullet = enemyTarget.transform.position - transform.position;
-            var b = Instantiate(actualElement.BaseAttack, transform.position + new Vector3(0, 3, 0), Quaternion.identity, transform);
-            b.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+            var b = Instantiate(actualElement.BaseAttack, transform.position + new Vector3(0, 3, 0), Quaternion.identity);
+            b.transform.localScale = new Vector3(1f, 1f, 1f);
             Quaternion desiredRotation = Quaternion.LookRotation(velocityBullet.normalized, Vector3.up) * Quaternion.Euler(90, 0, 0);
             b.transform.localRotation = desiredRotation;
 
@@ -204,7 +223,6 @@ public class Character : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log(other.gameObject);
         if (other.gameObject.GetComponent<WaterObj>())
         {
             Debug.Log("aa");

@@ -41,9 +41,9 @@ public class ChangeGameMode : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     {
         interaction = !interaction;
         if (interaction)
-            text.text = "Interaction\nOn";
+            text.text = "Interaction On";
         else
-            text.text = "Interaction\nOff";
+            text.text = "Interaction Off";
 
         GameManager.instance.SetInteraction(interaction);
         

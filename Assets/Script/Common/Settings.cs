@@ -12,6 +12,9 @@ public class Settings : MonoBehaviour
     [SerializeField]
     private Canvas mainCanvas;
 
+    [SerializeField]
+    private GameObject icons;
+
     public static Settings instance = null;
 
     void Awake()
@@ -53,6 +56,16 @@ public class Settings : MonoBehaviour
     {
         earthPanel.SetActive(false);
         mainCanvas.enabled = true;
+    }
+
+    public void EnableIcon()
+    {
+        icons.SetActive(true);
+    }
+
+    public void DisableIcon()
+    {
+        icons.SetActive(false);
     }
 
 }

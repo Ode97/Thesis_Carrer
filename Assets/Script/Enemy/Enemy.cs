@@ -339,4 +339,20 @@ public class Enemy : MonoBehaviour
 
         }
     }
+
+    private void OnParticleCollision(GameObject other)
+    {
+        if (other.layer == LayerMask.NameToLayer("Bullet"))
+        {
+            if (lowElement == other.GetComponent<MagicAttack>().element)
+            {
+                hit = true;
+                health -= 1;
+                Debug.Log(other.name);
+            }
+            
+                
+
+        }
+    }
 }

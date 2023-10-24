@@ -115,7 +115,8 @@ public class GameManager : MonoBehaviour
             }
             else if(!objs.Contains(obj))
                 objs.Add(obj);
-        }
+        }else
+            objs.Add(obj);
 
         return;
     }
@@ -123,8 +124,12 @@ public class GameManager : MonoBehaviour
     public void SetInteraction(bool interaction)
     {
         this.interaction = interaction;
-        if(!interaction)
+        if (!interaction)
+        {
+            Settings.instance.DisableIcon();
             character.StopImmediateAurea();
+        }else
+            Settings.instance.EnableIcon();
     }
 
     public bool IsInteraction()

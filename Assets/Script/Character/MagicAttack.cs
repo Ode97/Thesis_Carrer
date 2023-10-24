@@ -8,7 +8,7 @@ public class MagicAttack : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        StartCoroutine(DestroyBullet());
+        //StartCoroutine(DestroyBullet());
     }
 
     // Update is called once per frame

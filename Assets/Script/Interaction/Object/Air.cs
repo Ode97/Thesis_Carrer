@@ -8,10 +8,12 @@ public class Air : InteractableObject
     private Vector3 destination;
     private Vector3 direction;
     private Rigidbody rb;
+    
 
     // Start is called before the first frame update
     void Start()
     {
+        
         rb = GetComponent<Rigidbody>();
     }
 
@@ -38,7 +40,7 @@ public class Air : InteractableObject
 
             direction = moveDirection * rb.mass * 10;
             rb.AddForce(direction, ForceMode.Force);
-            
+           
 
         }
 

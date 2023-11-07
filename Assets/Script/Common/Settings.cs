@@ -43,6 +43,7 @@ public class Settings : MonoBehaviour
 
     public void CloseGame()
     {
+        GameManager.instance.p.Kill();
         Application.Quit();
     }
 
@@ -68,4 +69,8 @@ public class Settings : MonoBehaviour
         icons.SetActive(false);
     }
 
+    public void EnableMainCanvas()
+    {
+        mainCanvas.enabled = true;
+    }
 }

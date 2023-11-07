@@ -6,7 +6,6 @@ using UnityEngine;
 
 public class WaterObj : InteractableObject
 {
-    public GameObject water;
     private bool rise = false;
     private Vector3 initPosition;
     public Vector3 targetPosition;
@@ -15,14 +14,15 @@ public class WaterObj : InteractableObject
     // Start is called before the first frame update
     void Start()
     {
-        water = transform.GetChild(0).gameObject;
         
         initPosition = transform.position;
     }
 
+    override
     // Update is called once per frame
-    void Update()
+    protected void Update()
     {
+        base.Update();
         if (rise)
         {
             Vector3 moveDirection = (targetPosition - transform.position).normalized;
@@ -42,9 +42,17 @@ public class WaterObj : InteractableObject
     {
         //water.SetActive(true);
         //animator.SetTrigger("rise");
-        rise = true;
 
-        GetComponent<EnigmaObj>()?.Interaction(Element.Water);
+        if (!rise)
+        {
+            rise = true;
+
+            GetComponent<EnigmaObj>()?.Interaction(Element.Water);
+            return true;
+        }
+        //else
+            //rise = false;
+
         return true;
     }
 
@@ -52,8 +60,8 @@ public class WaterObj : InteractableObject
     public bool FireInteraction()
     {
         //water.SetActive(false);
-        rise = false;
-        return true;
+        //rise = false;
+        return false;
     }
 
     public override bool Interaction()

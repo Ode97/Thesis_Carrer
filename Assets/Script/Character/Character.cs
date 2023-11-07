@@ -25,6 +25,8 @@ public class Character : MonoBehaviour
     private bool attacking = false;
     [SerializeField]
     private Canvas mainCanvas;
+    [SerializeField]
+    private GameObject lives;
     private float space = 110;
     private GameObject water;
 
@@ -58,9 +60,14 @@ public class Character : MonoBehaviour
             rt.anchoredPosition = new Vector2(posX, -posY); // Negative y to account for Unity's UI system
 
             hearts[i] = heart;
+            heart.transform.SetParent(lives.transform);
         }
+
+
+      
     }
 
+    private bool dead = false;
     // Update is called once per frame
     void Update()
     {
@@ -69,17 +76,21 @@ public class Character : MonoBehaviour
             WaterRespawn();
         }
 
-        if(health <= 0)
+        if(health <= 0 && !dead)
         {
             StartCoroutine(Dead());
             
         }
         if(enemyTarget)
             Attack();
+        else
+            if(activeAttack)
+                Destroy(activeAttack);
     }
 
     private IEnumerator Dead()
     {
+        dead = true;
         GameManager.instance.stopLogic = true;
         animator.SetTrigger("Die");
         yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName("Die01_Stay_SwordAndShield"));
@@ -89,6 +100,7 @@ public class Character : MonoBehaviour
         Reset();
         Respawn();
         animator.Play("Idle_Battle_SwordAndShield");
+        dead = false;
     }
 
     public void SetEnemy(Enemy e)
@@ -106,6 +118,11 @@ public class Character : MonoBehaviour
         }
     }
 
+    public bool IsMoving()
+    {
+        return movment.IsWalking();
+    }
+
     public void MoveToDestination(Vector3 point)
     {
         movment.Move(point);
@@ -119,6 +136,7 @@ public class Character : MonoBehaviour
 
         if (activeAttack)
         {
+            
             Destroy(activeAttack);
         }
 
@@ -135,6 +153,14 @@ public class Character : MonoBehaviour
 
         aurea = Instantiate(element.aurea, transform);
         actualElement = element;
+    }
+
+    public void DisableElement()
+    {
+        Destroy(aurea.gameObject);
+        actualElement = null;
+        activeElement = false;
+        return;
     }
 
     public bool isActiveElement()
@@ -179,14 +205,40 @@ public class Character : MonoBehaviour
         if (activeElement && enemyTarget && !attacking && !activeAttack)
         {
             //StartCoroutine(AttackRoutine());
-            activeAttack = Instantiate(actualElement.BaseAttack, transform.position + new Vector3(0, 3, 0) + transform.forward * 3, Quaternion.identity);
 
+            activeAttack = Instantiate(actualElement.BaseAttack);
+            
+
+            if (activeAttack.GetComponent<MagicAttack>().element != Element.Earth)
+                activeAttack.transform.position = transform.position + new Vector3(0, 3, 0) + transform.forward * 3;
+            else
+                activeAttack.transform.position = transform.position + transform.forward * 3;
+
+            Vector3 enemyPos = enemyTarget.transform.position;
+            Vector3 target = new Vector3(enemyPos.x, activeAttack.transform.position.y, enemyPos.z);
+            activeAttack.transform.LookAt(target);
         }
-        else
+        else if(activeAttack)
         {
-            //Vector3 velocityBullet = enemyTarget.transform.position - transform.position;
-            //Quaternion desiredRotation = Quaternion.LookRotation(velocityBullet.normalized, Vector3.up);
-            activeAttack.transform.LookAt(enemyTarget.transform);
+            //activeAttack.transform.rotation = Quaternion.identity;
+            var attackElement = activeAttack.GetComponent<MagicAttack>().element;
+            if (attackElement != Element.Air)
+            {
+                if (attackElement != Element.Earth)
+                    activeAttack.transform.position = transform.position + new Vector3(0, 3, 0) + transform.forward * 3;
+                else
+                    activeAttack.transform.position = transform.position + transform.forward * 3;
+            }
+
+            Vector3 enemyPos = enemyTarget.transform.position;
+            Vector3 target = new Vector3 (enemyPos.x, activeAttack.transform.position.y, enemyPos.z);
+            activeAttack.transform.LookAt(target);
+            transform.LookAt(enemyTarget.transform);
+            
+            /*if(activeAttack.GetComponent<MagicAttack>().element == Element.Air)
+            {
+                activeAttack.transform.position = Vector3.Lerp(activeAttack.transform.position, target, Time.deltaTime * bulletVelocity);
+            }*/
         }
     }
 
@@ -216,6 +268,7 @@ public class Character : MonoBehaviour
 
         if (collision.collider.gameObject.GetComponentInParent<Enemy>() && health > 0)
         {
+            Debug.Log("colpito");
             health -= 1;
             Destroy(hearts[health]);
         }
@@ -225,7 +278,6 @@ public class Character : MonoBehaviour
     {
         if (other.gameObject.GetComponent<WaterObj>())
         {
-            Debug.Log("aa");
             water = other.gameObject;
         }
     }
@@ -238,17 +290,22 @@ public class Character : MonoBehaviour
 
     private void WaterRespawn()
     {
-        
-        Debug.Log("on water");
+
+        if (Vector3.Distance(water.transform.position, transform.position) > 80)
+        {
+            Debug.Log(Vector3.Distance(water.transform.position, transform.position));
+            water = null;
+            return;
+        }
+
         if (transform.position.y < water.transform.position.y - 5)
         {
-
+            Debug.Log("water");
             StartCoroutine(Respawn());
         }
         else if(transform.position.y > water.transform.position.y + 2)
         {
             water = null;
-            Debug.Log("over water");
         }
     }
 

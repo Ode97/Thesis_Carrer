@@ -18,17 +18,18 @@ public class MainCameraFollow : MonoBehaviour
     private CameraMode mode;
     private Quaternion lastRotation;
 
-    private void Awake()
+    private void Start()
     {
         offset = offset_move;
-        mode = CameraMode.Movment;
-        ChangePos();
+        mode = CameraMode.Strategica;
+        desiredPosition = target.position + (target.rotation * offset);
+        //ChangePos();
 
     }
 
     void Update()
     {
-        if (mode == CameraMode.View)
+        if (mode == CameraMode.Vista)
             View();
         else
             ChangePos();
@@ -99,17 +100,16 @@ public class MainCameraFollow : MonoBehaviour
 
 
 
-    
 
+    Vector3 desiredPosition;
     private void SetPosition()
     {
-        Vector3 desiredPosition;
-        if (mode == CameraMode.View)
+        if (mode == CameraMode.Vista)
         {
             desiredPosition = target.position + (target.rotation * offset);
-        }else
-        //Vector3 desiredPosition = targetP + (target.rotation * offset);
-            desiredPosition = target.position + offset;
+        }else if(GameManager.instance.character.IsMoving() || GameManager.instance.character.transform.parent)
+            desiredPosition = target.position + (target.rotation * offset);
+            //desiredPosition = target.position + offset;
 
         // Interpolazione della posizione desiderata della telecamera
         transform.position = Vector3.Lerp(transform.position, desiredPosition, positionSpeed * Time.deltaTime);
@@ -118,9 +118,11 @@ public class MainCameraFollow : MonoBehaviour
     public void SetMode(CameraMode newMode)
     {
         mode = newMode;
-        if (mode == CameraMode.Movment)
+        if (mode == CameraMode.Strategica)
         {
             offset = offset_move;
+            //desiredPosition = target.position + offset;
+            desiredPosition = target.position + (target.rotation * offset);
             return;
         }
         

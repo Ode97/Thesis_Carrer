@@ -13,12 +13,6 @@ public class Chest : InteractableObject
         animator = GetComponent<Animator>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-       
-    }
-
     override
     public bool Interaction()
     {

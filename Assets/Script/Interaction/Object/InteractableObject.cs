@@ -5,7 +5,9 @@ using UnityEngine;
 public abstract class InteractableObject : MonoBehaviour
 {
     private Outline outline;
-    private bool on = false;
+    private bool onView = false;
+    private float timer = 0;
+    private bool start = false;
     // Start is called before the first frame update
     void Awake()
     {
@@ -23,9 +25,30 @@ public abstract class InteractableObject : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    protected virtual void Update()
     {
+        if (start && GameManager.instance.IsInteraction())
+        {
+            timer += Time.deltaTime;
+
+            if (timer > 2 && !GetComponent<Earth>())
+            {
+                //Debug.Log(timer);
+                Debug.Log("select: " + name);
+                if(!GameManager.instance.stopLogic)
+                    GameManager.instance.fixing = true;
+                start = false;
+                StartCoroutine(Wait());
+            }
+        }
         
+            
+    }
+
+    private IEnumerator Wait()
+    {
+        yield return new WaitForFixedUpdate();
+        timer = 0;
     }
 
     public abstract bool Interaction();
@@ -41,10 +64,12 @@ public abstract class InteractableObject : MonoBehaviour
 
     void OnMouseEnter()
     {
-        if (GameManager.instance.IsInteraction() && !on)
+        start = true;
+        timer = 0;
+        if (GameManager.instance.IsInteraction() && !onView)
         {
-            //Debug.Log("add: " + name);
-            on = true;
+            
+            onView = true;
             GameManager.instance.SetObject(this);
         }
 
@@ -53,6 +78,9 @@ public abstract class InteractableObject : MonoBehaviour
 
     void OnMouseExit()
     {
+        start = false;
+        GameManager.instance.fixing = false;
+        timer = 0;
         if (GameManager.instance.IsInteraction())
             StartCoroutine(EndSelection());
         else
@@ -61,13 +89,18 @@ public abstract class InteractableObject : MonoBehaviour
 
     private IEnumerator EndSelection()
     {
-        on = false;
-        yield return new WaitForSeconds(0.3f);
-        if (!on)
+        onView = false;
+        yield return new WaitForSeconds(0.2f);
+        if (!onView)
         {
             outline.enabled = false;
             GameManager.instance.EndSelection();
         }
+    }
+
+    public bool IsOnView()
+    {
+        return timer > 2;
     }
 
     /*public void StartSelection()

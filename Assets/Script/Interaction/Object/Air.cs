@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Air : InteractableObject
@@ -8,7 +9,8 @@ public class Air : InteractableObject
     private Vector3 destination;
     private Vector3 direction;
     private Rigidbody rb;
-    
+    public bool movingPlatform = false;
+    private List<GameObject> onPlatform = new List<GameObject>();
 
     // Start is called before the first frame update
     void Start()
@@ -17,12 +19,18 @@ public class Air : InteractableObject
         rb = GetComponent<Rigidbody>();
     }
 
-    // Update is called once per frame
-    void Update()
+    override
+    protected void Update()
     {
-        
-
-
+        base.Update();
+        if(onPlatform.Count > 0 )
+        {
+            foreach( GameObject go in onPlatform )
+            {
+                if (Vector3.Distance(go.transform.position, transform.position) > 8)
+                    go.transform.SetParent(null);
+            }
+        }
     }
 
     override
@@ -35,12 +43,17 @@ public class Air : InteractableObject
         if (Physics.Raycast(ray, out hit, Mathf.Infinity))
         {
             destination = hit.point;
+            if (hit.collider.gameObject == gameObject)
+            {                
+                return true;
+            }
+            if (hit.collider.gameObject.layer != LayerMask.NameToLayer("Protagonist"))
+            {
+                Vector3 moveDirection = (destination - transform.position).normalized;
 
-            Vector3 moveDirection = (destination - transform.position).normalized;
-
-            direction = moveDirection * rb.mass * 10;
-            rb.AddForce(direction, ForceMode.Force);
-           
+                direction = moveDirection * rb.mass * 30;
+                rb.AddForce(direction, ForceMode.Force);
+            }           
 
         }
 
@@ -69,9 +82,24 @@ public class Air : InteractableObject
 
     private void OnCollisionEnter(Collision collision)
     {
-        if(collision.gameObject.layer != LayerMask.NameToLayer("Terrain") && collision.gameObject.layer != LayerMask.NameToLayer("Default")  && !collision.gameObject.GetComponent<WaterObj>())
+        if (movingPlatform && collision.gameObject.layer != LayerMask.NameToLayer("Default") && !collision.gameObject.GetComponent<WaterObj>() && !collision.gameObject.GetComponent<Terrain>())
+        {
+            Debug.Log(collision.gameObject.name);
             collision.gameObject.transform.SetParent(transform);
+            onPlatform.Add(collision.gameObject);
+        }
+
+        
     }
+
+    /*private void DisablePlatform()
+    {
+        if(movingPlatform)
+        {
+            GameManager.instance.character.transform.SetParent(transform);
+        }else
+            GameManager.instance.character.transform.SetParent(null);
+    }*/
 
     private void OnCollisionExit(Collision collision)
     {

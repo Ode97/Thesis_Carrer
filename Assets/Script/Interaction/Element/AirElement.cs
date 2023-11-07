@@ -14,7 +14,7 @@ public class AirElement : MagicElement
 
     private void Start()
     {
-        airEffect = Resources.Load<GameObject>("Magic circle 2 - air Variant");
+        airEffect = Resources.Load<GameObject>("air_effect");
     }
     override
     public void ApplyEffect()
@@ -22,9 +22,10 @@ public class AirElement : MagicElement
 
         GameManager.instance.stopLogic = true;
         StartCoroutine(Wait());
-        actualeffect = Instantiate(airEffect, interactableObject.transform);
-        actualeffect.transform.localPosition = new Vector3(0, -1, 0);
-        actualeffect.transform.localScale = Vector3.one;
+        actualeffect = Instantiate(airEffect);
+        actualeffect.transform.localScale = interactableObject.transform.localScale - Vector3.one;
+        //actualeffect.transform.position = interactableObject.transform.position - new Vector3(0, -1, 0);
+        //actualeffect.transform.localScale = Vector3.one;
 
     }
 
@@ -32,32 +33,43 @@ public class AirElement : MagicElement
     {
         if (clicked)
         {
-            if (Input.GetMouseButtonDown(0))
+            Vector3 pos = interactableObject.transform.position;
+            actualeffect.transform.position = new Vector3(pos.x, pos.y - 0.5f, pos.z);
+            Debug.Log("start" + interactableObject.name);
+            
+
+            if (!interactableObject.AirInteraction())
             {
-                
+                Debug.Log("false " + interactableObject.name);
+                clicked = false;
+                GameManager.instance.stopLogic = false;
+                Destroy(actualeffect);
+                return;
+            }
+
+            character.DisableElement();
+            if (Input.GetMouseButtonDown(0) || interactableObject.IsOnView() || !GameManager.instance.IsInteraction())// || interactableObject.GetComponent<EnigmaObj>().waterRespawn)
+            {
+                Debug.Log("stop" + interactableObject.name);
                 clicked = false;
                 StartCoroutine(Wait2());
                 Destroy(actualeffect);
             }
 
-            if (!interactableObject.AirInteraction())
-            {
-                clicked = false;
-                GameManager.instance.stopLogic = false;
-            }
+            
             
         }
     }
 
     private IEnumerator Wait()
     {
-        yield return new WaitForEndOfFrame();
+        yield return new WaitForFixedUpdate();
         clicked = true;
     }
 
     private IEnumerator Wait2()
     {
-        yield return new WaitForEndOfFrame();
+        yield return new WaitForFixedUpdate();
         GameManager.instance.stopLogic = false;
     }
 }

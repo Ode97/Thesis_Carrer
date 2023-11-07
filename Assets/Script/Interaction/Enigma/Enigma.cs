@@ -119,7 +119,7 @@ public  class Enigma : MonoBehaviour
     public void ActiveAllCheck()
     {
         i++;
-        Debug.Log(i);
+        Debug.Log(i + " " + numbersOfElement);
         if (i == numbersOfElement)
         {
             complete = true;

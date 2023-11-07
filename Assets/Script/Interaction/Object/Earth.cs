@@ -4,17 +4,6 @@ using UnityEngine;
 
 public class Earth : InteractableObject
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
     override
     public bool EarthInteraction(GameObject obj, Vector3 pos)

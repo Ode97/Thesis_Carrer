@@ -15,9 +15,9 @@ public class ChangeGameMode : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     // Start is called before the first frame update
     void Start()
     {
-        modes[0] = CameraMode.Movment;
+        modes[0] = CameraMode.Strategica;
         //modes[1] = GameMode.Interaction;
-        modes[1] = CameraMode.View;
+        modes[1] = CameraMode.Vista;
         text = GetComponentInChildren<TextMeshProUGUI>();
     }
 
@@ -41,9 +41,9 @@ public class ChangeGameMode : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     {
         interaction = !interaction;
         if (interaction)
-            text.text = "Interaction On";
+            text.text = "Magia attiva";
         else
-            text.text = "Interaction Off";
+            text.text = "Magia disattiva";
 
         GameManager.instance.SetInteraction(interaction);
         

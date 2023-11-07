@@ -15,14 +15,13 @@ public abstract class MagicElement : MonoBehaviour
     protected Character character;
     public Element element;
 
-    private void Start()
+    private void Awake()
     {
         character = GameManager.instance.character;
     }
     public abstract void ApplyEffect();
     public void SetObject(InteractableObject obj)
     {
-        Debug.Log(obj.name);
         interactableObject = obj;
     }
 

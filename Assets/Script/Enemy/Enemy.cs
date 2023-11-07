@@ -18,7 +18,7 @@ public class Enemy : MonoBehaviour
     
     // Start is called before the first frame update
     void Awake()
-    {       
+    {
         animator = GetComponent<Animator>();
 
         FSMState idle = new FSMState("idle");
@@ -123,6 +123,7 @@ public class Enemy : MonoBehaviour
 
     private IEnumerator DestroyAfterDeath()
     {
+        //Destroy(collider);
         yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName("Die"));
         animator.ResetTrigger("Hit");
         yield return new WaitForSeconds(2);
@@ -299,6 +300,7 @@ public class Enemy : MonoBehaviour
 
         return false;
     }
+
     #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
@@ -325,7 +327,7 @@ public class Enemy : MonoBehaviour
     }
     #endif
 
-    private void OnCollisionEnter(Collision collision)
+    /*private void OnCollisionEnter(Collision collision)
     {
         if (collision.collider.gameObject.layer == LayerMask.NameToLayer("Bullet"))
         {
@@ -337,22 +339,36 @@ public class Enemy : MonoBehaviour
             }else
                 Destroy(collision.gameObject);
 
+            Debug.Log("collision");
         }
-    }
+    }*/
 
     private void OnParticleCollision(GameObject other)
     {
+        
         if (other.layer == LayerMask.NameToLayer("Bullet"))
+        {
+            Debug.Log(other.name);
+            if (lowElement == other.GetComponent<MagicAttack>().element)
+            {
+                hit = true;
+                health -= 1;
+                Debug.Log("particle" + name);
+            }
+        }
+    }
+
+
+    /*private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.layer == LayerMask.NameToLayer("Bullet"))
         {
             if (lowElement == other.GetComponent<MagicAttack>().element)
             {
                 hit = true;
                 health -= 1;
-                Debug.Log(other.name);
+                Debug.Log("particle 2");
             }
-            
-                
-
         }
-    }
+    }*/
 }

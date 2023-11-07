@@ -5,19 +5,22 @@ using UnityEngine;
 //using static UnityEditor.Experimental.GraphView.GraphView;
 using Unity.Burst.CompilerServices;
 using Unity.VisualScripting;
+using System.Diagnostics;
 
-public enum CameraMode { Movment, View}
+public enum CameraMode { Strategica, Vista}
 
 public class GameManager : MonoBehaviour
 {
     public Character character;
-    private CameraMode actualMode = CameraMode.Movment;
+    private CameraMode actualMode = CameraMode.Strategica;
     [SerializeField]
     private MainCameraFollow cameraHandler;
     private bool interaction = false;
     private bool justChanged = false;
     private List<InteractableObject> objs = new List<InteractableObject>();
     public bool stopLogic = false;
+    public bool fixing = false;
+    public Process p;
     
 
     // Start is called before the first frame update
@@ -25,6 +28,13 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
+        p = new Process();
+        p.StartInfo.UseShellExecute = true;
+        //p.StartInfo.FileName = "C:\\Users\\Celeste\\Desktop\\EyeTrackerInteraction\\Blank-ADMI\\bin\\Release\\BlankADMI.exe";
+        //p.StartInfo.FileName = "E:\\EyeTrackerInteraction\\Blank-ADMI\\bin\\Release\\BlankADMI.exe";
+        //p.StartInfo.FileName = "D:\\EyeTrackerInteraction\\Blank-ADMI\\bin\\Release\\BlankADMI.exe";
+        //p.Start();
+
         if (instance == null)
             instance = this;
         else if (instance != this)
@@ -47,14 +57,14 @@ public class GameManager : MonoBehaviour
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
             if(Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("Enemy"))) {
-                //Debug.Log(hit.collider.gameObject.name);
+                
                 character.SetEnemy(hit.collider.GetComponentInParent<Enemy>());
             }
         }
 
-        if (Input.GetMouseButtonDown(0) && !stopLogic)
+        if ((Input.GetMouseButtonDown(0) && !stopLogic) || (fixing && !stopLogic))
         {
-            
+            fixing = false;
             if (EventSystem.current.IsPointerOverGameObject()) {
                 
                 return;
@@ -80,7 +90,7 @@ public class GameManager : MonoBehaviour
                     }
                 }
 
-                if (actualMode == CameraMode.Movment)
+                if (actualMode == CameraMode.Strategica)
                 {
                    
 

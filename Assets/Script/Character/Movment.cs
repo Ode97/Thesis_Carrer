@@ -81,6 +81,11 @@ public class Movment : MonoBehaviour
         }        
     }
 
+    public bool IsWalking()
+    {
+        return isWalking;
+    }
+
     #if UNITY_EDITOR
     private void OnDrawGizmos()
     {

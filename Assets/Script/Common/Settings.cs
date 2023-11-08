@@ -17,6 +17,8 @@ public class Settings : MonoBehaviour
 
     public static Settings instance = null;
 
+    private bool menuOpen = false;
+
     void Awake()
     {
         if (instance == null)
@@ -34,11 +36,13 @@ public class Settings : MonoBehaviour
     public void OpenSettings()
     {
         menu.SetActive(true);
+        menuOpen = true;
     }
 
     public void CloseSettings()
     {
         menu.SetActive(false);
+        menuOpen = false;
     }
 
     public void CloseGame()
@@ -51,12 +55,15 @@ public class Settings : MonoBehaviour
     {
         earthPanel.SetActive(true);
         mainCanvas.enabled = false;
+        menuOpen = true;
     }
 
     public void CloseEarthMenu()
     {
+        earthPanel.GetComponentInChildren<MenuButton>().Reset();
         earthPanel.SetActive(false);
         mainCanvas.enabled = true;
+        menuOpen = false;
     }
 
     public void EnableIcon()
@@ -72,5 +79,15 @@ public class Settings : MonoBehaviour
     public void EnableMainCanvas()
     {
         mainCanvas.enabled = true;
+    }
+
+    public bool isMenuOpen()
+    {
+        return menuOpen;
+    }
+
+    public void SetMenuStatus(bool status)
+    {
+        menuOpen = status;
     }
 }

@@ -186,7 +186,7 @@ public class Golem : MonoBehaviour
 
     private bool IsNear()
     {
-        Debug.Log(distanceToCharacter + " " + distanceForAttack);
+        
         if (distanceToCharacter < distanceForAttack)
         {
             return true;
@@ -262,7 +262,6 @@ public class Golem : MonoBehaviour
         yield return new WaitForSeconds(t);
         wait = false;
         active = true;
-        Debug.Log("NowIsActive");
     }
 
     private IEnumerator WaitInactive(int t)
@@ -271,7 +270,6 @@ public class Golem : MonoBehaviour
         yield return new WaitForSeconds(t);
         wait = false;
         active = false;
-        Debug.Log("NowIsInactive");
     }
 
     private void Chase()

@@ -11,16 +11,19 @@ public abstract class InteractableObject : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        
-        if(!GetComponent<Outline>())
-            outline = gameObject.AddComponent<Outline>();
-        else
-            outline = gameObject.GetComponent<Outline>();
+        if (gameObject.layer != LayerMask.NameToLayer("UI"))
+        {
+            if (!GetComponent<Outline>())
+                outline = gameObject.AddComponent<Outline>();
+            else
+                outline = gameObject.GetComponent<Outline>();
 
-        outline.OutlineMode = Outline.Mode.OutlineAll;
-        outline.OutlineColor = Color.yellow;
-        outline.OutlineWidth = 5f;
-        outline.enabled = false;
+
+            outline.OutlineMode = Outline.Mode.OutlineAll;
+            outline.OutlineColor = Color.yellow;
+            outline.OutlineWidth = 5f;
+            outline.enabled = false;
+        }
         
     }
 
@@ -64,16 +67,21 @@ public abstract class InteractableObject : MonoBehaviour
 
     void OnMouseEnter()
     {
-        start = true;
-        timer = 0;
-        if (GameManager.instance.IsInteraction() && !onView)
+        if (!Settings.instance.isMenuOpen())
         {
-            
-            onView = true;
-            GameManager.instance.SetObject(this);
-        }
+            Debug.Log("a");
+            start = true;
+            timer = 0;
+            if (GameManager.instance.IsInteraction() && !onView)
+            {
 
-        outline.enabled = true;
+                onView = true;
+                GameManager.instance.SetObject(this);
+            }
+
+            if (outline)
+                outline.enabled = true;
+        }
     }
 
     void OnMouseExit()
@@ -83,7 +91,7 @@ public abstract class InteractableObject : MonoBehaviour
         timer = 0;
         if (GameManager.instance.IsInteraction())
             StartCoroutine(EndSelection());
-        else
+        else if(outline)
             outline.enabled = false;
     }
 
@@ -93,7 +101,8 @@ public abstract class InteractableObject : MonoBehaviour
         yield return new WaitForSeconds(0.2f);
         if (!onView)
         {
-            outline.enabled = false;
+            if(outline)
+                outline.enabled = false;
             GameManager.instance.EndSelection();
         }
     }

@@ -15,13 +15,12 @@ public class MenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     {
         if (start)
         {
-
-
             timer += Time.deltaTime;
 
             if (timer > 2)
             {
-                if(!closeGame)
+                Reset();
+                if (!closeGame)
                     CloseMenu();
                 else
                 {
@@ -29,15 +28,16 @@ public class MenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 }
                 if (activateMainCanvas)
                     Settings.instance.EnableMainCanvas();
-                timer = 0;
-
             }
         }
     }
 
     private void CloseMenu()
     {
+        
         menu.SetActive(false);
+        Settings.instance.SetMenuStatus(false);
+        
     }
 
     private void CloseGame()
@@ -51,6 +51,11 @@ public class MenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     }
 
     public void OnPointerExit(PointerEventData eventData)
+    {
+        Reset();
+    }
+
+    public void Reset()
     {
         start = false;
         timer = 0;

@@ -51,7 +51,7 @@ public class Air : InteractableObject
             {
                 Vector3 moveDirection = (destination - transform.position).normalized;
 
-                direction = moveDirection * rb.mass * 30;
+                direction = moveDirection * rb.mass * 20;
                 rb.AddForce(direction, ForceMode.Force);
             }           
 

@@ -15,7 +15,7 @@ public class WaterObj : InteractableObject
     void Start()
     {
         
-        initPosition = transform.position;
+        initPosition = transform.localPosition;
     }
 
     override
@@ -25,8 +25,9 @@ public class WaterObj : InteractableObject
         base.Update();
         if (rise)
         {
-            Vector3 moveDirection = (targetPosition - transform.position).normalized;
-
+            
+            Vector3 moveDirection = (targetPosition - transform.localPosition).normalized;
+            Debug.Log(moveDirection + " " + transform.localPosition);
             transform.localPosition = Vector3.MoveTowards(transform.localPosition, targetPosition, animSpeed * moveDirection.magnitude * Time.deltaTime);
         }
         else
@@ -45,6 +46,7 @@ public class WaterObj : InteractableObject
 
         if (!rise)
         {
+            
             rise = true;
 
             GetComponent<EnigmaObj>()?.Interaction(Element.Water);

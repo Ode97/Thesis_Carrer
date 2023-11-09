@@ -15,7 +15,8 @@ public class Air : InteractableObject
     // Start is called before the first frame update
     void Start()
     {
-        
+        ParticleSystem.MainModule main = outlineEffect.GetComponent<ParticleSystem>().main;
+        main.startColor = Color.grey;
         rb = GetComponent<Rigidbody>();
     }
 
@@ -93,7 +94,7 @@ public class Air : InteractableObject
 
     private void OnCollisionEnter(Collision collision)
     {
-        Debug.Log(collision.gameObject.name + " a " + movingPlatform + " " + collision.gameObject.layer != LayerMask.NameToLayer("Default") + " " + !collision.gameObject.GetComponent<WaterObj>() + " " + !collision.gameObject.GetComponent<Terrain>());
+        
 
         if (movingPlatform && collision.gameObject.layer != LayerMask.NameToLayer("Default") && !collision.gameObject.GetComponent<WaterObj>() && !collision.gameObject.GetComponent<Terrain>())
         {

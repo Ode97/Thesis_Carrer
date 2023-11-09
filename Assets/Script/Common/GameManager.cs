@@ -62,9 +62,13 @@ public class GameManager : MonoBehaviour
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
-            if(Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("Enemy"))) {
+            Physics.Raycast(ray, out hit, Mathf.Infinity);
+            if (hit.collider.gameObject.layer == LayerMask.GetMask("Enemy")) {
                 
                 character.SetEnemy(hit.collider.GetComponentInParent<Enemy>());
+            }else if(hit.collider.gameObject.layer == LayerMask.GetMask("Protagonist"))
+            {
+                character.Life();
             }
         }
 

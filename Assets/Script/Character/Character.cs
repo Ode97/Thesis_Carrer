@@ -24,7 +24,7 @@ public class Character : MonoBehaviour
     private Enemy enemyTarget;
     private bool attacking = false;
     [SerializeField]
-    private Canvas mainCanvas;
+    private Canvas lifeCanvas;
     [SerializeField]
     private GameObject lives;
     private float space = 110;
@@ -43,7 +43,7 @@ public class Character : MonoBehaviour
 
     private void Reset()
     {
-        var h = Resources.Load<GameObject>("life");
+        /*var h = Resources.Load<GameObject>("life");
         health = 3;
 
         Vector2 canvasSize = mainCanvas.GetComponent<RectTransform>().sizeDelta;
@@ -61,16 +61,45 @@ public class Character : MonoBehaviour
 
             hearts[i] = heart;
             heart.transform.SetParent(lives.transform);
+        }*/
+
+        var h = Resources.Load<GameObject>("life");
+        health = 3;
+
+
+        for (int i = 0; i < health; i++)
+        {
+            GameObject heart = Instantiate(h, Vector3.zero, Quaternion.identity, lifeCanvas.transform);
+            //RectTransform rt = heart.GetComponent<RectTransform>();
+
+            // Calculate the position based on canvas size
+            //float posX = transform.position.x;
+            //float posY = transform.position.y + 1;
+
+            //rt.anchoredPosition = new Vector2(posX, -posY); // Negative y to account for Unity's UI system
+            lifeCanvas.transform.SetParent(transform);
+            lifeCanvas.transform.localPosition = new Vector3(0, 2, 0);
+            hearts[i] = heart;
+            heart.transform.SetParent(lives.transform);
+            heart.transform.localPosition = Vector3.zero;
+            heart.transform.LookAt(Camera.main.transform);
+            heart.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
         }
+    }
 
-
-      
+    public void Life()
+    {
+        for (int i = 0; i < health; i++)
+        {
+            hearts[i].transform.LookAt(Camera.main.transform);
+        }
     }
 
     private bool dead = false;
     // Update is called once per frame
     void Update()
     {
+        Life();
         if (water)
         {
             WaterRespawn();
@@ -312,6 +341,7 @@ public class Character : MonoBehaviour
     private IEnumerator Respawn()
     {
         yield return new WaitForSeconds(2);
+        movment.DisableMove();
         transform.position = checkpoint;
 
     }

@@ -103,6 +103,13 @@ public class Movment : MonoBehaviour
 
     }
 
+    public void DisableMove()
+    {
+
+        isWalking = false;
+        targetIndicator.SetActive(false);
+    }
+
     private void RotateCharacter(Vector3 targetPosition)
     {
         Vector3 direction = (targetPosition - transform.position).normalized;

@@ -4,14 +4,20 @@ using UnityEngine;
 
 public abstract class InteractableObject : MonoBehaviour
 {
-    private Outline outline;
+    //private Outline outline;
     private bool onView = false;
     private float timer = 0;
     private bool start = false;
+    protected GameObject outlineEffect;
+    
     // Start is called before the first frame update
     void Awake()
     {
-        if (gameObject.layer != LayerMask.NameToLayer("UI"))
+        outlineEffect = Instantiate(Resources.Load<GameObject>("CFX_Magical_Source Variant"));
+        outlineEffect.SetActive(false);
+        
+
+        /*if (gameObject.layer != LayerMask.NameToLayer("UI"))
         {
             if (!GetComponent<Outline>())
                 outline = gameObject.AddComponent<Outline>();
@@ -23,7 +29,7 @@ public abstract class InteractableObject : MonoBehaviour
             outline.OutlineColor = Color.yellow;
             outline.OutlineWidth = 5f;
             outline.enabled = false;
-        }
+        }*/
         
     }
 
@@ -78,9 +84,22 @@ public abstract class InteractableObject : MonoBehaviour
                 GameManager.instance.SetObject(this);
             }
 
-            if (outline)
-                outline.enabled = true;
+            if (outlineEffect)
+            {
+                outlineEffect.SetActive(true);
+            }
+
+            //if (outline)
+            //    outline.enabled = true;
         }
+    }
+
+    private void OnMouseOver()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+        Physics.Raycast(ray, out hit, Mathf.Infinity);
+        outlineEffect.transform.position = hit.point + new Vector3(0, 2, 0);
     }
 
     void OnMouseExit()
@@ -90,8 +109,12 @@ public abstract class InteractableObject : MonoBehaviour
         timer = 0;
         if (GameManager.instance.IsInteraction())
             StartCoroutine(EndSelection());
-        else if(outline)
-            outline.enabled = false;
+        else if (outlineEffect)
+        {
+            outlineEffect.SetActive(false);
+        }
+        //else if(outline)
+        //    outline.enabled = false;
     }
 
     private IEnumerator EndSelection()
@@ -100,8 +123,12 @@ public abstract class InteractableObject : MonoBehaviour
         yield return new WaitForSeconds(0.2f);
         if (!onView)
         {
-            if(outline)
-                outline.enabled = false;
+            if (outlineEffect)
+            {
+                outlineEffect.SetActive(false);
+            }
+            //if(outline)
+            //    outline.enabled = false;
             GameManager.instance.EndSelection();
         }
     }

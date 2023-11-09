@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class Earth : InteractableObject
 {
+    void Start()
+    {
+        ParticleSystem.MainModule main = outlineEffect.GetComponent<ParticleSystem>().main;
+        main.startColor = Color.green;
+
+    }
 
     override
     public bool EarthInteraction(GameObject obj, Vector3 pos)

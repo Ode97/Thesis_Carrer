@@ -26,7 +26,7 @@ public class Chest : InteractableObject
     {
         var effect = Instantiate(pickupEffect, transform);
         var pos = transform.position;
-        effect.transform.position = new Vector3(pos.x, pos.y + 3f, pos.z);
+        effect.transform.position = new Vector3(pos.x, pos.y + 8f, pos.z);
     }
 
     public override bool WaterInteraction()

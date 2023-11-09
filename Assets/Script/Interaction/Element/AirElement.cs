@@ -23,7 +23,8 @@ public class AirElement : MagicElement
         GameManager.instance.stopLogic = true;
         StartCoroutine(Wait());
         actualeffect = Instantiate(airEffect);
-        actualeffect.transform.localScale = interactableObject.transform.localScale - Vector3.one;
+        Vector3 scale = interactableObject.transform.localScale;
+        actualeffect.transform.localScale = scale * 2/3;
         //actualeffect.transform.position = interactableObject.transform.position - new Vector3(0, -1, 0);
         //actualeffect.transform.localScale = Vector3.one;
 
@@ -35,7 +36,7 @@ public class AirElement : MagicElement
         {
             Vector3 pos = interactableObject.transform.position;
             actualeffect.transform.position = new Vector3(pos.x, pos.y - 0.5f, pos.z);
-            Debug.Log("start" + interactableObject.name);
+            Debug.Log("start " + interactableObject.name);
             
 
             if (!interactableObject.AirInteraction())

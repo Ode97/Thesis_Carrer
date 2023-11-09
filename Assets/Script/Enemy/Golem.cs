@@ -243,7 +243,6 @@ public class Golem : MonoBehaviour
 
     private void Update()
     {
-        Debug.Log(fsm.currentState.name);
         distanceToCharacter = Vector3.Distance(transform.position, character.transform.position);
         if (active && !wait)
         {

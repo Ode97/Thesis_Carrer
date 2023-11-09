@@ -43,7 +43,7 @@ public class EnigmaObj : MonoBehaviour
             return;
         }
 
-        if (transform.position.y < water.transform.position.y - 5)
+        if (transform.position.y < water.transform.position.y - 3)
         {
             Debug.Log("waterRespawn");
             StartCoroutine(Respawn());

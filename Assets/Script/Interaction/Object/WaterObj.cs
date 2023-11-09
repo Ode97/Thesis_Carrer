@@ -27,7 +27,7 @@ public class WaterObj : InteractableObject
         {
             
             Vector3 moveDirection = (targetPosition - transform.localPosition).normalized;
-            Debug.Log(moveDirection + " " + transform.localPosition);
+            
             transform.localPosition = Vector3.MoveTowards(transform.localPosition, targetPosition, animSpeed * moveDirection.magnitude * Time.deltaTime);
         }
         else

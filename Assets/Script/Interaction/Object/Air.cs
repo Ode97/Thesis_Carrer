@@ -19,6 +19,8 @@ public class Air : InteractableObject
         rb = GetComponent<Rigidbody>();
     }
 
+    private bool remove = false;
+    private GameObject toRemove;
     override
     protected void Update()
     {
@@ -27,8 +29,17 @@ public class Air : InteractableObject
         {
             foreach( GameObject go in onPlatform )
             {
-                if (Vector3.Distance(go.transform.position, transform.position) > 8)
+                if (Vector3.Distance(go.transform.position, transform.position) > 20)
+                {
                     go.transform.SetParent(null);
+                    remove = true;
+                    toRemove = go;
+                }
+            }
+            if(remove)
+            {
+                onPlatform.Remove(toRemove);
+                remove = false;
             }
         }
     }
@@ -82,11 +93,15 @@ public class Air : InteractableObject
 
     private void OnCollisionEnter(Collision collision)
     {
+        Debug.Log(collision.gameObject.name + " a " + movingPlatform + " " + collision.gameObject.layer != LayerMask.NameToLayer("Default") + " " + !collision.gameObject.GetComponent<WaterObj>() + " " + !collision.gameObject.GetComponent<Terrain>());
+
         if (movingPlatform && collision.gameObject.layer != LayerMask.NameToLayer("Default") && !collision.gameObject.GetComponent<WaterObj>() && !collision.gameObject.GetComponent<Terrain>())
         {
             Debug.Log(collision.gameObject.name);
+
             collision.gameObject.transform.SetParent(transform);
             onPlatform.Add(collision.gameObject);
+            GameManager.instance.character.SetCheckpoint(transform.position);
         }
 
         

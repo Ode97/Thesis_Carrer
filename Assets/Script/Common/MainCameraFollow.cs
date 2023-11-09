@@ -83,7 +83,6 @@ public class MainCameraFollow : MonoBehaviour
                 else
                 {
                     transform.rotation = lastRotation;
-                    Debug.Log(lastRotation.eulerAngles);
                 }
             }
             else if (mouseXPercentage < edgeThreshold || mouseXPercentage > 1 - edgeThreshold)

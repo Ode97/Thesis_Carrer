@@ -6,6 +6,7 @@ using UnityEngine;
 using Unity.Burst.CompilerServices;
 using Unity.VisualScripting;
 using System.Diagnostics;
+using System.Runtime.Remoting.Lifetime;
 
 public enum CameraMode { Strategica, Vista}
 
@@ -28,13 +29,18 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
-        p = new Process();
-        p.StartInfo.UseShellExecute = true;
         //p.StartInfo.FileName = "C:\\Users\\Celeste\\Desktop\\EyeTrackerInteraction\\Blank-ADMI\\bin\\Release\\BlankADMI.exe";
-        //p.StartInfo.FileName = "E:\\EyeTrackerInteraction\\Blank-ADMI\\bin\\Release\\BlankADMI.exe";
-        //p.StartInfo.FileName = "D:\\EyeTrackerInteraction\\Blank-ADMI\\bin\\Release\\BlankADMI.exe";
-        //p.Start();
 
+        //p.StartInfo.FileName = "D:\\EyeTrackerInteraction\\Blank-ADMI\\bin\\Release\\BlankADMI.exe";
+        var filePath = "E:\\EyeTrackerInteraction\\Blank-ADMI\\bin\\Release\\BlankADMI.exe";
+        if (System.IO.File.Exists(filePath))
+        {
+            p = new Process();
+            p.StartInfo.UseShellExecute = true;
+            p.StartInfo.FileName = filePath;
+
+            p.Start();
+        }
         if (instance == null)
             instance = this;
         else if (instance != this)

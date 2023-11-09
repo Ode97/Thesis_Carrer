@@ -58,7 +58,7 @@ public class Movment : MonoBehaviour
                     // Do something to prevent movement along the wall or mountain.
                     if (hit.collider.gameObject.layer != LayerMask.NameToLayer("Checkpoint"))
                     {
-                        Debug.Log("ostacolo");
+                        
                         return;
                     }
                 }

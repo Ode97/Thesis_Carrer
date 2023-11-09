@@ -69,7 +69,6 @@ public abstract class InteractableObject : MonoBehaviour
     {
         if (!Settings.instance.isMenuOpen())
         {
-            Debug.Log("a");
             start = true;
             timer = 0;
             if (GameManager.instance.IsInteraction() && !onView)

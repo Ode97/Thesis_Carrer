@@ -14,8 +14,7 @@ public class WaterObj : InteractableObject
     // Start is called before the first frame update
     void Start()
     {
-        ParticleSystem.MainModule main = outlineEffect.GetComponent<ParticleSystem>().main;
-        main.startColor = UnityEngine.Color.blue;
+        color = UnityEngine.Color.blue;
         initPosition = transform.localPosition;
     }
 

@@ -29,9 +29,9 @@ public class Icon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         if(start)
         {
             t += Time.deltaTime;
-            if (t >= 2)
+            if (t >= GameManager.instance.fixingTime)
             {
-                Settings.instance.OpenEarthMenu();
+                MenuManager.instance.OpenEarthMenu();
                 
             }
         }

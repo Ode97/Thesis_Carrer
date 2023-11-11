@@ -5,9 +5,8 @@ using UnityEngine;
 public class Earth : InteractableObject
 {
     void Start()
-    {
-        ParticleSystem.MainModule main = outlineEffect.GetComponent<ParticleSystem>().main;
-        main.startColor = Color.green;
+    {        
+        color = Color.green;
 
     }
 

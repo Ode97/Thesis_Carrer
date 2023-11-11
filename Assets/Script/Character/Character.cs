@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.TextCore.Text;
 using UnityEngine.UI;
 using static UnityEngine.GraphicsBuffer;
 
@@ -43,25 +44,6 @@ public class Character : MonoBehaviour
 
     private void Reset()
     {
-        /*var h = Resources.Load<GameObject>("life");
-        health = 3;
-
-        Vector2 canvasSize = mainCanvas.GetComponent<RectTransform>().sizeDelta;
-
-        for (int i = 0; i < health; i++)
-        {
-            GameObject heart = Instantiate(h, Vector3.zero, Quaternion.identity, mainCanvas.transform);
-            RectTransform rt = heart.GetComponent<RectTransform>();
-
-            // Calculate the position based on canvas size
-            float posX = -canvasSize.x / 2 + space * i + 65;
-            float posY = -canvasSize.y / 2 + 65;
-
-            rt.anchoredPosition = new Vector2(posX, -posY); // Negative y to account for Unity's UI system
-
-            hearts[i] = heart;
-            heart.transform.SetParent(lives.transform);
-        }*/
 
         var h = Resources.Load<GameObject>("life");
         health = 3;
@@ -69,29 +51,51 @@ public class Character : MonoBehaviour
 
         for (int i = 0; i < health; i++)
         {
-            GameObject heart = Instantiate(h, Vector3.zero, Quaternion.identity, lifeCanvas.transform);
-            //RectTransform rt = heart.GetComponent<RectTransform>();
+            GameObject heart = Instantiate(h, Vector3.zero, Quaternion.identity);
 
-            // Calculate the position based on canvas size
-            //float posX = transform.position.x;
-            //float posY = transform.position.y + 1;
+            // Imposta il Canvas come genitore del cuore
+            heart.transform.SetParent(lifeCanvas.transform);
 
-            //rt.anchoredPosition = new Vector2(posX, -posY); // Negative y to account for Unity's UI system
+            // Posiziona il Canvas sopra la testa del personaggio
             lifeCanvas.transform.SetParent(transform);
-            lifeCanvas.transform.localPosition = new Vector3(0, 2, 0);
+            lifeCanvas.transform.localPosition = Vector3.up * 3; // Puoi regolare questa posizione a seconda delle tue esigenze
+
+            // Aggiungi il cuore all'array hearts
             hearts[i] = heart;
+
+            // Imposta il cuore come figlio di un oggetto chiamato "lives"
             heart.transform.SetParent(lives.transform);
-            heart.transform.localPosition = Vector3.zero;
+            var initPos = -heart.transform.right * 100;
+            // Posiziona il cuore nel centro dell'oggetto "lives"
+            heart.transform.localPosition = initPos + heart.transform.right * i * 100;
+
+            // Fai sì che il cuore sia sempre rivolto verso la camera principale
             heart.transform.LookAt(Camera.main.transform);
-            heart.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+
+            // Scala del cuore
+            heart.transform.localScale = new Vector3(0, 0, 0);
+            heart.SetActive(false);
         }
     }
+
+    private bool heartAnim = false;
 
     public void Life()
     {
         for (int i = 0; i < health; i++)
         {
             hearts[i].transform.LookAt(Camera.main.transform);
+            hearts[i].SetActive(true);
+            heartAnim = true;
+        }
+    }
+
+    private IEnumerator DisableLife()
+    {
+        yield return new WaitForSeconds(1);
+        for (int i = 0; i < health; i++)
+        {
+            heartAnim = false;
         }
     }
 
@@ -99,7 +103,21 @@ public class Character : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Life();
+        if (heartAnim && hearts[0].transform.localScale != Vector3.one)
+        {
+            for (int i = 0; i < health; i++)
+            {
+                hearts[i].transform.localScale = Vector3.Lerp(hearts[i].transform.localScale, Vector3.one, Time.deltaTime * 5);
+            }
+        }
+        else if(hearts[0].transform.localScale != Vector3.zero)
+        {
+            for (int i = 0; i < health; i++)
+            {
+                hearts[i].transform.localScale = Vector3.Lerp(hearts[i].transform.localScale, Vector3.zero, Time.deltaTime * 5);
+            }
+        }
+
         if (water)
         {
             WaterRespawn();
@@ -344,5 +362,15 @@ public class Character : MonoBehaviour
         movment.DisableMove();
         transform.position = checkpoint;
 
+    }
+
+    public void OnMouseEnter()
+    {
+        Life();
+    }
+
+    public void OnMouseExit()
+    {
+        StartCoroutine(DisableLife());
     }
 }

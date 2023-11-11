@@ -4,7 +4,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class MenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class MenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
     private float timer = 0;
     public GameObject menu;
@@ -17,37 +17,50 @@ public class MenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         {
             timer += Time.deltaTime;
 
-            if (timer > 2)
+            if (timer > GameManager.instance.fixingTime)
             {
                 Reset();
                 if (!closeGame)
-                    CloseMenu();
+                {
+                    if (menu.activeSelf)
+                        CloseMenu();
+                    else
+                        OpenMenu();
+                }
                 else
                 {
                     CloseGame();
                 }
                 if (activateMainCanvas)
-                    Settings.instance.EnableMainCanvas();
+                    MenuManager.instance.EnableMainCanvas();
             }
         }
     }
 
     private void CloseMenu()
     {
-        
+        Reset();
+        MenuManager.instance.SetMenuStatus(false);
         menu.SetActive(false);
-        Settings.instance.SetMenuStatus(false);
         
+    }
+
+    private void OpenMenu()
+    {
+        Reset();
+        menu.SetActive(true);
+        MenuManager.instance.SetMenuStatus(true);
     }
 
     private void CloseGame()
     {
-        Settings.instance.CloseGame();
+        MenuManager.instance.CloseGame();
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
         start = true;
+        timer = 0;
     }
 
     public void OnPointerExit(PointerEventData eventData)
@@ -59,5 +72,20 @@ public class MenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     {
         start = false;
         timer = 0;
+    }
+
+    
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        Debug.Log("reset" + menu.name);
+        Reset();
+
+        if (activateMainCanvas)
+            MenuManager.instance.EnableMainCanvas();
+
+        if (!menu.activeSelf)
+            OpenMenu();
+        else
+            CloseMenu();
     }
 }

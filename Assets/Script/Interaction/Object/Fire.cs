@@ -14,10 +14,9 @@ public class Fire : InteractableObject
     {
         fireEffect = Resources.Load<GameObject>("WildFire Variant");
         EventManager.StartListening("WrongFireEnigma1", CloseFire);
-        fireParticle = transform.GetChild(0).gameObject;       
-
-        ParticleSystem.MainModule main = outlineEffect.GetComponent<ParticleSystem>().main;
-        main.startColor = Color.red;
+        fireParticle = transform.GetChild(0).gameObject;
+        color = Color.red;
+        
 
     }
 

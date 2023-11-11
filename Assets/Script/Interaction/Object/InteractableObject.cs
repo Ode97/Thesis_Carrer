@@ -8,13 +8,11 @@ public abstract class InteractableObject : MonoBehaviour
     private bool onView = false;
     private float timer = 0;
     private bool start = false;
-    protected GameObject outlineEffect;
+    protected Color color;
     
     // Start is called before the first frame update
     void Awake()
     {
-        outlineEffect = Instantiate(Resources.Load<GameObject>("CFX_Magical_Source Variant"));
-        outlineEffect.SetActive(false);
         
 
         /*if (gameObject.layer != LayerMask.NameToLayer("UI"))
@@ -40,7 +38,7 @@ public abstract class InteractableObject : MonoBehaviour
         {
             timer += Time.deltaTime;
 
-            if (timer > 2 && !GetComponent<Earth>())
+            if (timer > GameManager.instance.fixingTime && !GetComponent<Earth>())
             {
                 //Debug.Log(timer);
                 Debug.Log("select: " + name);
@@ -73,7 +71,7 @@ public abstract class InteractableObject : MonoBehaviour
 
     void OnMouseEnter()
     {
-        if (!Settings.instance.isMenuOpen())
+        if (!MenuManager.instance.isMenuOpen())
         {
             start = true;
             timer = 0;
@@ -84,10 +82,10 @@ public abstract class InteractableObject : MonoBehaviour
                 GameManager.instance.SetObject(this);
             }
 
-            if (outlineEffect)
-            {
-                outlineEffect.SetActive(true);
-            }
+            
+            ParticleSystem.MainModule main = GameManager.instance.outlineEffect.GetComponent<ParticleSystem>().main;
+            main.startColor = color;
+                //outline.SetActive(true);
 
             //if (outline)
             //    outline.enabled = true;
@@ -99,7 +97,7 @@ public abstract class InteractableObject : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
         Physics.Raycast(ray, out hit, Mathf.Infinity);
-        outlineEffect.transform.position = hit.point + new Vector3(0, 2, 0);
+        GameManager.instance.outlineEffect.transform.position = hit.point + new Vector3(0, 2, 0);
     }
 
     void OnMouseExit()
@@ -109,10 +107,10 @@ public abstract class InteractableObject : MonoBehaviour
         timer = 0;
         if (GameManager.instance.IsInteraction())
             StartCoroutine(EndSelection());
-        else if (outlineEffect)
-        {
-            outlineEffect.SetActive(false);
-        }
+        //else if (outline)
+        //{
+        //    outline.SetActive(false);
+        //}
         //else if(outline)
         //    outline.enabled = false;
     }
@@ -123,10 +121,10 @@ public abstract class InteractableObject : MonoBehaviour
         yield return new WaitForSeconds(0.2f);
         if (!onView)
         {
-            if (outlineEffect)
+            /*if (outline)
             {
-                outlineEffect.SetActive(false);
-            }
+                outline.SetActive(false);
+            }*/
             //if(outline)
             //    outline.enabled = false;
             GameManager.instance.EndSelection();

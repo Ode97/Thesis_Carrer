@@ -19,6 +19,8 @@ public class GameManager : MonoBehaviour
     private bool interaction = false;
     private bool justChanged = false;
     private List<InteractableObject> objs = new List<InteractableObject>();
+    public GameObject outlineEffect;
+    public float fixingTime = 2;
     public bool stopLogic = false;
     public bool fixing = false;
     public Process p;
@@ -32,7 +34,7 @@ public class GameManager : MonoBehaviour
         //p.StartInfo.FileName = "C:\\Users\\Celeste\\Desktop\\EyeTrackerInteraction\\Blank-ADMI\\bin\\Release\\BlankADMI.exe";
 
         //p.StartInfo.FileName = "D:\\EyeTrackerInteraction\\Blank-ADMI\\bin\\Release\\BlankADMI.exe";
-        var filePath = "E:\\EyeTrackerInteraction\\Blank-ADMI\\bin\\Release\\BlankADMI.exe";
+        /*var filePath = "EyeTrackerInteraction\\Blank-ADMI\\bin\\Release\\BlankADMI.exe";
         if (System.IO.File.Exists(filePath))
         {
             p = new Process();
@@ -40,11 +42,13 @@ public class GameManager : MonoBehaviour
             p.StartInfo.FileName = filePath;
 
             p.Start();
-        }
+        }*/
         if (instance == null)
             instance = this;
         else if (instance != this)
             Destroy(gameObject);
+
+        outlineEffect = Instantiate(outlineEffect);
     }
 
 
@@ -58,6 +62,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
         if (character.isActiveElement())
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -66,54 +71,55 @@ public class GameManager : MonoBehaviour
             if (hit.collider.gameObject.layer == LayerMask.GetMask("Enemy")) {
                 
                 character.SetEnemy(hit.collider.GetComponentInParent<Enemy>());
-            }else if(hit.collider.gameObject.layer == LayerMask.GetMask("Protagonist"))
-            {
-                character.Life();
             }
         }
 
-        if ((Input.GetMouseButtonDown(0) && !stopLogic) || (fixing && !stopLogic))
-        {
-            fixing = false;
-            if (EventSystem.current.IsPointerOverGameObject()) {
-                
-                return;
-            }
+        if (!stopLogic && !MenuManager.instance.isMenuOpen()) {
 
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            Physics.Raycast(ray, out hit, Mathf.Infinity);
-
-            // Cast a ray from the mouse position into the scene
-            if (hit.collider != null)
+            if (Input.GetMouseButtonDown(0) || fixing)
             {
-                
-                var layer = hit.collider.gameObject.layer;
-                
-                if (interaction)
-                {
-                   
-                    if (layer == LayerMask.NameToLayer("Terrain") || layer == LayerMask.NameToLayer("InteractableObject"))
-                    {
-                        character.Interaction(hit);
-                        return;
-                    }
+                fixing = false;
+                if (EventSystem.current.IsPointerOverGameObject()) {
+
+                    return;
                 }
 
-                if (actualMode == CameraMode.Strategica)
-                {
-                   
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                RaycastHit hit;
+                Physics.Raycast(ray, out hit, Mathf.Infinity);
 
-                    if (layer == LayerMask.NameToLayer("Terrain"))
+                // Cast a ray from the mouse position into the scene
+                if (hit.collider != null)
+                {
+
+                    var layer = hit.collider.gameObject.layer;
+
+                    if (interaction)
                     {
 
-                        character.MoveToDestination(hit.point);
-                        return;
+                        if (layer == LayerMask.NameToLayer("Terrain") || layer == LayerMask.NameToLayer("InteractableObject"))
+                        {
+                            character.Interaction(hit);
+                            return;
+                        }
                     }
 
-                }
-                else
-                {
+                    if (actualMode == CameraMode.Strategica)
+                    {
+
+
+                        if (layer == LayerMask.NameToLayer("Terrain"))
+                        {
+
+                            character.MoveToDestination(hit.point);
+                            return;
+                        }
+
+                    }
+                    else
+                    {
+
+                    }
 
                 }
             }
@@ -146,10 +152,10 @@ public class GameManager : MonoBehaviour
         this.interaction = interaction;
         if (!interaction)
         {
-            Settings.instance.DisableIcon();
+            MenuManager.instance.DisableIcon();
             character.StopImmediateAurea();
         }else
-            Settings.instance.EnableIcon();
+            MenuManager.instance.EnableIcon();
     }
 
     public bool IsInteraction()

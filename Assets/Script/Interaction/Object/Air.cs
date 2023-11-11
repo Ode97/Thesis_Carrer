@@ -15,8 +15,7 @@ public class Air : InteractableObject
     // Start is called before the first frame update
     void Start()
     {
-        ParticleSystem.MainModule main = outlineEffect.GetComponent<ParticleSystem>().main;
-        main.startColor = Color.grey;
+        color = Color.grey;
         rb = GetComponent<Rigidbody>();
     }
 

@@ -38,12 +38,14 @@ public class MenuManager : MonoBehaviour
 
     public void OpenMenu()
     {
+        Time.timeScale = 0f;
         menu.SetActive(true);
         menuOpen = true;
     }
 
     public void CloseMenu()
     {
+        Time.timeScale = 1f;
         menu.SetActive(false);
         menuOpen = false;
     }
@@ -81,7 +83,6 @@ public class MenuManager : MonoBehaviour
 
     public void EnableMainCanvas()
     {
-        Debug.Log("A");
         mainCanvas.enabled = true;
     }
 

@@ -36,12 +36,10 @@ public class AirElement : MagicElement
         {
             Vector3 pos = interactableObject.transform.position;
             actualeffect.transform.position = new Vector3(pos.x, pos.y - 0.5f, pos.z);
-            Debug.Log("start " + interactableObject.name);
             
 
             if (!interactableObject.AirInteraction())
-            {
-                Debug.Log("false " + interactableObject.name);
+            {               
                 clicked = false;
                 GameManager.instance.stopLogic = false;
                 Destroy(actualeffect);
@@ -51,7 +49,6 @@ public class AirElement : MagicElement
             character.DisableElement();
             if (Input.GetMouseButtonDown(0) || interactableObject.IsOnView() || !GameManager.instance.IsInteraction())// || interactableObject.GetComponent<EnigmaObj>().waterRespawn)
             {
-                Debug.Log("stop" + interactableObject.name);
                 clicked = false;
                 StartCoroutine(Wait2());
                 Destroy(actualeffect);

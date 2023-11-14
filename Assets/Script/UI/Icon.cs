@@ -4,18 +4,23 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class Icon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class Icon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
     public MagicElement element;
     private float t = 0;
     private bool start = false;
-
+    public static bool click = false;
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        GameManager.instance.SetElement(element);
-        if(element.GetComponent<EarthElement>())
-            start = true;
+        if (!click)
+        {
+            GameManager.instance.SetElement(element);
+
+            if (element.GetComponent<EarthElement>())
+                start = true;
+        }
+        
     }
 
     public void OnPointerExit(PointerEventData eventData)
@@ -34,6 +39,20 @@ public class Icon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
                 MenuManager.instance.OpenEarthMenu();
                 
             }
+        }
+
+        
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if (click)
+        {
+            
+            GameManager.instance.SetElement(element);
+            if (element.GetComponent<EarthElement>())
+                MenuManager.instance.OpenEarthMenu();
+            
         }
     }
 }

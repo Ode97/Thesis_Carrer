@@ -12,9 +12,18 @@ public class Golem : MonoBehaviour
     public float health = 1;
     private Character character;
     public Element lowElement;
+    private GameObject aurea;
+    private ParticleSystem aureaPS;
+    Material mat;
 
     void Awake()
     {
+        /*aurea = Instantiate(Resources.Load<GameObject>("GolemEffect"), transform);
+        aurea.transform.localPosition = Vector3.zero;
+        aurea.transform.localScale = new Vector3(4,4,4);
+        aureaPS = aurea.GetComponent<ParticleSystem>();*/
+        mat = GetComponentInChildren<SkinnedMeshRenderer>().material;
+
         animator = GetComponent<Animator>();
 
         FSMState idle = new FSMState("idle");
@@ -57,26 +66,29 @@ public class Golem : MonoBehaviour
         //FSMTransition getHit = new FSMTransition(GetHit, a);
 
         //idle.AddTransition(outOfView, idle);
+        idle.AddTransition(hitted, stunned);
         idle.AddTransition(active, movment);
         //idle.AddTransition(getHit, idle);
         //idle.AddTransition(isDead, dead);
-        idle.AddTransition(hitted, stunned);
 
+        movment.AddTransition(hitted, stunned);
         movment.AddTransition(inactive, idle);
         movment.AddTransition(nearTo, attack);
         //movment.AddTransition(getHit, movment);
         //movment.AddTransition(isDead, dead);
-        movment.AddTransition(hitted, stunned);
         //movment.AddTransition(away, movment);
 
         //attack.AddTransition(getHit, attack);
         //attack.AddTransition(isDead, dead);
         //attack.AddTransition(nearTo, attack);
-        attack.AddTransition(away, movment);
-        attack.AddTransition(hitted, stunned);
 
-        stunned.AddTransition(active, movment);
+        attack.AddTransition(hitted, stunned);
+        attack.AddTransition(away, movment);
+        
+
         stunned.AddTransition(isDead, dead);
+        stunned.AddTransition(active, movment);
+        
 
         fsm = new FSM(idle);
         fsm.StartFSM();
@@ -102,12 +114,14 @@ public class Golem : MonoBehaviour
 
     private void StunnedAnim()
     {
-        animator.SetTrigger("stunned");
+        animator.SetTrigger("Hit");
+        
     }
 
     private void ResetStunnedAnim()
     {
-        animator.ResetTrigger("stunned");
+        animator.ResetTrigger("Hit");
+        change = false;
     }
 
     private void ResetHitAnim()
@@ -178,10 +192,12 @@ public class Golem : MonoBehaviour
     private bool GetHit()
     {
         if (hit)
+        {
             return true;
+        }
 
         return false;
-    }
+    }   
 
 
     private bool IsNear()
@@ -197,7 +213,7 @@ public class Golem : MonoBehaviour
 
     private bool IsAway()
     {
-        return !IsNear();
+        return !IsNear() && !hit;
     }
 
     private bool Dead()
@@ -215,7 +231,7 @@ public class Golem : MonoBehaviour
     private bool IsActive()
     {
         
-        if (active)
+        if (active && !hit)
             return true;
 
         return false;
@@ -238,21 +254,91 @@ public class Golem : MonoBehaviour
     public float speed = 5f;
     //public Vector3[] idlePositions;
     private int i = 0;
-
-
+    private bool change = false;
+    private bool stop = false;
 
     private void Update()
     {
+        if (!stop)
+            StartCoroutine(Change());
+
+        if (change)
+        {            
+           ChangeElement();
+        }
+
         distanceToCharacter = Vector3.Distance(transform.position, character.transform.position);
         if (active && !wait)
         {
             StartCoroutine(WaitInactive(10));
         } else if (!active && !wait)
         { 
-            StartCoroutine(WaitActive(5));
+            StartCoroutine(WaitActive(10));
         }
         fsm.UpdateFSM();
-        //Debug.Log(fsm.currentState.name);
+        Debug.Log(fsm.currentState.name);
+    }
+
+    private IEnumerator Change()
+    {
+        stop = true;
+        yield return new WaitForSeconds(8);
+        elem = Random.Range(0, 4);
+        stop = false;
+        change = !change;
+    }
+
+    //var ps = aureaPS.main;
+    private int elem = 0;
+    private void ChangeElement()
+    {
+        
+
+        if (elem == 0)
+        {
+            if (mat.color == Color.gray)
+            {
+
+                return;
+            }
+
+            lowElement = Element.Earth;
+            //ps.startColor = Color.gray;            
+            mat.color = Color.Lerp(GetComponentInChildren<SkinnedMeshRenderer>().material.color, Color.gray, Time.deltaTime * 5);
+        }
+        else if (elem == 1)
+        {
+            if (mat.color == Color.green)
+            {
+
+                return;
+            }
+            lowElement = Element.Fire;
+            //ps.startColor = Color.green;
+            mat.color = Color.Lerp(GetComponentInChildren<SkinnedMeshRenderer>().material.color, Color.green, Time.deltaTime * 5);
+        }
+        else if (elem == 2)
+        {
+            if (mat.color == Color.red)
+            {
+
+                return;
+            }
+            lowElement = Element.Water;
+            //ps.startColor = Color.red;
+            mat.color = Color.Lerp(GetComponentInChildren<SkinnedMeshRenderer>().material.color, Color.red, Time.deltaTime * 5);
+        }
+        else if (elem == 3)
+        {
+            if (mat.color == Color.blue)
+            {
+                return;
+            }
+            lowElement = Element.Air;
+            //ps.startColor = Color.blue;
+            mat.color = Color.Lerp(GetComponentInChildren<SkinnedMeshRenderer>().material.color, Color.blue, Time.deltaTime * 5);
+        }
+
     }
 
     private IEnumerator WaitActive(int t)
@@ -295,16 +381,30 @@ public class Golem : MonoBehaviour
 
     private void OnParticleCollision(GameObject other)
     {
-
-        if (other.layer == LayerMask.NameToLayer("Bullet"))
+        if (other.layer == LayerMask.NameToLayer("Bullet") && hit)
         {
-            Debug.Log(other.name);
             if (lowElement == other.GetComponent<MagicAttack>().element)
             {
-                hit = true;
+                hit = false;
                 health -= 1;
                 Debug.Log("particle" + name);
             }
+        }
+    }
+
+    private IEnumerator EndStun()
+    {
+        yield return new WaitForSeconds(5);
+        hit = false;
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.layer == LayerMask.NameToLayer("BossTrigger"))
+        {
+            Debug.Log(collision.gameObject.name + " mi ha colpito");
+            hit = true;
+            StartCoroutine(EndStun());
         }
     }
 }

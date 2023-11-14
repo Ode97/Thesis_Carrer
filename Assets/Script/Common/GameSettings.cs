@@ -1,9 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Configuration.Assemblies;
 using System.Diagnostics;
+using System.IO;
+using System.Reflection;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using System.IO;
 
 public class GameSettings : MonoBehaviour
 {
@@ -114,7 +118,37 @@ public class GameSettings : MonoBehaviour
                 magicButton.GetComponentInChildren<TextMeshProUGUI>().text = magic[l];
             }
 
-            var filePath = "EyeTrackerInteraction\\Blank-ADMI\\bin\\Release\\BlankADMI.exe";
+            /*string appFolderPath = Path.GetDirectoryName(System.AppDomain.CurrentDomain.BaseDirectory);
+            UnityEngine.Debug.Log(appFolderPath);
+            string exeFolder = Path.GetDirectoryName(appFolderPath);
+            UnityEngine.Debug.Log(exeFolder);*/
+            // Specifica il nome della cartella da aprire
+            string folderToOpen = "EyeTrackerInteraction\\Blank-ADMI\\bin\\Release\\BlankADMI";
+
+            // Unisci i percorsi per ottenere il percorso completo della cartella da aprire
+            //string folderPath = Path.Combine(exeFolder, folderToOpen);
+
+            //UnityEngine.Debug.Log(folderPath);
+
+            // Il percorso completo del file .txt che desideri scrivere
+            string filePath = Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, folderToOpen);
+            
+            //string writePath = Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "Output.txt");
+            //string aPath = Path.Combine("C:\\Users\\edoma\\Desktop", "Output1.txt");
+
+            //string content = filePath.ToString();
+
+            /*using (StreamWriter writer = new StreamWriter(aPath))
+            {
+                writer.Write(writePath);
+            }
+
+            // Scrivi il contenuto nel file
+            using (StreamWriter writer = new StreamWriter(writePath))
+            {
+                writer.Write(content);
+            }*/
+
             if (System.IO.File.Exists(filePath))
             {
                 GameManager.instance.p = new Process();
@@ -135,10 +169,21 @@ public class GameSettings : MonoBehaviour
         if (j >= interaction.Length)
             j = 0;
 
-        if (i == 0 && j == 1)
-            j++;
-        if(i == 1 && j == 0)
-            j++;
+        if (j == 1)
+        {
+            if(i == 0)
+                j++;
+
+            InteractableObject.click = false;
+        }
+
+        if (j == 0)
+        {
+            if(i == 1)
+                j++;
+
+            InteractableObject.click = true;
+        }
 
         interactionButton.GetComponentInChildren<TextMeshProUGUI>().text = interaction[j];
     }
@@ -150,13 +195,29 @@ public class GameSettings : MonoBehaviour
         if (k >= cam.Length)
             k = 0;
 
-        if (i == 0 && k == 1)
-            k++;
+        if (k == 1)
+        {
+            if(i == 0)
+                k++;
+            else
+                ChangeGameMode.click = false;
+        }
 
-        if (i == 1 && k == 0)
-            k++;
+        if (k == 0)
+        {
+            if (i == 1)
+            {
+                k++;
+            }else
+                ChangeGameMode.click = true;
+
+        }
+
+        if(k == 2)
+            ChangeGameMode.click = false;
 
         camButton.GetComponentInChildren<TextMeshProUGUI>().text = cam[k];
+
     }
 
     private int l = 0;
@@ -166,11 +227,26 @@ public class GameSettings : MonoBehaviour
         if (l >= magic.Length)
             l = 0;
 
-        if (i == 0 && l == 1)
-            l++;
+        if (l == 1)
+        {
+            if(i == 0)
+                l++;
+            else
+                Icon.click = false;
+        }
 
-        if (i == 1 && l == 0)
-            l++;
+        if (l == 0)
+        {
+            if(i == 1)
+                l++;
+            else
+                Icon.click = true;
+        }
+
+        if(l == 3)
+        {
+            Icon.click = false;
+        }
 
         magicButton.GetComponentInChildren<TextMeshProUGUI>().text = magic[l];
     }

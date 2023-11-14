@@ -38,10 +38,11 @@ public abstract class InteractableObject : MonoBehaviour
         {
             timer += Time.deltaTime;
 
-            if (timer > GameManager.instance.fixingTime && !GetComponent<Earth>())
+            
+
+            if (IsOnView() && !GetComponent<Earth>())
             {
-                //Debug.Log(timer);
-                Debug.Log("select: " + name);
+               
                 if(!GameManager.instance.stopLogic)
                     GameManager.instance.fixing = true;
                 start = false;
@@ -68,12 +69,16 @@ public abstract class InteractableObject : MonoBehaviour
 
     public abstract bool EarthInteraction(GameObject obj, Vector3 pos);
 
-
+    public static bool click = false;
     void OnMouseEnter()
     {
         if (!MenuManager.instance.isMenuOpen())
         {
-            start = true;
+            if (!click)
+            {
+                start = true;
+            }
+
             timer = 0;
             if (GameManager.instance.IsInteraction() && !onView)
             {
@@ -82,7 +87,7 @@ public abstract class InteractableObject : MonoBehaviour
                 GameManager.instance.SetObject(this);
             }
 
-            
+            GameManager.instance.outlineEffect.SetActive(true);
             ParticleSystem.MainModule main = GameManager.instance.outlineEffect.GetComponent<ParticleSystem>().main;
             main.startColor = color;
                 //outline.SetActive(true);
@@ -105,6 +110,7 @@ public abstract class InteractableObject : MonoBehaviour
         start = false;
         GameManager.instance.fixing = false;
         timer = 0;
+        GameManager.instance.outlineEffect.SetActive(false);
         if (GameManager.instance.IsInteraction())
             StartCoroutine(EndSelection());
         //else if (outline)
@@ -133,7 +139,7 @@ public abstract class InteractableObject : MonoBehaviour
 
     public bool IsOnView()
     {
-        return timer > 2;
+        return timer > GameManager.instance.fixingTime;
     }
 
     /*public void StartSelection()

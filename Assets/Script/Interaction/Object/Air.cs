@@ -25,7 +25,7 @@ public class Air : InteractableObject
     protected void Update()
     {
         base.Update();
-        if(onPlatform.Count > 0 )
+        if(onPlatform.Count > 0)
         {
             foreach( GameObject go in onPlatform )
             {
@@ -58,7 +58,7 @@ public class Air : InteractableObject
             {                
                 return true;
             }
-            if (hit.collider.gameObject.layer != LayerMask.NameToLayer("Protagonist"))
+            if (hit.collider.gameObject.layer != Constants.protagonistLayer)
             {
                 Vector3 moveDirection = (destination - transform.position).normalized;
 
@@ -95,7 +95,7 @@ public class Air : InteractableObject
     {
         
 
-        if (movingPlatform && collision.gameObject.layer != LayerMask.NameToLayer("Default") && !collision.gameObject.GetComponent<WaterObj>() && !collision.gameObject.GetComponent<Terrain>())
+        if (movingPlatform && collision.gameObject.layer != 12 && !collision.gameObject.GetComponent<WaterObj>() && !collision.gameObject.GetComponent<Terrain>())
         {
             Debug.Log(collision.gameObject.name);
 

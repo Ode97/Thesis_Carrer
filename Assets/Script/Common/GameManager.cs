@@ -2,11 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
 using UnityEngine;
-//using static UnityEditor.Experimental.GraphView.GraphView;
-using Unity.Burst.CompilerServices;
-using Unity.VisualScripting;
 using System.Diagnostics;
-using System.Runtime.Remoting.Lifetime;
 
 public enum CameraMode { Strategica, Vista}
 
@@ -63,64 +59,71 @@ public class GameManager : MonoBehaviour
     void Update()
     {
 
-        if (character.isActiveElement())
+        if (!stopLogic)
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            Physics.Raycast(ray, out hit, Mathf.Infinity);
-            if (hit.collider.gameObject.layer == LayerMask.GetMask("Enemy")) {
-                
-                character.SetEnemy(hit.collider.GetComponentInParent<Enemy>());
-            }
-        }
-
-        if (!stopLogic && !MenuManager.instance.isMenuOpen()) {
-
-            if (Input.GetMouseButtonDown(0) || fixing)
+            if (character.isActiveElement())
             {
-                fixing = false;
-                if (EventSystem.current.IsPointerOverGameObject()) {
-
-                    return;
-                }
-
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 RaycastHit hit;
                 Physics.Raycast(ray, out hit, Mathf.Infinity);
 
-                // Cast a ray from the mouse position into the scene
-                if (hit.collider != null)
+                
+                if (hit.collider.gameObject.layer == Constants.enemyLayer)
                 {
+                    character.SetEnemy(hit.collider.gameObject);
+                }
+            }
 
-                    var layer = hit.collider.gameObject.layer;
-
-                    if (interaction)
+            //if (!stopLogic && !MenuManager.instance.isMenuOpen()) {
+            if (!MenuManager.instance.isMenuOpen())
+            {
+                if (Input.GetMouseButtonDown(0) || fixing)
+                {
+                    fixing = false;
+                    if (EventSystem.current.IsPointerOverGameObject())
                     {
 
-                        if (layer == LayerMask.NameToLayer("Terrain") || layer == LayerMask.NameToLayer("InteractableObject"))
+                        return;
+                    }
+
+                    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                    RaycastHit hit;
+                    Physics.Raycast(ray, out hit, Mathf.Infinity);
+
+                    // Cast a ray from the mouse position into the scene
+                    if (hit.collider != null)
+                    {
+
+                        var layer = hit.collider.gameObject.layer;
+
+                        if (interaction)
                         {
-                            character.Interaction(hit);
-                            return;
+
+                            if (hit.collider.GetComponent<InteractableObject>())
+                            {
+                                character.Interaction(hit);
+                                return;
+                            }
                         }
-                    }
 
-                    if (actualMode == CameraMode.Strategica)
-                    {
-
-
-                        if (layer == LayerMask.NameToLayer("Terrain"))
+                        if (actualMode == CameraMode.Strategica)
                         {
 
-                            character.MoveToDestination(hit.point);
-                            return;
+
+                            if (layer == Constants.terrainLayer)
+                            {
+
+                                character.MoveToDestination(hit.point);
+                                return;
+                            }
+
+                        }
+                        else
+                        {
+
                         }
 
                     }
-                    else
-                    {
-
-                    }
-
                 }
             }
         }

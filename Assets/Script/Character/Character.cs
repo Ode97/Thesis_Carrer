@@ -22,7 +22,7 @@ public class Character : MonoBehaviour
     private Animator animator;
     private bool activeElement = false;
     private GameObject[] hearts;
-    private Enemy enemyTarget;
+    private GameObject enemyTarget;
     private bool attacking = false;
     [SerializeField]
     private Canvas lifeCanvas;
@@ -80,13 +80,47 @@ public class Character : MonoBehaviour
 
     private bool heartAnim = false;
 
-    public void Life()
+    /*public void Life()
     {
         for (int i = 0; i < health; i++)
         {
             hearts[i].transform.LookAt(Camera.main.transform);
             hearts[i].SetActive(true);
             heartAnim = true;
+        }
+    }*/
+
+    public void Life()
+    {
+        // Assicurati che hearts non sia nullo e health sia maggiore di zero
+
+        // Calcola il numero di cuori attivi
+        if (health > 0)
+        {
+            int activeHearts = health;
+
+            // Ottieni le dimensioni del canvas
+            RectTransform canvasRect = hearts[0].transform.parent.GetComponent<RectTransform>();
+            Vector2 canvasSize = canvasRect.sizeDelta;
+
+            // Calcola lo spazio tra i cuori
+            float spacing = 100f; // Puoi regolare lo spaziamento come preferisci
+
+            // Calcola la larghezza totale dei cuori e dello spaziamento
+            float totalWidth = (activeHearts - 1) * spacing;
+
+            // Calcola la posizione iniziale per centrare i cuori
+            float startX = 0 - totalWidth / 2;
+
+            // Posiziona i cuori
+            for (int i = 0; i < activeHearts; i++)
+            {
+                Vector3 heartPosition = new Vector3(startX + i * spacing, canvasSize.y / 2f, 0f);
+                hearts[i].transform.localPosition = heartPosition;
+                hearts[i].transform.LookAt(Camera.main.transform);
+                hearts[i].SetActive(true);
+                heartAnim = true;
+            }
         }
     }
 
@@ -103,18 +137,21 @@ public class Character : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (heartAnim && hearts[0].transform.localScale != Vector3.one)
+        if (health > 0)
         {
-            for (int i = 0; i < health; i++)
+            if (heartAnim && hearts[0].transform.localScale != Vector3.one)
             {
-                hearts[i].transform.localScale = Vector3.Lerp(hearts[i].transform.localScale, Vector3.one, Time.deltaTime * 5);
+                for (int i = 0; i < health; i++)
+                {
+                    hearts[i].transform.localScale = Vector3.Lerp(hearts[i].transform.localScale, Vector3.one, Time.deltaTime * 5);
+                }
             }
-        }
-        else if(hearts[0].transform.localScale != Vector3.zero)
-        {
-            for (int i = 0; i < health; i++)
+            else if (hearts[0].transform.localScale != Vector3.zero)
             {
-                hearts[i].transform.localScale = Vector3.Lerp(hearts[i].transform.localScale, Vector3.zero, Time.deltaTime * 5);
+                for (int i = 0; i < health; i++)
+                {
+                    hearts[i].transform.localScale = Vector3.Lerp(hearts[i].transform.localScale, Vector3.zero, Time.deltaTime * 5);
+                }
             }
         }
 
@@ -128,11 +165,14 @@ public class Character : MonoBehaviour
             StartCoroutine(Dead());
             
         }
-        if(enemyTarget)
+
+        if (enemyTarget)
+        {
             Attack();
+        }
         else
-            if(activeAttack)
-                Destroy(activeAttack);
+            if (activeAttack)
+            Destroy(activeAttack);
     }
 
     private IEnumerator Dead()
@@ -150,7 +190,7 @@ public class Character : MonoBehaviour
         dead = false;
     }
 
-    public void SetEnemy(Enemy e)
+    public void SetEnemy(GameObject e)
     {
         enemyTarget = e;
     }
@@ -163,6 +203,9 @@ public class Character : MonoBehaviour
             Destroy(aurea.gameObject);
             activeElement = false;
         }
+
+        if(activeAttack) 
+            Destroy(activeAttack);
     }
 
     public bool IsMoving()
@@ -191,6 +234,7 @@ public class Character : MonoBehaviour
         {
             actualElement = null;
             activeElement = false;
+            enemyTarget = null;
             return;
         }
 
@@ -247,8 +291,7 @@ public class Character : MonoBehaviour
 
     private GameObject activeAttack;
     public void Attack()
-    {
-        
+    {       
         if (activeElement && enemyTarget && !attacking && !activeAttack)
         {
             //StartCoroutine(AttackRoutine());
@@ -313,10 +356,13 @@ public class Character : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {       
 
-        if (collision.collider.gameObject.GetComponentInParent<Enemy>() && health > 0)
+        if (collision.gameObject.layer == Constants.enemyLayer && health > 0)
         {
             Debug.Log("colpito");
             health -= 1;
+            
+            Life();
+            
             Destroy(hearts[health]);
         }
     }

@@ -37,11 +37,15 @@ public class MenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         }
     }
 
+    public bool restart = false;
     private void CloseMenu()
     {
         Reset();
-        MenuManager.instance.SetMenuStatus(false);
         menu.SetActive(false);
+        
+        if(restart)
+            Time.timeScale = 1f;
+        
         
     }
 
@@ -49,7 +53,6 @@ public class MenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     {
         Reset();
         menu.SetActive(true);
-        MenuManager.instance.SetMenuStatus(true);
     }
 
     private void CloseGame()
@@ -77,7 +80,6 @@ public class MenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     
     public void OnPointerClick(PointerEventData eventData)
     {
-        Debug.Log("reset" + menu.name);
         Reset();
 
         if (activateMainCanvas)

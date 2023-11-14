@@ -4,8 +4,9 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using Unity.VisualScripting;
 
-public class ChangeGameMode : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class ChangeGameMode : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
     private CameraMode[] modes = new CameraMode[2];
     private int i = 0;
@@ -49,16 +50,31 @@ public class ChangeGameMode : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         
     }
 
+    public static bool click = false;
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if(mode)
-            ChangeMode();
-        else
-            InteractionMode();
+        if (!click)
+        {
+            if (mode)
+                ChangeMode();
+            else
+                InteractionMode();
+        }
     }
+
+    
 
     public void OnPointerExit(PointerEventData eventData)
     {
         
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if (click)          
+            if (mode)
+                ChangeMode();
+            else
+                InteractionMode();
     }
 }

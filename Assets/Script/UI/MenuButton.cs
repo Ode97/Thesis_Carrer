@@ -42,9 +42,12 @@ public class MenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     {
         Reset();
         menu.SetActive(false);
-        
-        if(restart)
+
+        if (restart)
+        {
             Time.timeScale = 1f;
+            MenuManager.instance.SetMenuStatus(false);
+        }
         
         
     }

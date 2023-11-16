@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Golem : MonoBehaviour
 {
@@ -15,6 +16,7 @@ public class Golem : MonoBehaviour
     private GameObject aurea;
     private ParticleSystem aureaPS;
     Material mat;
+    private NavMeshAgent agent;
 
     void Awake()
     {
@@ -97,6 +99,7 @@ public class Golem : MonoBehaviour
     private void Start()
     {
         character = FindObjectOfType<Character>();
+        agent = GetComponent<NavMeshAgent>();
     }
 
 
@@ -145,6 +148,10 @@ public class Golem : MonoBehaviour
     private void ResetChaseAnim()
     {
         animator.ResetTrigger("Walk");
+        
+        agent.isStopped = true;
+        agent.destination = transform.position;
+        Debug.Log("stop");
     }
 
     /*private void StartCombatAnim()
@@ -276,7 +283,7 @@ public class Golem : MonoBehaviour
             StartCoroutine(WaitActive(10));
         }
         fsm.UpdateFSM();
-        Debug.Log(fsm.currentState.name);
+        //Debug.Log(fsm.currentState.name);
     }
 
     private IEnumerator Change()
@@ -359,12 +366,16 @@ public class Golem : MonoBehaviour
 
     private void Chase()
     {
-        RotateTowardsCharacter();
+        //RotateTowardsCharacter();
 
-        Vector3 moveDirection = (character.transform.position - transform.position).normalized;
+        /*Vector3 moveDirection = (character.transform.position - transform.position).normalized;
 
         Vector3 move = moveDirection * speed * Time.deltaTime;
-        transform.position = Vector3.MoveTowards(transform.position, character.transform.position, move.magnitude);
+        transform.position = Vector3.MoveTowards(transform.position, character.transform.position, move.magnitude);*/
+
+        agent.isStopped = false;
+        Debug.Log("start");
+        agent.SetDestination(character.transform.position);
     }
 
     private void RotateTowardsCharacter()

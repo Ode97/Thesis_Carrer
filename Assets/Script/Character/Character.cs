@@ -181,11 +181,10 @@ public class Character : MonoBehaviour
         GameManager.instance.stopLogic = true;
         animator.SetTrigger("Die");
         yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName("Die01_Stay_SwordAndShield"));
-        GameManager.instance.stopLogic = true;
         animator.ResetTrigger("Die");
         yield return new WaitForSeconds(3);
         Reset();
-        Respawn();
+        StartCoroutine(Respawn());
         animator.Play("Idle_Battle_SwordAndShield");
         dead = false;
     }
@@ -407,7 +406,7 @@ public class Character : MonoBehaviour
         yield return new WaitForSeconds(2);
         movment.DisableMove();
         transform.position = checkpoint;
-
+        GameManager.instance.stopLogic = false;
     }
 
     public void OnMouseEnter()

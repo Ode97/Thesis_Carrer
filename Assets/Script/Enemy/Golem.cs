@@ -17,6 +17,8 @@ public class Golem : MonoBehaviour
     private ParticleSystem aureaPS;
     Material mat;
     private NavMeshAgent agent;
+    [SerializeField]
+    private GameObject sphere;
 
     void Awake()
     {
@@ -100,6 +102,8 @@ public class Golem : MonoBehaviour
     {
         character = FindObjectOfType<Character>();
         agent = GetComponent<NavMeshAgent>();
+        target = character.transform.position;
+        ChangeElement();
     }
 
 
@@ -151,7 +155,6 @@ public class Golem : MonoBehaviour
         
         agent.isStopped = true;
         agent.destination = transform.position;
-        Debug.Log("stop");
     }
 
     /*private void StartCombatAnim()
@@ -263,6 +266,7 @@ public class Golem : MonoBehaviour
     private int i = 0;
     private bool change = false;
     private bool stop = false;
+    private Vector3 target;
 
     private void Update()
     {
@@ -274,7 +278,7 @@ public class Golem : MonoBehaviour
            ChangeElement();
         }
 
-        distanceToCharacter = Vector3.Distance(transform.position, character.transform.position);
+        distanceToCharacter = Vector3.Distance(transform.position, target);
         if (active && !wait)
         {
             StartCoroutine(WaitInactive(10));
@@ -374,7 +378,6 @@ public class Golem : MonoBehaviour
         transform.position = Vector3.MoveTowards(transform.position, character.transform.position, move.magnitude);*/
 
         agent.isStopped = false;
-        Debug.Log("start");
         agent.SetDestination(character.transform.position);
     }
 
@@ -403,19 +406,30 @@ public class Golem : MonoBehaviour
         }
     }
 
+    private bool sphereHit = false;
     private IEnumerator EndStun()
     {
-        yield return new WaitForSeconds(5);
+        yield return new WaitForSeconds(10);
         hit = false;
+        active = true;
+        wait = false;
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.layer == LayerMask.NameToLayer("BossTrigger"))
+        if (collision.gameObject.layer == LayerMask.NameToLayer("BossTrigger") && !sphereHit)
         {
             Debug.Log(collision.gameObject.name + " mi ha colpito");
             hit = true;
+            sphereHit = true;
+            agent.SetDestination(sphere.transform.position);
+            target = sphere.transform.position;
+            StopAllCoroutines();
             StartCoroutine(EndStun());
+        }else if (sphereHit)
+        {
+            agent.SetDestination(character.transform.position);
+            target = character.transform.position;
         }
     }
 }

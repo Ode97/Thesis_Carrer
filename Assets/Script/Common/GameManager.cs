@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 using UnityEngine;
 using System.Diagnostics;
 
-public enum CameraMode { Strategica, Vista}
+public enum CameraMode {Strategica, Vista}
 
 public class GameManager : MonoBehaviour
 {
@@ -58,7 +58,6 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
         if (!stopLogic)
         {
             if (character.isActiveElement())
@@ -68,12 +67,11 @@ public class GameManager : MonoBehaviour
                 Physics.Raycast(ray, out hit, Mathf.Infinity);
 
                 
-                if (hit.collider.gameObject.layer == Constants.enemyLayer)
+                if (hit.collider && hit.collider.gameObject.layer == Constants.enemyLayer)
                 {
                     character.SetEnemy(hit.collider.gameObject);
                 }
             }
-
             //if (!stopLogic && !MenuManager.instance.isMenuOpen()) {
             if (!MenuManager.instance.isMenuOpen())
             {
@@ -112,7 +110,6 @@ public class GameManager : MonoBehaviour
 
                             if (layer == Constants.terrainLayer)
                             {
-
                                 character.MoveToDestination(hit.point);
                                 return;
                             }

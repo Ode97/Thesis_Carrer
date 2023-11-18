@@ -41,15 +41,14 @@ public class MenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     private void CloseMenu()
     {
         Reset();
-        menu.SetActive(false);
 
         if (restart)
         {
             Time.timeScale = 1f;
             MenuManager.instance.SetMenuStatus(false);
         }
-        
-        
+        menu.SetActive(false);
+
     }
 
     private void OpenMenu()

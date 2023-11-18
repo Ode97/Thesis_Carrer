@@ -46,14 +46,16 @@ public class WaterObj : InteractableObject
 
         if (!rise)
         {
-            
+
             rise = true;
 
             GetComponent<EnigmaObj>()?.Interaction(Element.Water);
             return true;
         }
-        //else
-            //rise = false;
+        else
+        {
+            rise = false;
+        }
 
         return true;
     }

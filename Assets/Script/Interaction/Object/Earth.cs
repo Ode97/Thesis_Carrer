@@ -22,6 +22,7 @@ public class Earth : InteractableObject
         t.transform.position = pos;
         t.transform.localScale = new Vector3(15, 15, 15);
         t.transform.LookAt(GameManager.instance.character.transform);
+        t.layer = Constants.intObjLayer;
         //GetComponent<EnigmaObj>()?.Interaction(Element.Earth);
         transform.GetComponent<Spot>()?.EnigmaSolve(obj);
 

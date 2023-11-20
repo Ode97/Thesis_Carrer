@@ -2,8 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InventoryObject : MonoBehaviour
+public abstract class InventoryObject : MonoBehaviour
 {
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -16,8 +17,6 @@ public class InventoryObject : MonoBehaviour
         
     }
 
-    public void SetEarthObject()
-    {
-        EarthElement.earthObject = this.gameObject;
-    }
+    public abstract void Chosen();
+
 }

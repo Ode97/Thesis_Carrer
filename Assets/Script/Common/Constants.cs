@@ -13,6 +13,7 @@ public static class Constants
     public static int enemyLayer = 8;
     public static int bulletLayer = 9;
     public static int checkpointLayer = 11;
+    public static int diamondLayer = 13;
 
 
 }

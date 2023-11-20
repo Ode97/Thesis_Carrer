@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class Air : InteractableObject
 {
-
     private Vector3 destination;
     private Vector3 direction;
     private Rigidbody rb;
@@ -44,10 +43,10 @@ public class Air : InteractableObject
         }
     }
 
+    public bool onlyUp = false;
     override
     public bool AirInteraction()
     {   
-
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
 
@@ -60,14 +59,17 @@ public class Air : InteractableObject
             }
             if (hit.collider.gameObject.layer != Constants.protagonistLayer)
             {
-                Vector3 moveDirection = (destination - transform.position).normalized;
+                Vector3 moveDirection;
+                if (onlyUp)
+                    moveDirection = new Vector3(0, destination.y - transform.position.y, 0).normalized;
+                else
+                    moveDirection = (destination - transform.position).normalized;
 
-                direction = moveDirection * rb.mass * 20;
+                direction = moveDirection * 50;
                 rb.AddForce(direction, ForceMode.Force);
+                GameManager.instance.character.AddForce(direction);
             }           
-
         }
-
         return true;
     }
 
@@ -93,18 +95,14 @@ public class Air : InteractableObject
 
     private void OnCollisionEnter(Collision collision)
     {
-        
-
         if (movingPlatform && collision.gameObject.layer != 12 && !collision.gameObject.GetComponent<WaterObj>() && !collision.gameObject.GetComponent<Terrain>())
         {
             Debug.Log(collision.gameObject.name);
 
-            collision.gameObject.transform.SetParent(transform);
+            //collision.gameObject.transform.SetParent(transform);
             onPlatform.Add(collision.gameObject);
             GameManager.instance.character.SetCheckpoint(transform.position);
-        }
-
-        
+        }        
     }
 
     /*private void DisablePlatform()

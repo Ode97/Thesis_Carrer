@@ -19,7 +19,7 @@ public class EnigmaEditor : Editor
     private void OnEnable()
     {
         rewardProp = serializedObject.FindProperty("reward");
-        objProp = serializedObject.FindProperty("obj");
+        objProp = serializedObject.FindProperty("objReward");
         disableObjectProp = serializedObject.FindProperty("disableObstacle");
         obstacleProp = serializedObject.FindProperty("obstacle");
         orderProp = serializedObject.FindProperty("order");

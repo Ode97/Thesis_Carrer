@@ -24,7 +24,7 @@ public class AirElement : MagicElement
         StartCoroutine(Wait());
         actualeffect = Instantiate(airEffect);
         Vector3 scale = interactableObject.transform.localScale;
-        actualeffect.transform.localScale = scale * 3/4;
+        actualeffect.transform.localScale = scale * 4/5;
         //actualeffect.transform.position = interactableObject.transform.position - new Vector3(0, -1, 0);
         //actualeffect.transform.localScale = Vector3.one;
 
@@ -47,15 +47,15 @@ public class AirElement : MagicElement
             }
 
             character.DisableElement();
+
             if (Input.GetMouseButtonDown(0) || interactableObject.IsOnView() || !GameManager.instance.IsInteraction())// || interactableObject.GetComponent<EnigmaObj>().waterRespawn)
             {
                 clicked = false;
                 StartCoroutine(Wait2());
                 Destroy(actualeffect);
-            }
-
-            
-            
+                Debug.Log("a");
+                GameManager.instance.character.StopPlt();
+            }                       
         }
     }
 

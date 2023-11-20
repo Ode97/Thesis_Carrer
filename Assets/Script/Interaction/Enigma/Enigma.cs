@@ -11,7 +11,7 @@ public  class Enigma : MonoBehaviour
     [SerializeField]
     private bool reward = false;
     [SerializeField]
-    private InventoryObject obj;
+    private GameObject objReward;
     [SerializeField]
     private GameObject obstacle;
 
@@ -39,26 +39,28 @@ public  class Enigma : MonoBehaviour
 
     private void Start()
     {
-        initPosition = transform.position;
+        if(disableObstacle)
+            initPosition = obstacle.transform.localPosition;
     }
 
     private void Update()
     {
         if (complete && disableObstacle)
         {
-            Vector3 moveDirection = (targetPosition - transform.position).normalized;
+            Debug.Log(obstacle.transform.localPosition + " " + targetPosition);
+            //Vector3 moveDirection = (targetPosition - obstacle.transform.localPosition).normalized;
 
-            obstacle.transform.localPosition = Vector3.MoveTowards(obstacle.transform.localPosition, targetPosition, animSpeed * moveDirection.magnitude * Time.deltaTime);
+            obstacle.transform.localPosition = Vector3.MoveTowards(obstacle.transform.localPosition, targetPosition, animSpeed* 20 * Time.deltaTime);
         }
         else if (!complete && disableObstacle)
         {
-            Vector3 moveDirection = (initPosition - transform.position).normalized;
-
-            obstacle.transform.localPosition = Vector3.MoveTowards(obstacle.transform.localPosition, initPosition, animSpeed * moveDirection.magnitude * Time.deltaTime);
+            //Vector3 moveDirection = (initPosition - obstacle.transform.localPosition).normalized;
+            obstacle.transform.localPosition = Vector3.MoveTowards(obstacle.transform.localPosition, initPosition, animSpeed * 20 * Time.deltaTime);
         }
 
         if (reward && complete)
         {
+            objReward.SetActive(true);
             Debug.Log("win");
         }
     }

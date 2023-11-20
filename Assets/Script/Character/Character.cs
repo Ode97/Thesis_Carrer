@@ -30,6 +30,8 @@ public class Character : MonoBehaviour
     private GameObject lives;
     private float space = 110;
     private GameObject water;
+    private Rigidbody rb;
+    private int diamond = 0;
 
 
     // Start is called before the first frame update
@@ -38,6 +40,7 @@ public class Character : MonoBehaviour
         animator = GetComponent<Animator>();
         movment = GetComponent<Movment>();
         hearts = new GameObject[health];
+        rb = GetComponent<Rigidbody>();
         
         Reset();
     }
@@ -209,7 +212,7 @@ public class Character : MonoBehaviour
 
     public bool IsMoving()
     {
-        return movment.IsWalking();
+        return movment.IsWalking() || movingPlt;
     }
 
     public void MoveToDestination(Vector3 point)
@@ -363,6 +366,10 @@ public class Character : MonoBehaviour
             Life();
             
             Destroy(hearts[health]);
+        }else if(collision.gameObject.layer == Constants.diamondLayer)
+        {
+            diamond++;
+            Destroy(collision.gameObject);
         }
     }
 
@@ -378,6 +385,17 @@ public class Character : MonoBehaviour
     {
         Debug.Log("checkpoint");
         checkpoint = point;
+    }
+
+    private bool movingPlt = true;
+    public void AddForce(Vector3 force)
+    {
+        rb.AddForce(force, ForceMode.Force);
+        movingPlt = true;
+    }
+    public void StopPlt()
+    {
+        movingPlt = false;
     }
 
     private void WaterRespawn()

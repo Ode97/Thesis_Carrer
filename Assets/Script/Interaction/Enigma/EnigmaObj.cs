@@ -17,7 +17,7 @@ public class EnigmaObj : MonoBehaviour
     private void Awake()
     {
         
-        enigmaChecker = transform.parent?.GetComponent<Enigma>();
+        //enigmaChecker = transform.parent?.GetComponent<Enigma>();
         initPos = transform.position;
         
     }
@@ -80,16 +80,18 @@ public class EnigmaObj : MonoBehaviour
         enigmaChecker = enigma;
     }
 
+    public bool active = true;
     public void Interaction(Element interactionElement)
     {
 
-        if (interactionElement == element) {
+        if (interactionElement == element && active) {           
             if (enigmaChecker.position)
                 enigmaChecker.ElementPositionCheck(value);
             if (enigmaChecker.order)
                 enigmaChecker.OrderCheck(value);
             if (enigmaChecker.activation)
             {
+                active = false;
                 enigmaChecker.ActiveAllCheck();
             }
         }

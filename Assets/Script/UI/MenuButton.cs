@@ -11,14 +11,15 @@ public class MenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     private bool start = false;
     public bool activateMainCanvas = false;
     public bool closeGame = false;
+
     private void Update()
     {
         if (start)
-        {
-            timer += Time.deltaTime;
-
+        {          
+            timer += Time.unscaledDeltaTime;
             if (timer > GameManager.instance.fixingTime)
             {
+                Debug.Log(timer);
                 Reset();
                 if (!closeGame)
                 {
@@ -75,6 +76,7 @@ public class MenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     public void Reset()
     {
+        
         start = false;
         timer = 0;
     }

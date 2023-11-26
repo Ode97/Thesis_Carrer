@@ -16,8 +16,9 @@ public class FloatingObject : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (water && transform.position.y - water.transform.position.y < 0.3)
+        if (water && transform.position.y - water.transform.position.y < 0.15)
         {
+            
             rb.AddForce(water.transform.up * waterForce, ForceMode.Force);
         }
     }

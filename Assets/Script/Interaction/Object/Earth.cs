@@ -4,30 +4,61 @@ using UnityEngine;
 
 public class Earth : InteractableObject
 {
+    private Vector3 scaleTarget;
+    private GameObject t;
+
     void Start()
     {        
         color = Color.green;
+        
 
     }
 
     override
+    protected void Update()
+    {
+        base.Update();
+
+        if (scaleTrigger)
+        {
+            if (t.transform.localScale.magnitude < scaleTarget.magnitude - 0.01f)
+            {
+                t.transform.localScale = Vector3.Lerp(t.transform.localScale, scaleTarget, Time.deltaTime * 5);
+            }
+            else
+            {
+                
+                scaleTrigger = false;
+            }
+        }
+    }
+
+    private bool scaleTrigger = false;
+    override
     public bool EarthInteraction(GameObject obj, Vector3 pos)
     {
-        GameObject t;
+        
         if (gameObject.layer == LayerMask.NameToLayer("Terrain"))
             t = Instantiate(obj, transform);
         else
             t = Instantiate(obj);
 
+        scaleTarget = t.GetComponent<EarthPlant>().GetScale();
+
         t.transform.position = pos;
-        t.transform.localScale = new Vector3(15, 15, 15);
-        t.transform.LookAt(GameManager.instance.character.transform);
+        
+        t.transform.localScale = new Vector3(0, 0, 0);
+        
         t.layer = Constants.intObjLayer;
-        //GetComponent<EnigmaObj>()?.Interaction(Element.Earth);
-        transform.GetComponent<Spot>()?.EnigmaSolve(obj);
+        
+        transform.GetComponent<Spot>()?.EnigmaSolve(t);
+
+        scaleTrigger = true;
 
         return true;
     }
+
+    
 
     public override bool Interaction()
     {

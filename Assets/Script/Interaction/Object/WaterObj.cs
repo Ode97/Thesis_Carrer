@@ -10,6 +10,8 @@ public class WaterObj : InteractableObject
     private Vector3 initPosition;
     public Vector3 targetPosition;
     public float animSpeed = 5;
+    [SerializeField]
+    private GameObject water;
 
     // Start is called before the first frame update
     void Start()
@@ -25,7 +27,7 @@ public class WaterObj : InteractableObject
         base.Update();
         if (rise)
         {
-            
+            transform.gameObject.SetActive(true);
             Vector3 moveDirection = (targetPosition - transform.localPosition).normalized;
             
             transform.localPosition = Vector3.MoveTowards(transform.localPosition, targetPosition, animSpeed * moveDirection.magnitude * Time.deltaTime);
@@ -48,7 +50,7 @@ public class WaterObj : InteractableObject
         {
 
             rise = true;
-
+            water.SetActive(true);
             GetComponent<EnigmaObj>()?.Interaction(Element.Water);
             return true;
         }

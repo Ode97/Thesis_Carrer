@@ -96,7 +96,7 @@ public class GameManager : MonoBehaviour
 
                         if (interaction)
                         {
-
+                            //cambiare con layer e vedere se si rompe tutto
                             if (hit.collider.GetComponent<InteractableObject>())
                             {
                                 character.Interaction(hit);

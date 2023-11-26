@@ -66,8 +66,10 @@ public class Air : InteractableObject
                     moveDirection = (destination - transform.position).normalized;
 
                 direction = moveDirection * 50;
+                
                 rb.AddForce(direction, ForceMode.Force);
-                GameManager.instance.character.AddForce(direction);
+                if(movingPlatform)
+                    GameManager.instance.character.AddForce(direction);
             }           
         }
         return true;

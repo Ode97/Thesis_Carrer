@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class EarthPlant : InventoryObject
 {
+    [SerializeField]
+    private float scale;
     public override void Chosen()
     {
         EarthElement.earthObject = this.gameObject;
@@ -19,5 +21,10 @@ public class EarthPlant : InventoryObject
     void Update()
     {
         
+    }
+
+    public Vector3 GetScale()
+    {
+        return new Vector3 (scale, scale, scale);
     }
 }

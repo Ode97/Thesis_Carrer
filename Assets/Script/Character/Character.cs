@@ -56,25 +56,16 @@ public class Character : MonoBehaviour
         {
             GameObject heart = Instantiate(h, Vector3.zero, Quaternion.identity);
 
-            // Imposta il Canvas come genitore del cuore
-            heart.transform.SetParent(lifeCanvas.transform);
-
             // Posiziona il Canvas sopra la testa del personaggio
             lifeCanvas.transform.SetParent(transform);
+            
             lifeCanvas.transform.localPosition = Vector3.up * 3; // Puoi regolare questa posizione a seconda delle tue esigenze
 
             // Aggiungi il cuore all'array hearts
             hearts[i] = heart;
 
-            // Imposta il cuore come figlio di un oggetto chiamato "lives"
             heart.transform.SetParent(lives.transform);
-            var initPos = -heart.transform.right * 100;
-            // Posiziona il cuore nel centro dell'oggetto "lives"
-            heart.transform.localPosition = initPos + heart.transform.right * i * 100;
-
-            // Fai sì che il cuore sia sempre rivolto verso la camera principale
-            heart.transform.LookAt(Camera.main.transform);
-
+                      
             // Scala del cuore
             heart.transform.localScale = new Vector3(0, 0, 0);
             heart.SetActive(false);

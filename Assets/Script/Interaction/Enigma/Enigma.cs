@@ -14,6 +14,8 @@ public  class Enigma : MonoBehaviour
     private GameObject objReward;
     [SerializeField]
     private GameObject obstacle;
+    [SerializeField]
+    private GameObject water;
 
     [SerializeField]
     public bool order = false;
@@ -43,25 +45,29 @@ public  class Enigma : MonoBehaviour
             initPosition = obstacle.transform.localPosition;
     }
 
+    private bool end = false;
     private void Update()
     {
-        if (complete && disableObstacle)
+        if (!end)
         {
-            Debug.Log(obstacle.transform.localPosition + " " + targetPosition);
-            //Vector3 moveDirection = (targetPosition - obstacle.transform.localPosition).normalized;
+            if (complete && disableObstacle)
+            {
+                
+                //Vector3 moveDirection = (targetPosition - obstacle.transform.localPosition).normalized;
 
-            obstacle.transform.localPosition = Vector3.MoveTowards(obstacle.transform.localPosition, targetPosition, animSpeed* 20 * Time.deltaTime);
-        }
-        else if (!complete && disableObstacle)
-        {
-            //Vector3 moveDirection = (initPosition - obstacle.transform.localPosition).normalized;
-            obstacle.transform.localPosition = Vector3.MoveTowards(obstacle.transform.localPosition, initPosition, animSpeed * 20 * Time.deltaTime);
-        }
+                obstacle.transform.localPosition = Vector3.MoveTowards(obstacle.transform.localPosition, targetPosition, animSpeed * 20 * Time.deltaTime);
+            }
+            else if (!complete && disableObstacle)
+            {
+                //Vector3 moveDirection = (initPosition - obstacle.transform.localPosition).normalized;
+                obstacle.transform.localPosition = Vector3.MoveTowards(obstacle.transform.localPosition, initPosition, animSpeed * 20 * Time.deltaTime);
+            }
 
-        if (reward && complete)
-        {
-            objReward.SetActive(true);
-            Debug.Log("win");
+            if (reward && complete)
+            {
+                objReward.SetActive(true);
+                end = true;
+            }
         }
     }
 

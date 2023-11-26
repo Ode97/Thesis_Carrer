@@ -12,6 +12,7 @@ public class EarthElement : MagicElement
     {
         earthObject = initObj;
     }
+
     override
     public void ApplyEffect()
     {        

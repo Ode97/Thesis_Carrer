@@ -8,6 +8,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
+using Unity.VisualScripting;
 
 public class GameSettings : MonoBehaviour
 {
@@ -96,7 +97,7 @@ public class GameSettings : MonoBehaviour
             }
 
             GameManager.instance.p.Kill();
-            Application.Quit();
+            //Application.Quit();
         }
         else
         {

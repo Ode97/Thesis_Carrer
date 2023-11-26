@@ -9,7 +9,9 @@ public class PressurePlate : MonoBehaviour
     private Vector3 initPosition;
     public Vector3 targetPosition;
     public float animSpeed = 1;
+    public bool enigma = false;
     private int i = 0;
+    EnigmaObj enim;
 
     // Start is called before the first frame update
     void Start()
@@ -17,6 +19,7 @@ public class PressurePlate : MonoBehaviour
         //enigmaChecker = transform.parent.GetComponent<Enigma>();
         //animator = obstacle.GetComponent<Animator>();
         initPosition = obstacle.transform.localPosition;
+        enim = GetComponent<EnigmaObj>();
     }
 
     // Update is called once per frame
@@ -36,14 +39,25 @@ public class PressurePlate : MonoBehaviour
         }
     }
 
+    private bool stop = false;
     private void OnCollisionEnter(Collision other)
     {
         var g = other.gameObject;
         
-        if (g.GetComponent<Rigidbody>() && g.GetComponent<Rigidbody>().mass > 0.5f)
+        if (g.GetComponent<Rigidbody>() && g.GetComponent<Rigidbody>().mass > 0.5f && !stop)
         {
             i++;
-            open = true;
+            if (enigma)
+            {
+                
+                enim.Interaction(Element.None);
+                stop = true;
+                
+            }
+            else
+            {
+                open = true;
+            }
             
         }
     }
@@ -51,11 +65,12 @@ public class PressurePlate : MonoBehaviour
     private void OnCollisionExit(Collision collision)
     {
         var g = collision.gameObject;
-        if (g.GetComponent<Rigidbody>() && g.GetComponent<Rigidbody>().mass > 0.5f)
+        if (g.GetComponent<Rigidbody>() && g.GetComponent<Rigidbody>().mass > 0.5f && !stop)
         {
             i--;
             if(i == 0)
                 open = false;
+            
         }
     }
 

@@ -4,15 +4,15 @@ using UnityEngine;
 
 public static class Constants
 {
-    //public static float airPower = 20;
-
     public static int terrainLayer = 3;
     public static int waterLayer = 4;
     public static int intObjLayer = 6;
     public static int protagonistLayer = 7;
     public static int enemyLayer = 8;
     public static int bulletLayer = 9;
+    public static int plantLayer = 10;
     public static int checkpointLayer = 11;
+    public static int bossTriggerLayer = 12;
     public static int diamondLayer = 13;
 
 

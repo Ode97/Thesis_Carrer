@@ -347,7 +347,26 @@ public class Character : MonoBehaviour
 
     private Vector3 checkpoint;
     private void OnCollisionEnter(Collision collision)
-    {       
+    {
+
+        if(collision.gameObject.layer == Constants.bulletLayer)
+        {
+            health -= 1;
+
+            Life();
+
+            Destroy(hearts[health]);
+            var rb = collision.transform.GetComponent<Rigidbody>();
+            Debug.Log("aaa");
+            if (!rb.isKinematic) 
+            {
+                /*collision.transform.GetComponent<Rigidbody>().velocity = Vector3.zero;
+                collision.transform.GetComponent<Rigidbody>().isKinematic = true;
+                collision.transform.SetParent(transform);
+                StartCoroutine(DestroyBullet(collision.gameObject));*/
+                Destroy(collision.gameObject);
+            }
+        }
 
         if (collision.gameObject.layer == Constants.enemyLayer && health > 0)
         {
@@ -363,6 +382,8 @@ public class Character : MonoBehaviour
             Destroy(collision.gameObject);
         }
     }
+
+    
 
     private void OnTriggerEnter(Collider other)
     {

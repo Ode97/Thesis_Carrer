@@ -10,6 +10,9 @@ public class MenuManager : MonoBehaviour
     private GameObject earthPanel;
 
     [SerializeField]
+    private GameObject mapCanvas;
+
+    [SerializeField]
     private Canvas mainCanvas;
 
     [SerializeField]
@@ -59,9 +62,27 @@ public class MenuManager : MonoBehaviour
     public void OpenEarthMenu()
     {
         earthPanel.SetActive(true);
-        mainCanvas.enabled = false;
+        //mainCanvas.enabled = false;
         menuOpen = true;
     }
+
+    public void OpenMap()
+    {
+        mapCanvas.SetActive(true);
+        //mainCanvas.enabled = false;
+        Debug.Log("aa");
+        //menuOpen = true;
+        
+    }
+    public void CloseMap()
+    {
+
+        mapCanvas.SetActive(false);
+        mainCanvas.enabled = true;
+        //menuOpen = false;
+        
+    }
+
 
     public void CloseEarthMenu()
     {

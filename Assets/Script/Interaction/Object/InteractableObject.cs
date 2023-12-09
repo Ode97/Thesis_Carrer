@@ -103,6 +103,7 @@ public abstract class InteractableObject : MonoBehaviour
         RaycastHit hit;
         Physics.Raycast(ray, out hit, Mathf.Infinity);
         GameManager.instance.outlineEffect.transform.position = hit.point + new Vector3(0, 2, 0);
+        //Debug.Log(name);
     }
 
     void OnMouseExit()

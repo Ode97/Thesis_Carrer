@@ -54,7 +54,6 @@ public class AirElement : MagicElement
                 StartCoroutine(Wait2());
                 Destroy(actualeffect);
                 Debug.Log("a");
-                GameManager.instance.character.StopPlt();
             }                       
         }
     }

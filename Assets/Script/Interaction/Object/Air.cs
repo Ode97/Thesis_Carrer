@@ -65,11 +65,26 @@ public class Air : InteractableObject
                 else
                     moveDirection = (destination - transform.position).normalized;
 
-                direction = moveDirection * 50;
+                direction = (moveDirection * 50);
                 
                 rb.AddForce(direction, ForceMode.Force);
-                if(movingPlatform)
-                    GameManager.instance.character.AddForce(direction);
+
+
+                //var r = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(new Vector3(direction.x, transform.position.y, direction.z)), Time.deltaTime * 20);
+                
+
+                if (movingPlatform)
+                {
+
+                    //transform.rotation = new Quaternion(0, r.y, 0, r.w);
+                    foreach (GameObject go in onPlatform)
+                    {
+                        Debug.Log(onPlatform.Count);
+                        var rbo = go.GetComponent<Rigidbody>();
+                        rbo.AddForce(direction, ForceMode.Force);
+                        //go.transform.rotation = transform.rotation;
+                    }
+                }
             }           
         }
         return true;
@@ -97,10 +112,9 @@ public class Air : InteractableObject
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (movingPlatform && collision.gameObject.layer != 12 && !collision.gameObject.GetComponent<WaterObj>() && !collision.gameObject.GetComponent<Terrain>())
-        {
-            Debug.Log(collision.gameObject.name);
-
+        var g = collision.gameObject;
+        if (movingPlatform && !onPlatform.Contains(g) && !g.GetComponent<WaterObj>() && g.layer != Constants.terrainLayer && g.layer != 0)
+        {            
             //collision.gameObject.transform.SetParent(transform);
             onPlatform.Add(collision.gameObject);
             GameManager.instance.character.SetCheckpoint(transform.position);
@@ -118,7 +132,6 @@ public class Air : InteractableObject
 
     private void OnCollisionExit(Collision collision)
     {
-        //if (collision.gameObject.layer != LayerMask.NameToLayer("Terrain") && !collision.gameObject.GetComponent<WaterObj>())
-        //    collision.gameObject.transform.SetParent(null);
+        
     }
 }

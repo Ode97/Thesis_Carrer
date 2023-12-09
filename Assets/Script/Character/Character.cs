@@ -5,7 +5,6 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.TextCore.Text;
 using UnityEngine.UI;
-using static UnityEngine.GraphicsBuffer;
 
 public class Character : MonoBehaviour
 {
@@ -32,7 +31,7 @@ public class Character : MonoBehaviour
     private GameObject water;
     private Rigidbody rb;
     private int diamond = 0;
-
+    private bool moving = false;
 
     // Start is called before the first frame update
     void Start()
@@ -41,7 +40,7 @@ public class Character : MonoBehaviour
         movment = GetComponent<Movment>();
         hearts = new GameObject[health];
         rb = GetComponent<Rigidbody>();
-        
+        lastPos = transform.position;
         Reset();
     }
 
@@ -57,7 +56,7 @@ public class Character : MonoBehaviour
             GameObject heart = Instantiate(h, Vector3.zero, Quaternion.identity);
 
             // Posiziona il Canvas sopra la testa del personaggio
-            lifeCanvas.transform.SetParent(transform);
+            //lifeCanvas.transform.SetParent(transform);
             
             lifeCanvas.transform.localPosition = Vector3.up * 3; // Puoi regolare questa posizione a seconda delle tue esigenze
 
@@ -98,7 +97,7 @@ public class Character : MonoBehaviour
             Vector2 canvasSize = canvasRect.sizeDelta;
 
             // Calcola lo spazio tra i cuori
-            float spacing = 100f; // Puoi regolare lo spaziamento come preferisci
+            float spacing = 100f;
 
             // Calcola la larghezza totale dei cuori e dello spaziamento
             float totalWidth = (activeHearts - 1) * spacing;
@@ -106,6 +105,7 @@ public class Character : MonoBehaviour
             // Calcola la posizione iniziale per centrare i cuori
             float startX = 0 - totalWidth / 2;
 
+            lifeCanvas.transform.rotation = transform.rotation;
             // Posiziona i cuori
             for (int i = 0; i < activeHearts; i++)
             {
@@ -115,6 +115,8 @@ public class Character : MonoBehaviour
                 hearts[i].SetActive(true);
                 heartAnim = true;
             }
+
+            
         }
     }
 
@@ -128,9 +130,20 @@ public class Character : MonoBehaviour
     }
 
     private bool dead = false;
+    private Vector3 lastPos;
     // Update is called once per frame
     void Update()
     {
+
+        if (lastPos != transform.position)
+        {
+            moving = true;
+        }
+        else
+            moving = false;
+
+        lastPos = transform.position;
+
         if (health > 0)
         {
             if (heartAnim && hearts[0].transform.localScale != Vector3.one)
@@ -203,7 +216,7 @@ public class Character : MonoBehaviour
 
     public bool IsMoving()
     {
-        return movment.IsWalking() || movingPlt;
+        return moving;
     }
 
     public void MoveToDestination(Vector3 point)
@@ -349,7 +362,7 @@ public class Character : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
 
-        if(collision.gameObject.layer == Constants.bulletLayer)
+        if(collision.gameObject.layer == Constants.bulletLayer && health > 0)
         {
             health -= 1;
 
@@ -397,17 +410,6 @@ public class Character : MonoBehaviour
     {
         Debug.Log("checkpoint");
         checkpoint = point;
-    }
-
-    private bool movingPlt = true;
-    public void AddForce(Vector3 force)
-    {
-        rb.AddForce(force, ForceMode.Force);
-        movingPlt = true;
-    }
-    public void StopPlt()
-    {
-        movingPlt = false;
     }
 
     private void WaterRespawn()

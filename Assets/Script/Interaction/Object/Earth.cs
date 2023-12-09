@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Earth : InteractableObject
@@ -38,7 +39,7 @@ public class Earth : InteractableObject
     public bool EarthInteraction(GameObject obj, Vector3 pos)
     {
         
-        if (gameObject.layer == LayerMask.NameToLayer("Terrain"))
+        if (gameObject.layer == Constants.terrainLayer)
             t = Instantiate(obj, transform);
         else
             t = Instantiate(obj);
@@ -48,6 +49,8 @@ public class Earth : InteractableObject
         t.transform.position = pos;
         
         t.transform.localScale = new Vector3(0, 0, 0);
+        var c = GameManager.instance.character.transform.position;
+        t.transform.LookAt(new Vector3(c.x, t.transform.position.y, c.z));
         
         t.layer = Constants.intObjLayer;
         

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PressurePlate : MonoBehaviour
@@ -7,6 +8,7 @@ public class PressurePlate : MonoBehaviour
     public GameObject obstacle;
     private bool open = false;
     private Vector3 initPosition;
+    private Quaternion initRotation;
     public Vector3 targetPosition;
     public float animSpeed = 1;
     public bool enigma = false;
@@ -19,9 +21,17 @@ public class PressurePlate : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //enigmaChecker = transform.parent.GetComponent<Enigma>();
-        //animator = obstacle.GetComponent<Animator>();
-        initPosition = obstacle.transform.localPosition;
+        if (!physics)
+        {
+            initPosition = obstacle.transform.localPosition;
+            initRotation = obstacle.transform.localRotation;
+        }
+        else
+        {
+            initPosition = obstacle.transform.position;
+            initRotation = obstacle.transform.rotation;
+        }
+        initRotation = obstacle.transform.rotation;
         enim = GetComponent<EnigmaObj>();
         if(physics)
             rb = obstacle.GetComponent<Rigidbody>();
@@ -35,58 +45,98 @@ public class PressurePlate : MonoBehaviour
         {
             if (!physics)
             {
-                Vector3 moveDirection = (targetPosition - obstacle.transform.position).normalized;
+                Vector3 moveDirection = (targetPosition - obstacle.transform.localPosition).normalized;
 
                 obstacle.transform.localPosition = Vector3.MoveTowards(obstacle.transform.localPosition, targetPosition, animSpeed * moveDirection.magnitude * Time.deltaTime);
             }
         }
         else if(returnBack)
         {
-
+            
             if (!physics)
             {
-                Vector3 moveDirection = (initPosition - transform.position).normalized;
+                Vector3 moveDirection = (initPosition - obstacle.transform.localPosition).normalized;
                 obstacle.transform.localPosition = Vector3.MoveTowards(obstacle.transform.localPosition, initPosition, animSpeed * moveDirection.magnitude * Time.deltaTime);
                 
             }
         }
     }
 
-    private bool stop = false;
     private void OnCollisionEnter(Collision other)
     {
-        var g = other.gameObject;
-        
-        if (g.GetComponent<Rigidbody>() && g.GetComponent<Rigidbody>().mass > 0.5f && !stop)
+        if (!physics)
         {
-            i++;
-            if (enigma)
-            {
-                
-                enim.Interaction(Element.None);
-                stop = true;
-                
-            }
-            else
+            var g = other.gameObject;
+
+            if (g.GetComponent<Rigidbody>() && g.GetComponent<Rigidbody>().mass > 0.5f && !stop)
             {
 
-
-                if (physics)
+                i++;
+                if (enigma)
                 {
-                    Vector3 moveDirection = (targetPosition - obstacle.transform.localPosition).normalized;
-                   
-                    var v = new Vector3(0, 0, moveDirection.x);
-                    Debug.Log(obstacle.transform.localRotation.eulerAngles.y);
-                    //if (obstacle.transform.localRotation.eulerAngles.y < 0)
-                    //    v = -1 * v;
 
-                    Debug.Log(v);
-                    rb.velocity = v * animSpeed;
+                    enim.Interaction(Element.None);
+                    stop = true;
+
                 }
-                open = true;
+                else
+                {
+                    
+                    open = true;
+                }
+
             }
-            
         }
+    }
+
+    private bool stop = false;
+    private void OnCollisionStay(Collision other)
+    {
+        if (physics)
+        {
+            var g = other.gameObject;
+
+            if (g.GetComponent<Rigidbody>() && g.GetComponent<Rigidbody>().mass > 0.5f && !stop)
+            {
+
+                i++;
+                if (enigma)
+                {
+
+                    enim.Interaction(Element.None);
+                    stop = true;
+
+                }
+                else
+                {
+                    if (physics)
+                    {
+                        if (!stopClone)
+                            StartCoroutine(Clone(obstacle));
+
+                        Vector3 moveDirection = (targetPosition - obstacle.transform.localPosition).normalized;
+
+                        var v = new Vector3(0, 0, moveDirection.x);
+
+                        rb.velocity = v * animSpeed;
+                    }
+                    open = true;
+                }
+
+            }
+        }
+    }
+
+    private bool stopClone = false;
+    private IEnumerator Clone(GameObject g)
+    {
+        stopClone = true;
+        yield return new WaitForSeconds(0.5f);
+        stopClone = false;
+        obstacle = Instantiate(g, initPosition, initRotation, g.transform.parent);
+        
+        rb = obstacle.GetComponent<Rigidbody>();
+        rb.isKinematic = false;
     }
 
     private void OnCollisionExit(Collision collision)
@@ -95,8 +145,11 @@ public class PressurePlate : MonoBehaviour
         if (g.GetComponent<Rigidbody>() && g.GetComponent<Rigidbody>().mass > 0.5f && !stop)
         {
             i--;
-            if(i == 0)
+            
+            if (i == 0)
+            {                
                 open = false;
+            }
             
         }
     }

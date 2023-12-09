@@ -22,7 +22,6 @@ public class Movment : MonoBehaviour
     public float groundDistance = 0.4f;
     public LayerMask groundMask;
 
-    Vector3 velocity;
     bool isGrounded;
 
     private void Start()
@@ -81,10 +80,7 @@ public class Movment : MonoBehaviour
         }        
     }
 
-    public bool IsWalking()
-    {
-        return isWalking;
-    }
+    
 
     #if UNITY_EDITOR
     private void OnDrawGizmos()

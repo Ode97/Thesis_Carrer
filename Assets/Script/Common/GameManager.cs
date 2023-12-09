@@ -27,18 +27,7 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
-        //p.StartInfo.FileName = "C:\\Users\\Celeste\\Desktop\\EyeTrackerInteraction\\Blank-ADMI\\bin\\Release\\BlankADMI.exe";
-
-        //p.StartInfo.FileName = "D:\\EyeTrackerInteraction\\Blank-ADMI\\bin\\Release\\BlankADMI.exe";
-        /*var filePath = "EyeTrackerInteraction\\Blank-ADMI\\bin\\Release\\BlankADMI.exe";
-        if (System.IO.File.Exists(filePath))
-        {
-            p = new Process();
-            p.StartInfo.UseShellExecute = true;
-            p.StartInfo.FileName = filePath;
-
-            p.Start();
-        }*/
+        
         if (instance == null)
             instance = this;
         else if (instance != this)

@@ -14,6 +14,8 @@ public class MenuManager : MonoBehaviour
 
     [SerializeField]
     private Canvas mainCanvas;
+    [SerializeField]
+    private Canvas startMenuCanvas;
 
     [SerializeField]
     private GameObject icons;
@@ -24,6 +26,11 @@ public class MenuManager : MonoBehaviour
     public static MenuManager instance = null;
 
     private bool menuOpen = false;
+
+    [SerializeField]
+    private Camera mainCamera;
+    [SerializeField]
+    private Camera menuCamera;
 
     void Awake()
     {
@@ -125,5 +132,16 @@ public class MenuManager : MonoBehaviour
     public void CloseSettings()
     {
         settingsPanel.SetActive(false);
+    }
+
+    public void StartNewGame()
+    {
+        menuCamera.gameObject.SetActive(false);
+        startMenuCanvas.gameObject.SetActive(false);
+    }
+
+    public void ContinueGame()
+    {
+
     }
 }

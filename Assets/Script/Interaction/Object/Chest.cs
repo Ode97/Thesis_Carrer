@@ -48,4 +48,5 @@ public class Chest : InteractableObject
     {
         return false;
     }
+
 }

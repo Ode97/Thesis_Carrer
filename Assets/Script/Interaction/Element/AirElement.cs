@@ -66,7 +66,7 @@ public class AirElement : MagicElement
 
     private IEnumerator Wait2()
     {
-        yield return new WaitForFixedUpdate();
+        yield return new WaitForSeconds(0.3f);
         GameManager.instance.stopLogic = false;
     }
 }

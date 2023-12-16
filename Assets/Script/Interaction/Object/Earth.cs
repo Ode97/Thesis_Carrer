@@ -39,10 +39,10 @@ public class Earth : InteractableObject
     public bool EarthInteraction(GameObject obj, Vector3 pos)
     {
         
-        if (gameObject.layer == Constants.terrainLayer)
+        /*if (gameObject.layer == Constants.terrainLayer)
             t = Instantiate(obj, transform);
-        else
-            t = Instantiate(obj);
+        else*/
+        t = Instantiate(obj);
 
         scaleTarget = t.GetComponent<EarthPlant>().GetScale();
 

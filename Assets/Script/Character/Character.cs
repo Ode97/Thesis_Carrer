@@ -273,7 +273,6 @@ public class Character : MonoBehaviour
     public void SetObject(InteractableObject obj)
     {
         this.obj = obj;
-        //Debug.Log(obj.gameObject.name);
     }
 
     public InteractableObject GetObject()
@@ -284,13 +283,15 @@ public class Character : MonoBehaviour
     public void Interaction(RaycastHit hit)
     {
         if (activeElement)
-        {           
+        {
+            //Debug.Log(obj.name);
             actualElement.SetObject(obj);
             actualElement.SetPosition(hit.point);
             actualElement.ApplyEffect();
         }
         else
         {
+            Debug.Log(obj.gameObject.name);
             obj.Interaction();
         }
     }
@@ -358,6 +359,16 @@ public class Character : MonoBehaviour
         attacking = false;
     }
 
+    public int GetDiamonds()
+    {
+        return diamond;
+    }
+
+    public void SetDiamonds(int d)
+    {
+        diamond = d;
+    }
+
     private Vector3 checkpoint;
     private void OnCollisionEnter(Collision collision)
     {
@@ -370,7 +381,7 @@ public class Character : MonoBehaviour
 
             Destroy(hearts[health]);
             var rb = collision.transform.GetComponent<Rigidbody>();
-            Debug.Log("aaa");
+            
             if (!rb.isKinematic) 
             {
                 /*collision.transform.GetComponent<Rigidbody>().velocity = Vector3.zero;
@@ -424,7 +435,7 @@ public class Character : MonoBehaviour
 
         if (transform.position.y < water.transform.position.y - 5)
         {
-            Debug.Log("water");
+            
             StartCoroutine(Respawn());
         }
         else if(transform.position.y > water.transform.position.y + 2)

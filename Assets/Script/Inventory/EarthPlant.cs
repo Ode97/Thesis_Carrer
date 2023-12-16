@@ -6,6 +6,8 @@ public class EarthPlant : InventoryObject
 {
     [SerializeField]
     private float scale;
+    [SerializeField]
+    private int index;
     public override void Chosen()
     {
         EarthElement.earthObject = this.gameObject;
@@ -26,5 +28,11 @@ public class EarthPlant : InventoryObject
     public Vector3 GetScale()
     {
         return new Vector3 (scale, scale, scale);
+    }
+    
+
+    public int GetIndex()
+    {
+        return index;
     }
 }

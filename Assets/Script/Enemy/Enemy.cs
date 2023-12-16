@@ -4,6 +4,7 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Enemy : MonoBehaviour
 {
@@ -14,8 +15,9 @@ public class Enemy : MonoBehaviour
     public float health = 1;
     private Character character;
     public Element lowElement;
-    
-    
+    private NavMeshAgent agent;
+
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -74,6 +76,10 @@ public class Enemy : MonoBehaviour
     private void Start()
     {
         character = FindObjectOfType<Character>();
+        agent = GetComponent<NavMeshAgent>();
+
+        agent.isStopped = false;
+        agent.SetDestination(idlePositions[0]);
     }
 
     private void HitAnim()
@@ -201,7 +207,7 @@ public class Enemy : MonoBehaviour
     private float distanceToCharacter;
     public float distanceForAttack;
     public float rotationSpeed = 5f;
-    public float speed = 5f;
+    //public float speed = 5f;
     public Vector3[] idlePositions;
     private int i = 0;
 
@@ -220,7 +226,7 @@ public class Enemy : MonoBehaviour
             detected = false;
 
         fsm.UpdateFSM();
-        //Debug.Log(fsm.currentState.name);
+        //Debug.Log(gameObject.name + " " + fsm.currentState.name);
     }
 
     private void Chase()
@@ -232,13 +238,16 @@ public class Enemy : MonoBehaviour
             velocity.y = -2f;
         }*/
 
-        RotateTowardsCharacter();
+        /*RotateTowardsCharacter();
 
         Vector3 moveDirection = (character.transform.position - transform.position).normalized;
 
 
         Vector3 move = moveDirection * speed * Time.deltaTime;
-        transform.position = Vector3.MoveTowards(transform.position, character.transform.position, move.magnitude);
+        transform.position = Vector3.MoveTowards(transform.position, character.transform.position, move.magnitude);*/
+
+        agent.isStopped = false;
+        agent.SetDestination(character.transform.position);
     }
 
     private void Move()
@@ -250,21 +259,30 @@ public class Enemy : MonoBehaviour
             velocity.y = -2f;
         }*/
 
-        if (Vector3.Distance(transform.position, idlePositions[i]) > 1)
+        
+        if (Vector3.Distance(transform.position, idlePositions[i]) < 1f)
         {
-            RotateCharacter(idlePositions[i]);
+            
+            
+            i += 1;
+            if (i >= idlePositions.Length)
+                i = 0;
+            /*RotateCharacter(idlePositions[i]);
 
             Vector3 moveDirection = (idlePositions[i] - transform.position).normalized;
 
 
             Vector3 move = moveDirection * speed * Time.deltaTime;
-            transform.position = Vector3.MoveTowards(transform.position, idlePositions[i], move.magnitude);
-        }
-        else
-            i+=1;
+            transform.position = Vector3.MoveTowards(transform.position, idlePositions[i], move.magnitude);*/
+            //Debug.Log(Vector3.Distance(transform.position, idlePositions[i]));
 
-        if (i == idlePositions.Length)
-            i = 0;
+            agent.isStopped = false;
+            agent.SetDestination(idlePositions[i]);
+        }
+        
+
+
+
     }
 
     private void RotateTowardsCharacter()

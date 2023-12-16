@@ -6,58 +6,31 @@ using UnityEngine.Rendering;
 [System.Serializable]
 public class Data
 {
-    public int wood = 0;
+    //0 = fire(open/close), 1 = water(rise), 2 = air(pos, rot), 3 = earthPlant (pos, rot)
+    
+    public int diamonds;
+    public float[] playerPos = new float[3];
+    public float[] playerRot = new float[3];
+    public float[,,] earthPos;
+    public float[,,] earthRot;
+    public float[,] airPos;
+    public float[,] airRot;
+    public int[] fireData;
+    public bool[] waterData;
 
-    public int people = 0;
-
-    public int jobs = 0;
-
-    public int entertainment = 0;
-
-    public int workerNum = 0;
-
-    public int food = 0;
-
-    public bool[,] street = new bool[100, 4];
-
-    public int[] layers = new int[100];
-
-    public int[] buildings = new int[100];
-
-    public int[] rotation = new int[100];
-
-    public float time = 0;
-
-    public int[] workerPos = new int[5];
-
-    public bool[,] endDay;
-    public bool[,] start;
-    public int[,] type;
-    public int[,] toX;
-    public int[,] toY;
-    public int[,] happiness;
-    public bool[,] jobFound;
-    public bool[,] eat;
-    public bool[,] work;
-    public bool[,] stillWork;
-    public bool[,] justEat;
-    public int[,,] hj;
-
-
-    public Data()
+    public Data(int d, float[] pPos, float[] pRot, float[,,] pE, float[,,] rE, float[,] aP, float[,] aR, int[] fD, bool[] wD)
     {
-        endDay = new bool[100, 30];
-        start = new bool[100, 30];
-        type = new int[100, 30];
-        toX = new int[100, 30];
-        toY = new int[100, 30];
-        happiness = new int [100, 30];
-        jobFound = new bool[100, 30];
-        eat = new bool[100, 30];
-        work = new bool[100, 30];
-        stillWork = new bool[100, 30];
-        justEat = new bool[100, 30];
-        hj = new int[100, 30, 2];
+
+        earthPos = pE;
+        earthRot = rE;
+        playerPos = pPos;
+        playerRot = pRot;
+        diamonds = d;
+        airPos = aP;
+        airRot = aR;
+        fireData = fD;
+        waterData = wD;
+
     }
     
     

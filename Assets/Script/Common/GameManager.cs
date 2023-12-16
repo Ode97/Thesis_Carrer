@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine.EventSystems;
 using UnityEngine;
 using System.Diagnostics;
+using Unity.VisualScripting;
 
 public enum CameraMode {Strategica, Vista}
 
@@ -20,6 +21,7 @@ public class GameManager : MonoBehaviour
     public bool stopLogic = false;
     public bool fixing = false;
     public Process p;
+    public InteractableObject initTerrain;
     
 
     // Start is called before the first frame update
@@ -34,14 +36,17 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
 
         outlineEffect = Instantiate(outlineEffect);
+        outlineEffect.SetActive(false);
+        SetObject(initTerrain);
+        stopLogic = true;
     }
 
 
         // Start is called before the first frame update
     void Start()
     {
-        var t = FindObjectOfType<Terrain>();
-        SetObject(t.GetComponent<InteractableObject>());
+        
+        
     }
 
     // Update is called once per frame
@@ -89,8 +94,9 @@ public class GameManager : MonoBehaviour
                             if (hit.collider.GetComponent<InteractableObject>())
                             {
                                 character.Interaction(hit);
-                                return;
+                                
                             }
+                            return;
                         }
 
                         if (actualMode == CameraMode.Strategica)
@@ -117,21 +123,25 @@ public class GameManager : MonoBehaviour
 
     public void SetObject(InteractableObject obj)
     {
-        if (!stopLogic) 
-        { 
-            //Debug.Log(obj.name);
-            if (!justChanged )
+        if (!stopLogic)
+        {
+            if (!justChanged)
             {
-                //Debug.Log("a" + obj.name);
-
                 justChanged = true;
+                
                 character.SetObject(obj);
                 //StartCoroutine(EndSelect());
             }
-            else if(!objs.Contains(obj))
+            else if (!objs.Contains(obj))
+            {
                 objs.Add(obj);
-        }else
+            }
+        }
+        else
+        {
+            
             objs.Add(obj);
+        }
 
         return;
     }
@@ -162,6 +172,8 @@ public class GameManager : MonoBehaviour
     {
         if (objs.Count > 0)
         {
+            //UnityEngine.Debug.Log(objs.Count);
+            //UnityEngine.Debug.Log(objs[objs.Count - 1].name);
             character.SetObject(objs[objs.Count - 1]);
             objs.Clear();            
         }
@@ -180,5 +192,46 @@ public class GameManager : MonoBehaviour
     {
         actualMode = mode;
         cameraHandler.SetMode(mode);
+    }
+
+    public void SetLoad(int d, float[] pPos, float[] pRot, float[,,] pE, float[,,] rE, float[,] aP, float[,] aR, int[] fD, bool[] wD)
+    {
+        character.SetDiamonds(d);
+
+        character.transform.position = new Vector3(pPos[0], pPos[1], pPos[2]);
+        character.transform.rotation = new Quaternion(pRot[0], pRot[1], pRot[2], 1);
+
+        var x = FindObjectsOfType<Air>();
+        var i = 0;
+        foreach (Air a in x)
+        { 
+            a.gameObject.transform.position = new Vector3(aP[i, 0], aP[i, 1], aP[i, 2]);
+            a.gameObject.transform.rotation = new Quaternion(aR[i, 0], aR[i, 1], aR[i, 2], 1);
+            i++;
+        }
+
+        var y = FindObjectsOfType<Fire>();
+        i = 0;
+        foreach (Fire f in y)
+        {
+            if (fD[i] == 1)
+            {
+                f.FireInteraction();
+            }
+            i++;
+        }
+
+        var z = FindObjectsOfType<WaterObj>();
+        i = 0;
+        foreach (WaterObj w in z)
+        {
+            if (wD[i])
+            {
+                w.WaterInteraction();
+            }
+            i++;
+        }
+
+
     }
 }

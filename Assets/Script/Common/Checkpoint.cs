@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEditor.PlayerSettings;
 
 public class Checkpoint : MonoBehaviour
 {
@@ -12,6 +11,13 @@ public class Checkpoint : MonoBehaviour
     private TextMeshProUGUI areanNameMainCanvas;
     [SerializeField]
     private Canvas main;
+    private SaveCity sc;
+
+    private void Awake()
+    {
+        sc = FindObjectOfType<SaveCity>();
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if(areanNameMainCanvas != null)
@@ -21,6 +27,8 @@ public class Checkpoint : MonoBehaviour
         if (other.gameObject.layer == Constants.protagonistLayer)
         {
             GameManager.instance.character.SetCheckpoint(transform.position);
+            sc.SaveState();
+
             if (areaName != null)
             {
                 areaName.gameObject.SetActive(true);
@@ -47,19 +55,22 @@ public class Checkpoint : MonoBehaviour
         areanNameMainCanvas = Instantiate(areaName, main.transform);
        
         areanNameMainCanvas.transform.localScale = Vector3.one;
-        RectTransform canvasRect = main.transform.GetComponent<RectTransform>();
-        Vector2 canvasSize = canvasRect.sizeDelta;
+        //RectTransform canvasRect = main.transform.GetComponent<RectTransform>();
+        //Vector2 canvasSize = canvasRect.sizeDelta;
 
-        var v = canvasSize/2;
+        Vector2 screenSize = new Vector2(Screen.width, Screen.height);
+
+        var v = screenSize/2;
 
         v.y += 100;
 
         areanNameMainCanvas.transform.position = v;
         increaseScale = true;
+
         yield return new WaitForSeconds(5);
 
         increaseScale = false;
-        Destroy(areanNameMainCanvas);
-
+        Destroy(areanNameMainCanvas.gameObject);
+        
     }
 }

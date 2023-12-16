@@ -21,6 +21,7 @@ public class Movment : MonoBehaviour
     public Transform groundCheck;
     public float groundDistance = 0.4f;
     public LayerMask groundMask;
+    private Rigidbody rb;
 
     bool isGrounded;
 
@@ -30,6 +31,7 @@ public class Movment : MonoBehaviour
         ps = targetIndicator.GetComponent<ParticleSystem>();
         ps.Pause();
         targetIndicator.SetActive(false);
+        rb = GetComponent<Rigidbody>();
     }
 
     private void Update()
@@ -40,11 +42,7 @@ public class Movment : MonoBehaviour
             Vector2 targetPos = new Vector2(targetPosition.x, targetPosition.z);
             if (Vector2.Distance(character, targetPos) < 0.5 && isWalking)
             {
-                isWalking = false;
-                characterAnimator.ResetTrigger("Move");
-                characterAnimator.SetTrigger("Idle");
-                ps.Pause();
-                targetIndicator.SetActive(false);
+                DisableMove();
             }           
 
             if (isWalking)
@@ -61,14 +59,7 @@ public class Movment : MonoBehaviour
                         return;
                     }
                 }
-
-                isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
-
-                /*if (isGrounded && velocity.y < 0)
-                {
-                    velocity.y = -2f;
-                }*/
-
+                
                 Vector3 moveDirection = (targetPosition - transform.position).normalized;
 
                 Vector3 move = moveDirection * speed * Time.deltaTime;
@@ -77,7 +68,14 @@ public class Movment : MonoBehaviour
                 //velocity.y += gravity * Time.deltaTime;
                 
             }
-        }        
+        }
+
+        isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
+
+        if (!isGrounded && rb.velocity.y < 0)
+        {
+            rb.velocity = new Vector3(rb.velocity.x, 1.1f * rb.velocity.y, rb.velocity.z);
+        }
     }
 
     
@@ -103,6 +101,9 @@ public class Movment : MonoBehaviour
     {
 
         isWalking = false;
+        characterAnimator.ResetTrigger("Move");
+        characterAnimator.SetTrigger("Idle");
+        ps.Pause();
         targetIndicator.SetActive(false);
     }
 

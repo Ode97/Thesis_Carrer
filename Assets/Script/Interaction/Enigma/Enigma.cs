@@ -92,7 +92,13 @@ public  class Enigma : MonoBehaviour
     private IEnumerator WaitError()
     {
         yield return new WaitForSeconds(0.5f);
-        EventManager.TriggerEvent("WrongFire" + gameObject.name);
+        var intObj = GetComponentsInChildren<InteractableObject>();
+        
+        foreach(InteractableObject o in intObj)
+        {
+            EventManager.TriggerEvent("WrongEnigma" + o.name);
+        }
+        
     }
 
     

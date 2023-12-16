@@ -80,10 +80,10 @@ public class EnigmaObj : MonoBehaviour
         enigmaChecker = enigma;
     }
 
-    public bool active = true;
+    private bool active = true;
     public void Interaction(Element interactionElement)
     {
-
+        
         if (interactionElement == element && active) {           
             if (enigmaChecker.position)
                 enigmaChecker.ElementPositionCheck(value);

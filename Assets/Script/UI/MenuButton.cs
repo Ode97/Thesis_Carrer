@@ -11,6 +11,8 @@ public class MenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     private bool start = false;
     public bool activateMainCanvas = false;
     public bool closeGame = false;
+    public bool newGame = false;
+    public bool continueGame = false;
 
     private void Update()
     {
@@ -19,18 +21,29 @@ public class MenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             timer += Time.unscaledDeltaTime;
             if (timer > GameManager.instance.fixingTime)
             {
-                Debug.Log(timer);
                 Reset();
-                if (!closeGame)
+
+                if (newGame)
                 {
-                    if (menu.activeSelf)
-                        CloseMenu();
-                    else
-                        OpenMenu();
+                    NewGame();
+                }else if (continueGame)
+                {
+                    ContinueGame();
                 }
                 else
                 {
-                    CloseGame();
+
+                    if (!closeGame)
+                    {
+                        if (menu.activeSelf)
+                            CloseMenu();
+                        else
+                            OpenMenu();
+                    }
+                    else
+                    {
+                        CloseGame();
+                    }
                 }
                 if (activateMainCanvas)
                     MenuManager.instance.EnableMainCanvas();
@@ -39,6 +52,7 @@ public class MenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     }
 
     public bool restart = false;
+    public bool map = false;
     private void CloseMenu()
     {
         Reset();
@@ -49,18 +63,44 @@ public class MenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             MenuManager.instance.SetMenuStatus(false);
         }
         menu.SetActive(false);
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+                             
+        if(map)
+            CloseMap();
+
     }
 
     private void OpenMenu()
     {
         Reset();
         menu.SetActive(true);
+        if(map)
+            OpenMap();
+    }
+
+    private void NewGame()
+    {
+        MenuManager.instance.StartNewGame();
+    }
+
+    private void ContinueGame()
+    {
+        MenuManager.instance.StartNewGame();
+        Save.loadData();
     }
 
     private void CloseGame()
     {
         MenuManager.instance.CloseGame();
+    }
+
+    private void OpenMap()
+    {
+        MenuManager.instance.OpenMap();
+    }
+
+    private void CloseMap()
+    {
+        MenuManager.instance.OpenMap();
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -89,9 +129,21 @@ public class MenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         if (activateMainCanvas)
             MenuManager.instance.EnableMainCanvas();
 
-        if (!menu.activeSelf)
-            OpenMenu();
+        if (newGame)
+        {
+            NewGame();
+        }
+        else if (continueGame)
+        {
+            ContinueGame();
+        }
         else
-            CloseMenu();
+        {
+
+            if (!menu.activeSelf)
+                OpenMenu();
+            else
+                CloseMenu();
+        }
     }
 }

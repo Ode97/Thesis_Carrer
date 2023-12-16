@@ -16,6 +16,7 @@ public class CheckpointTeleport : MonoBehaviour
     public void Teleport()
     {
         GameManager.instance.character.transform.position = pos;
+        MenuManager.instance.OpenMap();
     }
 
     

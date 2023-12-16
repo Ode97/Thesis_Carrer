@@ -6,6 +6,10 @@ public class MenuManager : MonoBehaviour
 {
     [SerializeField]
     private GameObject menu;
+
+    [SerializeField]
+    private GameObject startMenu;
+
     [SerializeField]
     private GameObject earthPanel;
 
@@ -14,8 +18,6 @@ public class MenuManager : MonoBehaviour
 
     [SerializeField]
     private Canvas mainCanvas;
-    [SerializeField]
-    private Canvas startMenuCanvas;
 
     [SerializeField]
     private GameObject icons;
@@ -28,9 +30,19 @@ public class MenuManager : MonoBehaviour
     private bool menuOpen = false;
 
     [SerializeField]
+    private GameObject mainButtons;
+
+    [SerializeField]
+    private GameObject mapIcon;
+
+    [SerializeField]
     private Camera mainCamera;
     [SerializeField]
-    private Camera menuCamera;
+    private Camera mapCamera;
+
+    private IgnoreFog renderCam;
+
+    private bool start = false;
 
     void Awake()
     {
@@ -38,6 +50,8 @@ public class MenuManager : MonoBehaviour
             instance = this;
         else if (instance != this)
             Destroy(gameObject);
+
+        renderCam = mapCamera.GetComponent<IgnoreFog>();
     }
 
     private void Update()
@@ -62,32 +76,47 @@ public class MenuManager : MonoBehaviour
 
     public void CloseGame()
     {
-        GameManager.instance.p.Kill();
+        try 
+        {
+            GameManager.instance.p.Kill();
+        }
+        catch 
+        {
+            Application.Quit();
+        }
+        
         Application.Quit();
     }
 
     public void OpenEarthMenu()
     {
         earthPanel.SetActive(true);
-        //mainCanvas.enabled = false;
+        mainCanvas.enabled = false;
         menuOpen = true;
     }
 
     public void OpenMap()
     {
         mapCanvas.SetActive(true);
+        var p = GameManager.instance.character.transform.position;
+        mapIcon.transform.position = new Vector3(p.x, mapIcon.transform.position.y, p.z);
+        renderCam.RenderMap();
         //mainCanvas.enabled = false;
-        Debug.Log("aa");
+
         //menuOpen = true;
-        
+        //RenderSettings.fog = false;
+
+
     }
     public void CloseMap()
     {
 
         mapCanvas.SetActive(false);
         mainCanvas.enabled = true;
+        mapCamera.gameObject.SetActive(false);
+        //RenderSettings.fog = true;
         //menuOpen = false;
-        
+
     }
 
 
@@ -127,17 +156,25 @@ public class MenuManager : MonoBehaviour
     public void OpenSettings()
     {
         settingsPanel.SetActive(true);
+        
+        
     }
 
     public void CloseSettings()
     {
         settingsPanel.SetActive(false);
+        
     }
 
     public void StartNewGame()
     {
-        menuCamera.gameObject.SetActive(false);
-        startMenuCanvas.gameObject.SetActive(false);
+        startMenu.gameObject.SetActive(false);
+        GameManager.instance.outlineEffect.SetActive(true);
+        GameManager.instance.stopLogic = false;
+        mainCamera.GetComponent<MainCameraFollow>().enabled = true;
+        mainCanvas.gameObject.SetActive(true);
+        mainButtons.SetActive(true);
+        start = true;
     }
 
     public void ContinueGame()

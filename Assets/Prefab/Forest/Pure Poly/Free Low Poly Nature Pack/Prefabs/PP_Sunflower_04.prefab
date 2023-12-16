@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 4400482160171448049}
   - component: {fileID: 6919011243008595}
   - component: {fileID: -629010212180607024}
+  - component: {fileID: 2171000582005276913}
   m_Layer: 10
   m_Name: PP_Sunflower_04
   m_TagString: Untagged
@@ -103,7 +104,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
@@ -120,9 +121,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a811aeea20814f46ad6e698407d501b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  removeRb: 0
+  enigmaChecker: {fileID: 0}
   element: 4
   value: 1
+  waterRespawn: 0
 --- !u!54 &-629010212180607024
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -150,3 +152,24 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 46
   m_CollisionDetection: 0
+--- !u!65 &2171000582005276913
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4400482160171448048}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.24617627, y: 0.44770145, z: 0.22396782}
+  m_Center: {x: -0.003592872, y: 0.22387362, z: 0.052781418}

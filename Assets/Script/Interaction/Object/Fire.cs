@@ -7,20 +7,23 @@ public class Fire : InteractableObject
 {
     public GameObject fireParticle;
     public bool distructible = false;
+    private int fire = 0;
     private GameObject fireEffect;
     private GameObject actualFire;
     // Start is called before the first frame update
     void Start()
     {
         fireEffect = Resources.Load<GameObject>("WildFire Variant");
-        EventManager.StartListening("WrongFireEnigma1", CloseFire);
-        fireParticle = transform.GetChild(0).gameObject;
+        
+        if(!distructible)
+            fireParticle = transform.GetChild(0).gameObject;
+
         color = Color.red;
         
 
     }
 
-    override
+    /*override
     protected void Update()
     {
         base.Update();
@@ -28,7 +31,7 @@ public class Fire : InteractableObject
         {
             //actualFire.transform.position = Vector3.Lerp(actualFire.transform.position, Vector3.right, 5 * Time.deltaTime);
         }
-    }
+    }*/
 
 
     override
@@ -39,8 +42,9 @@ public class Fire : InteractableObject
         else
         {
             fireParticle.SetActive(true);
+            
         }
-
+        fire = 1;
         GetComponent<EnigmaObj>()?.Interaction(Element.Fire);
         return true;
     }
@@ -53,11 +57,12 @@ public class Fire : InteractableObject
         
         actualFire.transform.localScale = new Vector3(5, 5, 5);
         yield return new WaitForSeconds(4);
-        Destroy(gameObject);
+        gameObject.SetActive(false);
         Destroy(actualFire);
     }
 
-    private void CloseFire()
+    override
+    protected void EnigmaFail()
     {
         WaterInteraction();
     }
@@ -65,6 +70,7 @@ public class Fire : InteractableObject
     override
     public bool WaterInteraction()
     {
+        fire = 0;
         fireParticle.SetActive(false);
         return true;
         
@@ -85,5 +91,8 @@ public class Fire : InteractableObject
         return false;
     }
 
-    
+    public int GetFire()
+    {
+        return fire;
+    }
 }

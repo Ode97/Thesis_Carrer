@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 
 public class Save : MonoBehaviour {
     public static void saveData(Data g){
-        
+
         string destination = Application.persistentDataPath + "/" + "_game.dat";
         
         FileStream file;
@@ -24,43 +24,6 @@ public class Save : MonoBehaviour {
         bf.Serialize(file, data);
         file.Close();
         //GameManager.GM().audioManager.Confirm();
-    }
-
-    public static void SaveSeenTutorial(bool s)
-    {
-        string destination = Application.persistentDataPath + "/" + "_t.dat";
-        Debug.Log(destination);
-        FileStream file;
-
-        if(File.Exists(destination)) 
-            file = File.OpenWrite(destination);
-        else 
-            file = File.Create(destination);
-
-        
-        BinaryFormatter bf = new BinaryFormatter();
-        bf.Serialize(file, s);
-        file.Close();
-    }
-
-    public static bool LoadSeenTutorial()
-    {
-        string destination = Application.persistentDataPath + "/" + "_t.dat";
-        FileStream file;
-
-        if(File.Exists(destination)) file = File.OpenRead(destination);
-        else
-        {
-            //Debug.LogError("Save File not found");
-            return false;
-        }
-
-        BinaryFormatter bf = new BinaryFormatter();
-        bool s = (bool) bf.Deserialize(file);
-        
-        file.Close();
-        
-        return s;    
     }
     
     public static Data loadData(){
@@ -79,7 +42,7 @@ public class Save : MonoBehaviour {
         
         file.Close();
 
-        //GameManager.GM().SetLoad(data.wood, data.people, data.jobs, data.entertainment, data.food);
+        GameManager.instance.SetLoad(data.diamonds, data.playerPos, data.playerRot, data.earthPos, data.earthRot, data.airPos, data.airRot, data.fireData, data.waterData);
         //GameManager.GM().data = data;
         return data;        
     }

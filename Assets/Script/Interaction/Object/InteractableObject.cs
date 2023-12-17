@@ -37,8 +37,6 @@ public abstract class InteractableObject : MonoBehaviour
         {
             timer += Time.deltaTime;
 
-            
-
             if (IsOnView() && !GetComponent<Earth>())
             {
                
@@ -50,6 +48,11 @@ public abstract class InteractableObject : MonoBehaviour
         }
         
             
+    }
+
+    public void ResetTimer()
+    {
+        timer = 0;
     }
 
     private IEnumerator Wait()

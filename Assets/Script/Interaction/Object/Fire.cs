@@ -61,6 +61,11 @@ public class Fire : InteractableObject
         Destroy(actualFire);
     }
 
+    public void LoadDestroy()
+    {
+        gameObject.SetActive(false);
+    }
+
     override
     protected void EnigmaFail()
     {

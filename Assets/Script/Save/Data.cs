@@ -17,8 +17,9 @@ public class Data
     public float[,] airRot;
     public int[] fireData;
     public bool[] waterData;
+    public int checkpoint;
 
-    public Data(int d, float[] pPos, float[] pRot, float[,,] pE, float[,,] rE, float[,] aP, float[,] aR, int[] fD, bool[] wD)
+    public Data(int d, float[] pPos, float[] pRot, float[,,] pE, float[,,] rE, float[,] aP, float[,] aR, int[] fD, bool[] wD, int cP)
     {
 
         earthPos = pE;
@@ -30,6 +31,7 @@ public class Data
         airRot = aR;
         fireData = fD;
         waterData = wD;
+        checkpoint = cP;
 
     }
     

@@ -44,6 +44,9 @@ public class MenuManager : MonoBehaviour
 
     private bool start = false;
 
+    private Vector3 initCameraPos;
+    private Quaternion initCameraRot;
+
     void Awake()
     {
         if (instance == null)
@@ -54,9 +57,15 @@ public class MenuManager : MonoBehaviour
         renderCam = mapCamera.GetComponent<IgnoreFog>();
     }
 
+    private void Start()
+    {
+        initCameraPos = Camera.main.transform.position;
+        initCameraRot = Camera.main.transform.rotation;
+    }
+
     private void Update()
     {
-        if (Input.GetMouseButtonDown(2))
+        if (Input.GetMouseButtonDown(2) && start)
             OpenMenu();
     }
 
@@ -72,6 +81,14 @@ public class MenuManager : MonoBehaviour
         Time.timeScale = 1f;
         menu.SetActive(false);
         menuOpen = false;
+    }
+
+    public void OpenMenuStart()
+    {
+        startMenu.SetActive(true);
+        Camera.main.GetComponent<MainCameraFollow>().enabled = false;
+        Camera.main.transform.position = initCameraPos;
+        Camera.main.transform.rotation = initCameraRot;
     }
 
     public void CloseGame()

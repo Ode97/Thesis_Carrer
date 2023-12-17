@@ -4,6 +4,7 @@ using UnityEngine.EventSystems;
 using UnityEngine;
 using System.Diagnostics;
 using Unity.VisualScripting;
+using System.Linq;
 
 public enum CameraMode {Strategica, Vista}
 
@@ -22,6 +23,7 @@ public class GameManager : MonoBehaviour
     public bool fixing = false;
     public Process p;
     public InteractableObject initTerrain;
+    public SaveCity saveCity;
     
 
     // Start is called before the first frame update
@@ -46,7 +48,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         
-        
+        saveCity = GetComponent<SaveCity>();
     }
 
     // Update is called once per frame
@@ -72,6 +74,9 @@ public class GameManager : MonoBehaviour
                 if (Input.GetMouseButtonDown(0) || fixing)
                 {
                     fixing = false;
+
+
+
                     if (EventSystem.current.IsPointerOverGameObject())
                     {
 
@@ -85,13 +90,14 @@ public class GameManager : MonoBehaviour
                     // Cast a ray from the mouse position into the scene
                     if (hit.collider != null)
                     {
-
+                        var intObj = hit.collider.GetComponent<InteractableObject>();
                         var layer = hit.collider.gameObject.layer;
 
                         if (interaction)
                         {
+                            intObj.ResetTimer();
                             //cambiare con layer e vedere se si rompe tutto
-                            if (hit.collider.GetComponent<InteractableObject>())
+                            if (intObj)
                             {
                                 character.Interaction(hit);
                                 
@@ -194,7 +200,7 @@ public class GameManager : MonoBehaviour
         cameraHandler.SetMode(mode);
     }
 
-    public void SetLoad(int d, float[] pPos, float[] pRot, float[,,] pE, float[,,] rE, float[,] aP, float[,] aR, int[] fD, bool[] wD)
+    public void SetLoad(int d, float[] pPos, float[] pRot, float[,,] pE, float[,,] rE, float[,] aP, float[,] aR, int[] fD, bool[] wD, int cP)
     {
         character.SetDiamonds(d);
 
@@ -211,12 +217,21 @@ public class GameManager : MonoBehaviour
         }
 
         var y = FindObjectsOfType<Fire>();
+        y = FindObjectsOfType<Fire>().OrderBy(fire => fire.GetComponent<EnigmaObj>().value).ToArray(); 
         i = 0;
         foreach (Fire f in y)
         {
             if (fD[i] == 1)
             {
-                f.FireInteraction();
+                if (f.distructible)
+                {
+                    f.LoadDestroy();
+                }
+                else
+                {
+                    
+                    f.FireInteraction();
+                }
             }
             i++;
         }
@@ -232,6 +247,14 @@ public class GameManager : MonoBehaviour
             i++;
         }
 
+        var r = FindObjectsOfType<Checkpoint>();
 
+        foreach (Checkpoint c in r)
+        {
+            if(c.GetIndex() == cP)
+            {
+                character.SetCheckpoint(c);
+            }
+        }
     }
 }

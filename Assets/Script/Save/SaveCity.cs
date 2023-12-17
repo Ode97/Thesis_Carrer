@@ -18,6 +18,7 @@ public class SaveCity : MonoBehaviour
         bool[] waterData;
         float[] playerPos;
         float[] playerRot;
+        int checkpoint;
 
         playerPos = new float[3];
         playerRot = new float[3];
@@ -74,7 +75,7 @@ public class SaveCity : MonoBehaviour
             i++;
         }
 
-        var z = FindObjectsOfType<Fire>();
+        var z = FindObjectsOfType<Fire>(includeInactive:true);
 
         i = 0;
 
@@ -100,7 +101,9 @@ public class SaveCity : MonoBehaviour
             i++;
         }
 
-        Data d = new Data(diams, playerPos, playerRot, posEarth, rotEarth, posAir, rotAir, fireData, waterData);
+        checkpoint = GameManager.instance.character.GetCheckpointIndex();
+
+        Data d = new Data(diams, playerPos, playerRot, posEarth, rotEarth, posAir, rotAir, fireData, waterData, checkpoint);
         
         Save.saveData(d);
         StartCoroutine(SaveText());

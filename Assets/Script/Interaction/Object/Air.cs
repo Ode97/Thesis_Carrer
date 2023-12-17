@@ -117,7 +117,8 @@ public class Air : InteractableObject
         {            
             //collision.gameObject.transform.SetParent(transform);
             onPlatform.Add(collision.gameObject);
-            GameManager.instance.character.SetCheckpoint(transform.position);
+            if(g.layer == Constants.protagonistLayer)
+                GameManager.instance.character.SetPlatform(gameObject);
         }        
     }
 

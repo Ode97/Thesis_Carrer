@@ -12,21 +12,24 @@ public class Checkpoint : MonoBehaviour
     [SerializeField]
     private Canvas main;
     private SaveCity sc;
+    [SerializeField]
+    private int index;
 
     private void Awake()
     {
         sc = FindObjectOfType<SaveCity>();
     }
 
+
     private void OnTriggerEnter(Collider other)
     {
-        if(areanNameMainCanvas != null)
-        {
+        /*if(areanNameMainCanvas != null)
+        {            
             Destroy(areanNameMainCanvas);
-        }
+        }*/
         if (other.gameObject.layer == Constants.protagonistLayer)
         {
-            GameManager.instance.character.SetCheckpoint(transform.position);
+            GameManager.instance.character.SetCheckpoint(this);
             sc.SaveState();
 
             if (areaName != null)
@@ -35,7 +38,8 @@ public class Checkpoint : MonoBehaviour
                 areaName.transform.parent.GetComponent<CheckpointTeleport>().pos = transform.position;
                 areaName.transform.parent.GetComponent<Button>().enabled = true;
 
-                StartCoroutine(ShowAreaName());
+                if(!show)
+                    StartCoroutine(ShowAreaName());
             }
         }
     }
@@ -49,28 +53,37 @@ public class Checkpoint : MonoBehaviour
         }
     }
 
+    private bool show = false;
     private IEnumerator ShowAreaName()
     {
+        if (areanNameMainCanvas == null)
+        {
+            areanNameMainCanvas = Instantiate(areaName, main.transform);
+
+            areanNameMainCanvas.transform.localScale = Vector3.one;
+            //RectTransform canvasRect = main.transform.GetComponent<RectTransform>();
+            //Vector2 canvasSize = canvasRect.sizeDelta;
+
+            Vector2 screenSize = new Vector2(Screen.width, Screen.height);
+
+            var v = screenSize / 2;
+
+            v.y += 100;
+
+            areanNameMainCanvas.transform.position = v;
+            increaseScale = true;
+            show = true;
+            yield return new WaitForSeconds(5);
+            
+            increaseScale = false;
+            Destroy(areanNameMainCanvas.gameObject);
+            show = false;
+        }
         
-        areanNameMainCanvas = Instantiate(areaName, main.transform);
-       
-        areanNameMainCanvas.transform.localScale = Vector3.one;
-        //RectTransform canvasRect = main.transform.GetComponent<RectTransform>();
-        //Vector2 canvasSize = canvasRect.sizeDelta;
+    }
 
-        Vector2 screenSize = new Vector2(Screen.width, Screen.height);
-
-        var v = screenSize/2;
-
-        v.y += 100;
-
-        areanNameMainCanvas.transform.position = v;
-        increaseScale = true;
-
-        yield return new WaitForSeconds(5);
-
-        increaseScale = false;
-        Destroy(areanNameMainCanvas.gameObject);
-        
+    public int GetIndex()
+    {
+        return index;
     }
 }

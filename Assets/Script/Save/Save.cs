@@ -42,7 +42,7 @@ public class Save : MonoBehaviour {
         
         file.Close();
 
-        GameManager.instance.SetLoad(data.diamonds, data.playerPos, data.playerRot, data.earthPos, data.earthRot, data.airPos, data.airRot, data.fireData, data.waterData);
+        GameManager.instance.SetLoad(data.diamonds, data.playerPos, data.playerRot, data.earthPos, data.earthRot, data.airPos, data.airRot, data.fireData, data.waterData, data.checkpoint);
         //GameManager.GM().data = data;
         return data;        
     }

@@ -10,9 +10,11 @@ public class MenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     public GameObject menu;
     private bool start = false;
     public bool activateMainCanvas = false;
+    public bool activateStartCanvas = false;
     public bool closeGame = false;
     public bool newGame = false;
     public bool continueGame = false;
+    public bool save = false;
 
     private void Update()
     {
@@ -29,16 +31,22 @@ public class MenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 }else if (continueGame)
                 {
                     ContinueGame();
+                }else if (save)
+                {
+                    GameManager.instance.saveCity.SaveState();
                 }
                 else
                 {
 
                     if (!closeGame)
                     {
-                        if (menu.activeSelf)
-                            CloseMenu();
-                        else
-                            OpenMenu();
+                        if (menu)
+                        {
+                            if (menu.activeSelf)
+                                CloseMenu();
+                            else
+                                OpenMenu();
+                        }
                     }
                     else
                     {
@@ -47,6 +55,11 @@ public class MenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 }
                 if (activateMainCanvas)
                     MenuManager.instance.EnableMainCanvas();
+                else if (activateStartCanvas)
+                {
+                    Debug.Log("a");
+                    MenuManager.instance.OpenMenuStart();
+                }
             }
         }
     }
@@ -137,13 +150,28 @@ public class MenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         {
             ContinueGame();
         }
+        else if (save)
+        {
+            GameManager.instance.saveCity.SaveState();
+        }
         else
         {
+            if (menu)
+            {
 
-            if (!menu.activeSelf)
-                OpenMenu();
-            else
-                CloseMenu();
+
+                if (!menu.activeSelf)
+                    OpenMenu();
+                else
+                    CloseMenu();
+            }
+        }
+
+        if (activateMainCanvas)
+            MenuManager.instance.EnableMainCanvas();
+        else if (activateStartCanvas)
+        {
+            MenuManager.instance.OpenMenuStart();
         }
     }
 }

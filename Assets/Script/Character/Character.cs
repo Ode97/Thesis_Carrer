@@ -369,7 +369,8 @@ public class Character : MonoBehaviour
         diamond = d;
     }
 
-    private Vector3 checkpoint;
+    private Checkpoint checkpoint;
+    private GameObject airObj;
     private void OnCollisionEnter(Collision collision)
     {
 
@@ -407,7 +408,11 @@ public class Character : MonoBehaviour
         }
     }
 
-    
+    public void SetPlatform(GameObject g)
+    {
+        airObj = g;
+        platform = true;
+    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -417,10 +422,16 @@ public class Character : MonoBehaviour
         }
     }
 
-    public void SetCheckpoint(Vector3 point)
+    public void SetCheckpoint(Checkpoint cP)
     {
-        Debug.Log("checkpoint");
-        checkpoint = point;
+        checkpoint = cP;
+        platform = false;
+    }
+
+    public int GetCheckpointIndex()
+    {
+
+        return checkpoint.GetIndex();
     }
 
     private void WaterRespawn()
@@ -444,11 +455,17 @@ public class Character : MonoBehaviour
         }
     }
 
+    private bool platform = false;
     private IEnumerator Respawn()
     {
         yield return new WaitForSeconds(2);
         movment.DisableMove();
-        transform.position = checkpoint;
+
+        if(platform)
+            transform.position = airObj.transform.position;
+        else
+            transform.position = checkpoint.transform.position;
+
         GameManager.instance.stopLogic = false;
     }
 

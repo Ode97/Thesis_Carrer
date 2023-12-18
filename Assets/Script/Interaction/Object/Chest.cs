@@ -49,4 +49,9 @@ public class Chest : InteractableObject
         return false;
     }
 
+    public override void Reset()
+    {
+        
+    }
+
 }

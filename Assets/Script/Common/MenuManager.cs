@@ -43,6 +43,7 @@ public class MenuManager : MonoBehaviour
     private IgnoreFog renderCam;
 
     private bool start = false;
+    private bool firstStart = false;
 
     private Vector3 initCameraPos;
     private Quaternion initCameraRot;
@@ -89,6 +90,9 @@ public class MenuManager : MonoBehaviour
         Camera.main.GetComponent<MainCameraFollow>().enabled = false;
         Camera.main.transform.position = initCameraPos;
         Camera.main.transform.rotation = initCameraRot;
+        menuOpen = false;
+        start = false;
+        Time.timeScale = 1f;
     }
 
     public void CloseGame()
@@ -191,11 +195,13 @@ public class MenuManager : MonoBehaviour
         mainCamera.GetComponent<MainCameraFollow>().enabled = true;
         mainCanvas.gameObject.SetActive(true);
         mainButtons.SetActive(true);
+        firstStart = true;
+        GameManager.instance.ResetGame();
         start = true;
     }
 
-    public void ContinueGame()
+    public bool IsFirstStart()
     {
-
+        return firstStart;
     }
 }

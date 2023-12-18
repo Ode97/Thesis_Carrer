@@ -10,7 +10,7 @@ public class Checkpoint : MonoBehaviour
     private TextMeshProUGUI areaName;
     private TextMeshProUGUI areanNameMainCanvas;
     [SerializeField]
-    private Canvas main;
+    private GameObject areaPanel;
     private SaveCity sc;
     [SerializeField]
     private int index;
@@ -58,8 +58,7 @@ public class Checkpoint : MonoBehaviour
     {
         if (areanNameMainCanvas == null)
         {
-            areanNameMainCanvas = Instantiate(areaName, main.transform);
-
+            areanNameMainCanvas = Instantiate(areaName, areaPanel.transform);
             areanNameMainCanvas.transform.localScale = Vector3.one;
             //RectTransform canvasRect = main.transform.GetComponent<RectTransform>();
             //Vector2 canvasSize = canvasRect.sizeDelta;

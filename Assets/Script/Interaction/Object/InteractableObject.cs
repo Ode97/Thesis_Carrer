@@ -10,7 +10,7 @@ public abstract class InteractableObject : MonoBehaviour
     private bool start = false;
     protected Color color;
     public int index = 0;
-    
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -28,6 +28,7 @@ public abstract class InteractableObject : MonoBehaviour
             outline.enabled = false;
         }*/
         EventManager.StartListening("WrongEnigma" + gameObject.name, EnigmaFail);
+        EventManager.StartListening("Reset", Reset);
     }
 
     // Update is called once per frame
@@ -39,15 +40,15 @@ public abstract class InteractableObject : MonoBehaviour
 
             if (IsOnView() && !GetComponent<Earth>())
             {
-               
-                if(!GameManager.instance.stopLogic)
+
+                if (!GameManager.instance.stopLogic)
                     GameManager.instance.fixing = true;
                 start = false;
                 StartCoroutine(Wait());
             }
         }
-        
-            
+
+
     }
 
     public void ResetTimer()
@@ -70,6 +71,8 @@ public abstract class InteractableObject : MonoBehaviour
     public abstract bool AirInteraction();
 
     public abstract bool EarthInteraction(GameObject obj, Vector3 pos);
+
+    public abstract void Reset();
 
     protected virtual void EnigmaFail()
     {

@@ -32,6 +32,8 @@ public class Character : MonoBehaviour
     private Rigidbody rb;
     private int diamond = 0;
     private bool moving = false;
+    private Vector3 initPosition;
+    private Quaternion initRotation;
 
     // Start is called before the first frame update
     void Start()
@@ -41,7 +43,16 @@ public class Character : MonoBehaviour
         hearts = new GameObject[health];
         rb = GetComponent<Rigidbody>();
         lastPos = transform.position;
+        initPosition = transform.position;
+        initRotation = transform.rotation;
         Reset();
+    }
+
+    public void NewGame()
+    {
+        transform.position = initPosition;
+        transform.rotation = initRotation;
+        checkpoint = null;
     }
 
     private void Reset()

@@ -10,17 +10,19 @@ public class Fire : InteractableObject
     private int fire = 0;
     private GameObject fireEffect;
     private GameObject actualFire;
+    private bool isFireActive = false;
     // Start is called before the first frame update
     void Start()
     {
         fireEffect = Resources.Load<GameObject>("WildFire Variant");
-        
-        if(!distructible)
+
+        if (!distructible)
+        {
             fireParticle = transform.GetChild(0).gameObject;
+            isFireActive = fireParticle.activeSelf;
+        }
 
-        color = Color.red;
-        
-
+        color = Color.red;            
     }
 
     /*override
@@ -94,6 +96,19 @@ public class Fire : InteractableObject
     public override bool EarthInteraction(GameObject obj, Vector3 pos)
     {
         return false;
+    }
+
+    public override void Reset()
+    {
+        fire = 0;
+        if(distructible)
+            gameObject.SetActive(true);
+        else if (!isFireActive)
+        {
+            fireParticle.SetActive(false);
+            //Debug.Log(name + " spento");
+        }
+
     }
 
     public int GetFire()

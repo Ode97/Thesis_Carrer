@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class SaveCity : MonoBehaviour
@@ -21,7 +22,7 @@ public class SaveCity : MonoBehaviour
         int checkpoint;
 
         playerPos = new float[3];
-        playerRot = new float[3];
+        playerRot = new float[4];
 
         diams = GameManager.instance.character.GetDiamonds();
 
@@ -34,6 +35,7 @@ public class SaveCity : MonoBehaviour
         playerRot[0] = r.x;
         playerRot[1] = r.y;
         playerRot[2] = r.z;
+        playerRot[3] = r.w;
 
         int i = 0;
 
@@ -75,19 +77,34 @@ public class SaveCity : MonoBehaviour
             i++;
         }
 
-        var z = FindObjectsOfType<Fire>(includeInactive:true);
+        var fires = FindObjectsOfType<Fire>(includeInactive:true);
+        //Fire[] filteredArray = fires.Where(obj => obj.GetComponent<EnigmaObj>() == null).ToArray();
+        var z = fires.OrderBy(fire => fire.GetComponent<EnigmaObj>()?.value).Where(fire => fire.gameObject.layer == Constants.intObjLayer).ToArray();
+
+        fireData = new int[z.Length];        
 
         i = 0;
-
-        fireData = new int[z.Length];
-
         foreach (Fire f in z)
         {
-            fireData[i] = f.GetFire();          
+            Debug.Log(i + " " + f.name);
+            fireData[i] = f.GetFire();
+
+            //if (f.GetFire() == 1)
+            //    Debug.Log(f.name + " acceso");
 
             i++;
         }
 
+        /*Debug.Log("---");
+
+        foreach (Fire f in filteredArray)
+        {
+            Debug.Log(f.name);
+            fireData[i] = f.GetFire();
+
+            i++;
+        }*/
+        //Debug.Log("-----------------");
         var s = FindObjectsOfType<WaterObj>();
 
         i = 0;
@@ -111,9 +128,9 @@ public class SaveCity : MonoBehaviour
 
     public IEnumerator SaveText()
     {
-        saveText.text = "Game Saved";
-        saveText.enabled = true;
+        saveText.text = "Partita Salvata";
+        saveText.gameObject.SetActive(true);
         yield return new WaitForSeconds(2);
-        saveText.enabled = false;
+        saveText.gameObject.SetActive(false);
     }
 }

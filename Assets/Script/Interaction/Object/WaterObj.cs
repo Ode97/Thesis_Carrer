@@ -12,12 +12,14 @@ public class WaterObj : InteractableObject
     public float animSpeed = 5;
     [SerializeField]
     private GameObject water;
+    private bool isActiveWater = false;
 
     // Start is called before the first frame update
     void Start()
     {
         color = UnityEngine.Color.blue;
         initPosition = water.transform.localPosition;
+        isActiveWater = water.activeSelf;
     }
 
     override
@@ -83,6 +85,13 @@ public class WaterObj : InteractableObject
     public override bool EarthInteraction(GameObject obj, Vector3 pos)
     {
         return false;
+    }
+
+    public override void Reset()
+    {
+        rise = false;
+        if(!isActiveWater)
+            water.SetActive(false);
     }
 
     public bool IsRise()

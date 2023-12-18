@@ -24,7 +24,8 @@ public class GameManager : MonoBehaviour
     public Process p;
     public InteractableObject initTerrain;
     public SaveCity saveCity;
-    
+    public LayerMask ignoreLayer;
+
 
     // Start is called before the first frame update
     public static GameManager instance = null;
@@ -54,6 +55,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //UnityEngine.Debug.Log(stopLogic + " " + MenuManager.instance.isMenuOpen());
         if (!stopLogic)
         {
             if (character.isActiveElement())
@@ -75,8 +77,6 @@ public class GameManager : MonoBehaviour
                 {
                     fixing = false;
 
-
-
                     if (EventSystem.current.IsPointerOverGameObject())
                     {
 
@@ -85,12 +85,15 @@ public class GameManager : MonoBehaviour
 
                     Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                     RaycastHit hit;
-                    Physics.Raycast(ray, out hit, Mathf.Infinity);
 
+                    Physics.Raycast(ray, out hit, Mathf.Infinity, ~ignoreLayer);
+
+                    //UnityEngine.Debug.Log(hit.collider.gameObject.layer);
                     // Cast a ray from the mouse position into the scene
                     if (hit.collider != null)
                     {
                         var intObj = hit.collider.GetComponent<InteractableObject>();
+                        
                         var layer = hit.collider.gameObject.layer;
 
                         if (interaction)
@@ -205,7 +208,7 @@ public class GameManager : MonoBehaviour
         character.SetDiamonds(d);
 
         character.transform.position = new Vector3(pPos[0], pPos[1], pPos[2]);
-        character.transform.rotation = new Quaternion(pRot[0], pRot[1], pRot[2], 1);
+        character.transform.rotation = new Quaternion(pRot[0], pRot[1], pRot[2], pRot[3]);
 
         var x = FindObjectsOfType<Air>();
         var i = 0;
@@ -216,38 +219,66 @@ public class GameManager : MonoBehaviour
             i++;
         }
 
-        var y = FindObjectsOfType<Fire>();
-        y = FindObjectsOfType<Fire>().OrderBy(fire => fire.GetComponent<EnigmaObj>().value).ToArray(); 
+        var fires = FindObjectsOfType<Fire>();
+        //Fire[] filteredArray = fires.Where(obj => obj.GetComponent<EnigmaObj>() == null).ToArray();
+        var z = fires.OrderBy(fire => fire.GetComponent<EnigmaObj>()?.value).ToArray();
+        
+
         i = 0;
-        foreach (Fire f in y)
+        foreach (Fire f in z)
         {
+            UnityEngine.Debug.Log(i + " " + f.name);
             if (fD[i] == 1)
             {
+                
                 if (f.distructible)
                 {
+                    //UnityEngine.Debug.Log("destroy " + f.name);
                     f.LoadDestroy();
                 }
                 else
                 {
-                    
+                    //UnityEngine.Debug.Log("open " + f.name);
                     f.FireInteraction();
                 }
             }
             i++;
         }
 
-        var z = FindObjectsOfType<WaterObj>();
-        i = 0;
-        foreach (WaterObj w in z)
+        /*foreach (Fire f in filteredArray)
         {
-            if (wD[i])
+            if (fD[i] == 1)
             {
-                w.WaterInteraction();
+                UnityEngine.Debug.Log(f.name);
+                if (f.distructible)
+                {
+                    f.LoadDestroy();
+                }
+                else
+                {
+
+                    f.FireInteraction();
+                }
             }
             i++;
-        }
+        }*/
 
-        var r = FindObjectsOfType<Checkpoint>();
+
+        if (MenuManager.instance.IsFirstStart())
+        {
+            var p = FindObjectsOfType<WaterObj>();
+            i = 0;
+            foreach (WaterObj w in p)
+            {
+                if (wD[i])
+                {
+                    w.WaterInteraction();
+                }
+                i++;
+            }
+        }
+        
+        var r = FindObjectsOfType<Checkpoint>();      
 
         foreach (Checkpoint c in r)
         {
@@ -256,5 +287,11 @@ public class GameManager : MonoBehaviour
                 character.SetCheckpoint(c);
             }
         }
+    }
+
+    public void ResetGame()
+    {
+        character.NewGame();
+        EventManager.TriggerEvent("Reset");
     }
 }

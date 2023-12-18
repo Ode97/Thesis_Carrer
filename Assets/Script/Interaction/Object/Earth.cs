@@ -82,4 +82,9 @@ public class Earth : InteractableObject
     {
         return false;
     }
+
+    public override void Reset()
+    {
+        
+    }
 }

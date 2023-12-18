@@ -10,12 +10,16 @@ public class Air : InteractableObject
     private Rigidbody rb;
     public bool movingPlatform = false;
     private List<GameObject> onPlatform = new List<GameObject>();
+    private Vector3 initPos;
+    private Quaternion initRot;
 
     // Start is called before the first frame update
     void Start()
     {
         color = Color.grey;
         rb = GetComponent<Rigidbody>();
+        initPos = transform.position;
+        initRot = transform.rotation;
     }
 
     private bool remove = false;
@@ -110,6 +114,12 @@ public class Air : InteractableObject
         return false;
     }
 
+    public override void Reset()
+    {
+        transform.position = initPos;
+        transform.rotation = initRot;
+    }
+
     private void OnCollisionEnter(Collision collision)
     {
         var g = collision.gameObject;
@@ -135,4 +145,6 @@ public class Air : InteractableObject
     {
         
     }
+
+
 }

@@ -15,5 +15,4 @@ public static class Constants
     public static int bossTriggerLayer = 12;
     public static int diamondLayer = 13;
 
-
 }

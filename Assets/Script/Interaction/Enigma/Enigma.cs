@@ -41,6 +41,7 @@ public  class Enigma : MonoBehaviour
 
     private void Start()
     {
+        EventManager.StartListening("Reset", Reset);
         if(disableObstacle)
             initPosition = obstacle.transform.localPosition;
     }
@@ -138,6 +139,12 @@ public  class Enigma : MonoBehaviour
         {
             complete = true;
         }
+    }
+
+    private void Reset()
+    {
+        i = 0;
+        complete = false;
     }
 
 }

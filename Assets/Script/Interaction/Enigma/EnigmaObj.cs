@@ -84,7 +84,8 @@ public class EnigmaObj : MonoBehaviour
     public void Interaction(Element interactionElement)
     {
         
-        if (interactionElement == element && active) {           
+        if (interactionElement == element && active) {
+            
             if (enigmaChecker.position)
                 enigmaChecker.ElementPositionCheck(value);
             if (enigmaChecker.order)

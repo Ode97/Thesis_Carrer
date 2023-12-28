@@ -28,9 +28,9 @@ public class Air : InteractableObject
     protected void Update()
     {
         base.Update();
-        if(onPlatform.Count > 0)
+        if (onPlatform.Count > 0)
         {
-            foreach( GameObject go in onPlatform )
+            foreach (GameObject go in onPlatform)
             {
                 if (Vector3.Distance(go.transform.position, transform.position) > 20)
                 {
@@ -39,11 +39,17 @@ public class Air : InteractableObject
                     toRemove = go;
                 }
             }
-            if(remove)
+            if (remove)
             {
                 onPlatform.Remove(toRemove);
                 remove = false;
             }
+        }
+
+        if (transform.position.y < initPos.y - 80)
+        {
+            transform.position = initPos;
+            rb.velocity = Vector3.zero;
         }
     }
 
@@ -83,7 +89,7 @@ public class Air : InteractableObject
                     //transform.rotation = new Quaternion(0, r.y, 0, r.w);
                     foreach (GameObject go in onPlatform)
                     {
-                        Debug.Log(onPlatform.Count);
+                        
                         var rbo = go.GetComponent<Rigidbody>();
                         rbo.AddForce(direction, ForceMode.Force);
                         //go.transform.rotation = transform.rotation;

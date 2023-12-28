@@ -11,15 +11,17 @@ public class SaveCity : MonoBehaviour
     public void SaveState()
     {
         int diams;
-        float[,,] posEarth;
-        float[,,] rotEarth;
+        float[,] posEarth;
+        float[,] rotEarth;
         float[,] posAir;
         float[,] rotAir;
         int[] fireData;
         bool[] waterData;
         float[] playerPos;
         float[] playerRot;
+        bool[,] enigmasComplete;
         int checkpoint;
+        
 
         playerPos = new float[3];
         playerRot = new float[4];
@@ -41,19 +43,21 @@ public class SaveCity : MonoBehaviour
 
         var x = FindObjectsOfType<EarthPlant>();
 
-        posEarth = new float[x.Length, 1, 3];
-        rotEarth = new float[x.Length, 1, 3];
+        posEarth = new float[x.Length, 4];
+        rotEarth = new float[x.Length, 4];
 
         foreach (EarthPlant e in x)
         {
-            posEarth[i, e.GetIndex(), 0] = e.transform.position.x;
-            posEarth[i, e.GetIndex(), 1] = e.transform.position.y;
-            posEarth[i, e.GetIndex(), 2] = e.transform.position.z;
+            posEarth[i, 0] = e.transform.position.x;
+            posEarth[i, 1] = e.transform.position.y;
+            posEarth[i, 2] = e.transform.position.z;
+            posEarth[i, 3] = e.GetIndex();
 
-            rotEarth[i, e.GetIndex(), 0] = e.transform.rotation.x;
-            rotEarth[i, e.GetIndex(), 1] = e.transform.rotation.y;
-            rotEarth[i, e.GetIndex(), 2] = e.transform.rotation.z;
-           
+            rotEarth[i, 0] = e.transform.rotation.x;
+            rotEarth[i, 1] = e.transform.rotation.y;
+            rotEarth[i, 2] = e.transform.rotation.z;
+            rotEarth[i, 3] = e.transform.rotation.w;
+
             i++;
         }
 
@@ -78,15 +82,14 @@ public class SaveCity : MonoBehaviour
         }
 
         var fires = FindObjectsOfType<Fire>(includeInactive:true);
-        //Fire[] filteredArray = fires.Where(obj => obj.GetComponent<EnigmaObj>() == null).ToArray();
-        var z = fires.OrderBy(fire => fire.GetComponent<EnigmaObj>()?.value).Where(fire => fire.gameObject.layer == Constants.intObjLayer).ToArray();
-
+        var z = fires.OrderBy(fire => fire.GetComponent<EnigmaObj>()?.value).Where(fire => fire.gameObject.layer == Constants.intObjLayer && !fire.GetComponent<EarthPlant>()).ToArray();
+        
         fireData = new int[z.Length];        
 
         i = 0;
         foreach (Fire f in z)
         {
-            Debug.Log(i + " " + f.name);
+            //Debug.Log(i + " " + f.name + " " + f.GetFire());
             fireData[i] = f.GetFire();
 
             //if (f.GetFire() == 1)
@@ -95,16 +98,6 @@ public class SaveCity : MonoBehaviour
             i++;
         }
 
-        /*Debug.Log("---");
-
-        foreach (Fire f in filteredArray)
-        {
-            Debug.Log(f.name);
-            fireData[i] = f.GetFire();
-
-            i++;
-        }*/
-        //Debug.Log("-----------------");
         var s = FindObjectsOfType<WaterObj>();
 
         i = 0;
@@ -120,7 +113,19 @@ public class SaveCity : MonoBehaviour
 
         checkpoint = GameManager.instance.character.GetCheckpointIndex();
 
-        Data d = new Data(diams, playerPos, playerRot, posEarth, rotEarth, posAir, rotAir, fireData, waterData, checkpoint);
+        var en = FindObjectsOfType<Enigma>();
+
+        enigmasComplete = new bool[en.Length, 2];
+        i = 0;
+        foreach (Enigma obj in en)
+        {
+            var enigma = obj.IsComplete();
+            enigmasComplete[i, 0] = enigma[0];
+            enigmasComplete[i, 1] = enigma[1];
+            i++;
+        }
+
+        Data d = new Data(diams, playerPos, playerRot, posEarth, rotEarth, posAir, rotAir, fireData, waterData, checkpoint, enigmasComplete);
         
         Save.saveData(d);
         StartCoroutine(SaveText());

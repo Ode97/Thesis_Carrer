@@ -47,8 +47,6 @@ public abstract class InteractableObject : MonoBehaviour
                 StartCoroutine(Wait());
             }
         }
-
-
     }
 
     public void ResetTimer()

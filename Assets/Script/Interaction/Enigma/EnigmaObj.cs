@@ -8,9 +8,6 @@ public class EnigmaObj : MonoBehaviour
     public Enigma enigmaChecker;
     public Element element = Element.None;
     private Vector3 initPos;
-
-    
-
     public int value = 0;
     
 
@@ -80,10 +77,15 @@ public class EnigmaObj : MonoBehaviour
         enigmaChecker = enigma;
     }
 
+    public void SetActiveObj(bool c)
+    {
+        active = c;
+    }
+
     private bool active = true;
     public void Interaction(Element interactionElement)
     {
-        
+        //Debug.Log(active);
         if (interactionElement == element && active) {
             
             if (enigmaChecker.position)

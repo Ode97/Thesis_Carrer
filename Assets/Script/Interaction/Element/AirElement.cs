@@ -53,7 +53,6 @@ public class AirElement : MagicElement
                 clicked = false;
                 StartCoroutine(Wait2());
                 Destroy(actualeffect);
-                Debug.Log("a");
             }                       
         }
     }

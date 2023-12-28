@@ -16,7 +16,7 @@ public class EarthPlant : InventoryObject
     // Start is called before the first frame update
     void Start()
     {
-        
+        EventManager.StartListening("Reset", Reset);
     }
 
     // Update is called once per frame
@@ -34,5 +34,14 @@ public class EarthPlant : InventoryObject
     public int GetIndex()
     {
         return index;
+    }
+
+    private void Reset()
+    {
+        if (gameObject.layer == Constants.intObjLayer)
+        {
+            
+            Destroy(gameObject);
+        }
     }
 }

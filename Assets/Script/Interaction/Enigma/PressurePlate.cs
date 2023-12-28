@@ -32,12 +32,13 @@ public class PressurePlate : MonoBehaviour
             initRotation = obstacle.transform.rotation;
         }
         initRotation = obstacle.transform.rotation;
-        enim = GetComponent<EnigmaObj>();
+        enim = obstacle.GetComponent<EnigmaObj>();
         if(physics)
             rb = obstacle.GetComponent<Rigidbody>();
     }
 
-    
+    private bool back = false;
+    public bool stopWhenComplete = false;
     // Update is called once per frame
     void Update()
     {
@@ -49,15 +50,30 @@ public class PressurePlate : MonoBehaviour
 
                 obstacle.transform.localPosition = Vector3.MoveTowards(obstacle.transform.localPosition, targetPosition, animSpeed * moveDirection.magnitude * Time.deltaTime);
             }
+            back = true;
         }
         else if(returnBack)
         {
-            
-            if (!physics)
+
+            ComeBack();
+            back = false;
+        }
+    }
+
+    private void ComeBack()
+    {
+        if (!physics)
+        {
+            Vector3 moveDirection = (initPosition - obstacle.transform.localPosition).normalized;
+            obstacle.transform.localPosition = Vector3.MoveTowards(obstacle.transform.localPosition, initPosition, animSpeed * moveDirection.magnitude * Time.deltaTime);
+
+
+            if (back)
             {
-                Vector3 moveDirection = (initPosition - obstacle.transform.localPosition).normalized;
-                obstacle.transform.localPosition = Vector3.MoveTowards(obstacle.transform.localPosition, initPosition, animSpeed * moveDirection.magnitude * Time.deltaTime);
-                
+                enim.GetComponent<InteractableObject>().Reset();
+                enim.enigmaChecker.Reset();
+                //enim.SetActiveObj(true);
+                Debug.Log(enim.enigmaChecker.name);
             }
         }
     }

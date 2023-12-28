@@ -34,8 +34,10 @@ public  class Enigma : MonoBehaviour
     public int elementsToOrder;
     public int numbersOfElement;
     //public int signalToResolve = 0;
+    public bool diam = false;
 
     private int i = 0;
+    private EnigmaObj[] objs;
     
 
 
@@ -44,6 +46,14 @@ public  class Enigma : MonoBehaviour
         EventManager.StartListening("Reset", Reset);
         if(disableObstacle)
             initPosition = obstacle.transform.localPosition;
+        else
+            diam = objReward.activeSelf;
+
+        var eo = GetComponentsInChildren<EnigmaObj>();
+
+        objs = new EnigmaObj[eo.Length];
+
+        objs = eo;
     }
 
     private bool end = false;
@@ -67,6 +77,7 @@ public  class Enigma : MonoBehaviour
             if (reward && complete)
             {
                 objReward.SetActive(true);
+                diam = true;
                 end = true;
             }
         }
@@ -106,16 +117,6 @@ public  class Enigma : MonoBehaviour
   
     public void ElementPositionCheck(int code)
     {
-
-        /*if (i < elements.Length && code == elements[i])
-        {
-
-
-            i++;
-            if (i == elements.Length)
-                complete = true;
-        }*/
-
         
         foreach (var s in spots)
         {
@@ -134,17 +135,52 @@ public  class Enigma : MonoBehaviour
     public void ActiveAllCheck()
     {
         i++;
-        Debug.Log(i + " " + numbersOfElement);
+        //Debug.Log(i + " " + numbersOfElement);
         if (i == numbersOfElement)
         {
             complete = true;
         }
     }
 
-    private void Reset()
+    public void Reset()
     {
         i = 0;
+        var x = GetComponentsInChildren<InteractableObject>();
+        foreach (InteractableObject io in x)
+        {
+            io.WaterInteraction();
+            
+        }
+        foreach (EnigmaObj eo in objs)
+            eo.SetActiveObj(true);
+
         complete = false;
     }
 
+    public bool[] IsComplete()
+    {
+        var x = new bool[2];
+        if (reward)
+        {
+            diam = objReward.activeSelf;
+            x[1] = diam;
+        }
+        else
+        {
+            x[1] = false;
+        }
+        x[0] = complete;
+        
+        return x;
+    }
+
+    public void Complete(bool c, bool d)
+    {
+        complete = c;
+        if (reward)
+        {
+            diam = d;
+            objReward.SetActive(d);
+        }
+    }
 }

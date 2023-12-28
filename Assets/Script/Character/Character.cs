@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -26,6 +27,9 @@ public class Character : MonoBehaviour
     [SerializeField]
     private Canvas lifeCanvas;
     [SerializeField]
+    private GameObject gems;
+    private TextMeshProUGUI textDiams;
+    [SerializeField]
     private GameObject lives;
     private float space = 110;
     private GameObject water;
@@ -34,6 +38,11 @@ public class Character : MonoBehaviour
     private bool moving = false;
     private Vector3 initPosition;
     private Quaternion initRotation;
+
+    public bool IsAttacking()
+    {
+        return attacking;
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -45,6 +54,7 @@ public class Character : MonoBehaviour
         lastPos = transform.position;
         initPosition = transform.position;
         initRotation = transform.rotation;
+        textDiams = gems.GetComponentInChildren<TextMeshProUGUI>();
         Reset();
     }
 
@@ -129,15 +139,19 @@ public class Character : MonoBehaviour
 
             
         }
+        textDiams.text = diamond.ToString();
+        gems.gameObject.SetActive(true);
+        
     }
 
     private IEnumerator DisableLife()
     {
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(1.5f);
         for (int i = 0; i < health; i++)
         {
             heartAnim = false;
         }
+        gems.gameObject.SetActive(false);
     }
 
     private bool dead = false;
@@ -415,7 +429,7 @@ public class Character : MonoBehaviour
         }else if(collision.gameObject.layer == Constants.diamondLayer)
         {
             diamond++;
-            Destroy(collision.gameObject);
+            collision.gameObject.SetActive(false);
         }
     }
 
@@ -441,8 +455,10 @@ public class Character : MonoBehaviour
 
     public int GetCheckpointIndex()
     {
-
-        return checkpoint.GetIndex();
+        var x = 0;
+        if (checkpoint)
+            x = checkpoint.GetIndex();
+        return x;
     }
 
     private void WaterRespawn()

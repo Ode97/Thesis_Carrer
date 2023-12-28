@@ -5,6 +5,7 @@ using UnityEngine;
 using System.Diagnostics;
 using Unity.VisualScripting;
 using System.Linq;
+using System;
 
 public enum CameraMode {Strategica, Vista}
 
@@ -30,6 +31,10 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     public static GameManager instance = null;
 
+
+    private CreateCSV csvBuilder = new CreateCSV();
+
+
     void Awake()
     {
         
@@ -52,16 +57,23 @@ public class GameManager : MonoBehaviour
         saveCity = GetComponent<SaveCity>();
     }
 
+
     // Update is called once per frame
     void Update()
     {
+
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+        Physics.Raycast(ray, out hit, Mathf.Infinity);
+        long timestamp = (long)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+        csvBuilder.AddData(timestamp + ";" + actualMode.ToString() + ";" + character.GetObject() + ";" + character.getActualElement() + ";" + character.IsMoving() + ";" + character.IsAttacking() + ";" + hit.point.x + ";" + hit.point.y);
         //UnityEngine.Debug.Log(stopLogic + " " + MenuManager.instance.isMenuOpen());
         if (!stopLogic)
         {
             if (character.isActiveElement())
             {
-                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                RaycastHit hit;
+                //Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                //RaycastHit hit;
                 Physics.Raycast(ray, out hit, Mathf.Infinity);
 
                 
@@ -83,8 +95,8 @@ public class GameManager : MonoBehaviour
                         return;
                     }
 
-                    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                    RaycastHit hit;
+                    //Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                    //RaycastHit hit;
 
                     Physics.Raycast(ray, out hit, Mathf.Infinity, ~ignoreLayer);
 
@@ -203,7 +215,7 @@ public class GameManager : MonoBehaviour
         cameraHandler.SetMode(mode);
     }
 
-    public void SetLoad(int d, float[] pPos, float[] pRot, float[,,] pE, float[,,] rE, float[,] aP, float[,] aR, int[] fD, bool[] wD, int cP)
+    public void SetLoad(int d, float[] pPos, float[] pRot, float[,] pE, float[,] rE, float[,] aP, float[,] aR, int[] fD, bool[] wD, int cP, bool[,] enigmasComplete)
     {
         character.SetDiamonds(d);
 
@@ -227,7 +239,6 @@ public class GameManager : MonoBehaviour
         i = 0;
         foreach (Fire f in z)
         {
-            UnityEngine.Debug.Log(i + " " + f.name);
             if (fD[i] == 1)
             {
                 
@@ -245,23 +256,6 @@ public class GameManager : MonoBehaviour
             i++;
         }
 
-        /*foreach (Fire f in filteredArray)
-        {
-            if (fD[i] == 1)
-            {
-                UnityEngine.Debug.Log(f.name);
-                if (f.distructible)
-                {
-                    f.LoadDestroy();
-                }
-                else
-                {
-
-                    f.FireInteraction();
-                }
-            }
-            i++;
-        }*/
 
 
         if (MenuManager.instance.IsFirstStart())
@@ -286,6 +280,36 @@ public class GameManager : MonoBehaviour
             {
                 character.SetCheckpoint(c);
             }
+        }
+
+        var t = FindObjectsOfType<EarthPlant>(includeInactive:true);
+        
+        
+        for (int plant = 0; plant < pE.GetLength(0); plant++)
+        {
+            
+            foreach (EarthPlant earthPlant in t)
+            {
+                if (earthPlant.GetIndex() == pE[plant, 3])
+                {
+                                        
+                    var a = Instantiate(earthPlant, new Vector3(pE[plant, 0], pE[plant, 1], pE[plant, 2]), new Quaternion(rE[plant, 0], rE[plant, 1], rE[plant, 2], rE[plant, 3]));
+                    UnityEngine.Debug.Log(a.name);
+                    a.transform.localScale = earthPlant.GetScale();
+                    a.gameObject.layer = Constants.intObjLayer;
+                }               
+            }
+        }
+
+        var en = FindObjectsOfType<Enigma>();
+
+        i = 0;
+        //UnityEngine.Debug.Log(en.Length + " " + enigmasComplete.Length);
+        foreach (Enigma enigma in en)
+        {
+            //UnityEngine.Debug.Log(i);
+            enigma.Complete(enigmasComplete[i,0], enigmasComplete[i,1]);
+            i++;
         }
     }
 

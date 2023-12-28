@@ -87,6 +87,7 @@ public class MenuManager : MonoBehaviour
     public void OpenMenuStart()
     {
         startMenu.SetActive(true);
+        GameManager.instance.ResetGame();
         Camera.main.GetComponent<MainCameraFollow>().enabled = false;
         Camera.main.transform.position = initCameraPos;
         Camera.main.transform.rotation = initCameraRot;
@@ -176,9 +177,7 @@ public class MenuManager : MonoBehaviour
 
     public void OpenSettings()
     {
-        settingsPanel.SetActive(true);
-        
-        
+        settingsPanel.SetActive(true);       
     }
 
     public void CloseSettings()
@@ -196,7 +195,7 @@ public class MenuManager : MonoBehaviour
         mainCanvas.gameObject.SetActive(true);
         mainButtons.SetActive(true);
         firstStart = true;
-        GameManager.instance.ResetGame();
+        
         start = true;
     }
 

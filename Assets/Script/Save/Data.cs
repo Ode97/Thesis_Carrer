@@ -11,15 +11,16 @@ public class Data
     public int diamonds;
     public float[] playerPos = new float[3];
     public float[] playerRot = new float[3];
-    public float[,,] earthPos;
-    public float[,,] earthRot;
+    public float[,] earthPos;
+    public float[,] earthRot;
     public float[,] airPos;
     public float[,] airRot;
     public int[] fireData;
     public bool[] waterData;
     public int checkpoint;
+    public bool[,] enigmasComplete;
 
-    public Data(int d, float[] pPos, float[] pRot, float[,,] pE, float[,,] rE, float[,] aP, float[,] aR, int[] fD, bool[] wD, int cP)
+    public Data(int d, float[] pPos, float[] pRot, float[,] pE, float[,] rE, float[,] aP, float[,] aR, int[] fD, bool[] wD, int cP, bool[,] enigmaC)
     {
 
         earthPos = pE;
@@ -32,6 +33,7 @@ public class Data
         fireData = fD;
         waterData = wD;
         checkpoint = cP;
+        enigmasComplete = enigmaC;
 
     }
     

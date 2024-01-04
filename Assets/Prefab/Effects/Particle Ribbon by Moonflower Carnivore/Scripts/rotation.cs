@@ -11,7 +11,13 @@ public class rotation : MonoBehaviour {
 	void OnDisable(){
 		CancelInvoke();
 	}
-	public void clickOn(){
+
+    private void OnEnable()
+    {
+        InvokeRepeating("rotate", 0f, 0.0167f);
+    }
+
+    public void clickOn(){
 		InvokeRepeating("rotate", 0f, 0.0167f);
 	}
 	public void clickOff(){

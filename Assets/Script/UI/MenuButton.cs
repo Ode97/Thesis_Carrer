@@ -33,7 +33,7 @@ public class MenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     ContinueGame();
                 }else if (save)
                 {
-                    GameManager.instance.saveCity.SaveState();
+                    GameManager.instance.Save();
                 }
                 else
                 {
@@ -92,13 +92,14 @@ public class MenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     private void NewGame()
     {
+        GetComponent<DialogueTrigger>().TriggerDialogue();
         MenuManager.instance.StartNewGame();
     }
 
     private void ContinueGame()
     {
         MenuManager.instance.StartNewGame();
-        Save.loadData();
+        DataManager.loadData();
     }
 
     private void CloseGame()
@@ -152,7 +153,7 @@ public class MenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         }
         else if (save)
         {
-            GameManager.instance.saveCity.SaveState();
+            GameManager.instance.Save();
         }
         else
         {

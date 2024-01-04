@@ -24,7 +24,7 @@ public class GameManager : MonoBehaviour
     public bool fixing = false;
     public Process p;
     public InteractableObject initTerrain;
-    public SaveCity saveCity;
+    private Save save;
     public LayerMask ignoreLayer;
 
 
@@ -34,6 +34,10 @@ public class GameManager : MonoBehaviour
 
     private CreateCSV csvBuilder = new CreateCSV();
 
+    public void Save()
+    {
+        save.SaveState();
+    }
 
     void Awake()
     {
@@ -54,7 +58,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         
-        saveCity = GetComponent<SaveCity>();
+        save = GetComponent<Save>();
     }
 
 
@@ -65,8 +69,8 @@ public class GameManager : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
         Physics.Raycast(ray, out hit, Mathf.Infinity);
-        long timestamp = (long)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
-        csvBuilder.AddData(timestamp + ";" + actualMode.ToString() + ";" + character.GetObject() + ";" + character.getActualElement() + ";" + character.IsMoving() + ";" + character.IsAttacking() + ";" + hit.point.x + ";" + hit.point.y);
+        long timestamp = (long)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalMilliseconds;
+        csvBuilder.AddData(timestamp + ";" + actualMode.ToString() + ";" + character.GetObject() + ";" + character.getActualElement() + ";" + character.IsMoving() + ";" + character.IsAttacking() + ";" + Input.mousePosition.x + ";" + Input.mousePosition.y);
         //UnityEngine.Debug.Log(stopLogic + " " + MenuManager.instance.isMenuOpen());
         if (!stopLogic)
         {
@@ -104,12 +108,13 @@ public class GameManager : MonoBehaviour
                     // Cast a ray from the mouse position into the scene
                     if (hit.collider != null)
                     {
-                        var intObj = hit.collider.GetComponent<InteractableObject>();
+                       
                         
                         var layer = hit.collider.gameObject.layer;
 
                         if (interaction)
                         {
+                            var intObj = hit.collider.GetComponent<InteractableObject>();
                             intObj.ResetTimer();
                             //cambiare con layer e vedere se si rompe tutto
                             if (intObj)

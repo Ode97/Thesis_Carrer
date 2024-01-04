@@ -7,10 +7,22 @@ public class MagicAttack : MonoBehaviour
     public Element element;
     private Vector3 hitPoint;
     private bool destroy = false;
+    public AudioSource castAudio;
+    public AudioSource impactAudio;
     // Start is called before the first frame update
     void Start()
     {
         
+    }
+
+    public void AudioCast()
+    {
+        castAudio.Play();
+    }
+
+    public void AudioImpact()
+    {
+        impactAudio.Play();
     }
 
     // Update is called once per frame
@@ -26,7 +38,7 @@ public class MagicAttack : MonoBehaviour
                 hitPoint = hit.collider.transform.position;
             }
             
-            transform.position = Vector3.MoveTowards(transform.position, hitPoint, Time.deltaTime * 10);
+            transform.position = Vector3.MoveTowards(transform.position, hitPoint, Time.deltaTime * 50);
             if (!destroy)
             {
                 StartCoroutine(DestroyBullet());

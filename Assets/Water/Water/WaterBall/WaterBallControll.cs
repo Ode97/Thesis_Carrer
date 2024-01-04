@@ -8,6 +8,8 @@ public class WaterBallControll : MonoBehaviour
     [SerializeField] Transform _CreationPoint;
     [SerializeField] WaterBall WaterBallPrefab;
     WaterBall waterBall = null;
+    [SerializeField]
+    private float waitingTime = 1;
 
     private void Start()
     {
@@ -39,7 +41,7 @@ public class WaterBallControll : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
         busy = true;
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(waitingTime);
         busy = false;
         if (Physics.Raycast(ray, out hit))
         {

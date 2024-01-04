@@ -20,6 +20,7 @@ public abstract class MagicElement : MonoBehaviour
         character = GameManager.instance.character;
     }
     public abstract void ApplyEffect();
+    
     public void SetObject(InteractableObject obj)
     {
         interactableObject = obj;
@@ -34,4 +35,5 @@ public abstract class MagicElement : MonoBehaviour
     {
         return interactableObject;
     }
+
 }

@@ -19,7 +19,7 @@ public class Earth : InteractableObject
     protected void Update()
     {
         base.Update();
-
+        
         if (scaleTrigger)
         {
             if (t.transform.localScale.magnitude < scaleTarget.magnitude - 0.01f)
@@ -38,12 +38,12 @@ public class Earth : InteractableObject
     override
     public bool EarthInteraction(GameObject obj, Vector3 pos)
     {
-        
+
         /*if (gameObject.layer == Constants.terrainLayer)
             t = Instantiate(obj, transform);
         else*/
+        
         t = Instantiate(obj);
-
         scaleTarget = t.GetComponent<EarthPlant>().GetScale();
 
         t.transform.position = pos;

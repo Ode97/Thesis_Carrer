@@ -15,7 +15,7 @@ public class EarthElement : MagicElement
 
     override
     public void ApplyEffect()
-    {        
+    {
         interactableObject.EarthInteraction(earthObject, objectPosition);
     }
 

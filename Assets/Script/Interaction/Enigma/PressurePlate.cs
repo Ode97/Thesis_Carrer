@@ -32,7 +32,7 @@ public class PressurePlate : MonoBehaviour
             initRotation = obstacle.transform.rotation;
         }
         initRotation = obstacle.transform.rotation;
-        enim = obstacle.GetComponent<EnigmaObj>();
+        enim = GetComponent<EnigmaObj>();
         if(physics)
             rb = obstacle.GetComponent<Rigidbody>();
     }
@@ -70,7 +70,8 @@ public class PressurePlate : MonoBehaviour
 
             if (back)
             {
-                enim.GetComponent<InteractableObject>().Reset();
+
+                enim.GetComponent<InteractableObject>()?.Reset();
                 enim.enigmaChecker.Reset();
                 //enim.SetActiveObj(true);
                 Debug.Log(enim.enigmaChecker.name);
@@ -80,17 +81,18 @@ public class PressurePlate : MonoBehaviour
 
     private void OnCollisionEnter(Collision other)
     {
+        
         if (!physics)
         {
             var g = other.gameObject;
-
+            Debug.Log("bbbbbbb");
             if (g.GetComponent<Rigidbody>() && g.GetComponent<Rigidbody>().mass > 0.5f && !stop)
             {
-
+                Debug.Log("cccccc");
                 i++;
                 if (enigma)
                 {
-
+                    Debug.Log("dddddd");
                     enim.Interaction(Element.None);
                     stop = true;
 
@@ -105,13 +107,55 @@ public class PressurePlate : MonoBehaviour
         }
     }
 
+    //Trigger used for enable also navmash agent activation
+    private void OnTriggerEnter(Collider other)
+    {
+
+        if (!physics)
+        {
+            var g = other.gameObject;
+            if (g.GetComponent<Rigidbody>() && g.GetComponent<Rigidbody>().mass > 0.5f && !stop)
+            {
+                i++;
+                if (enigma)
+                {
+                    Debug.Log(other.gameObject.name + " " + transform.name);
+                    enim.Interaction(Element.None);
+                    stop = true;
+
+                }
+                else
+                {
+
+                    open = true;
+                }
+
+            }
+        }
+    }
+
+    private void OnTriggerExit(Collider collision)
+    {
+        var g = collision.gameObject;
+        if (g.GetComponent<Rigidbody>() && g.GetComponent<Rigidbody>().mass > 0.5f && !stop)
+        {
+            i--;
+
+            if (i == 0)
+            {
+                open = false;
+            }
+
+        }
+    }
+
     private bool stop = false;
     private void OnCollisionStay(Collision other)
     {
         if (physics)
         {
             var g = other.gameObject;
-
+            
             if (g.GetComponent<Rigidbody>() && g.GetComponent<Rigidbody>().mass > 0.5f && !stop)
             {
 

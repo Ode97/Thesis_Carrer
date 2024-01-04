@@ -7,7 +7,6 @@ public class WaterElement : MagicElement
 
     public override void ApplyEffect()
     {
-        
         interactableObject.WaterInteraction();
     }
 }

@@ -27,7 +27,7 @@ public class MenuManager : MonoBehaviour
 
     public static MenuManager instance = null;
 
-    private bool menuOpen = false;
+    private bool menuOpen = true;
 
     [SerializeField]
     private GameObject mainButtons;
@@ -72,7 +72,7 @@ public class MenuManager : MonoBehaviour
 
     public void OpenMenu()
     {
-        Time.timeScale = 0f;
+        //Time.timeScale = 0f;
         menu.SetActive(true);
         menuOpen = true;
     }
@@ -195,7 +195,7 @@ public class MenuManager : MonoBehaviour
         mainCanvas.gameObject.SetActive(true);
         mainButtons.SetActive(true);
         firstStart = true;
-        
+        menuOpen = false;
         start = true;
     }
 

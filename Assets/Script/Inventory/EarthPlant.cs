@@ -10,7 +10,7 @@ public class EarthPlant : InventoryObject
     private int index;
     public override void Chosen()
     {
-        EarthElement.earthObject = this.gameObject;
+        EarthElement.earthObject = gameObject;
     }
 
     // Start is called before the first frame update

@@ -11,13 +11,13 @@ public class Checkpoint : MonoBehaviour
     private TextMeshProUGUI areanNameMainCanvas;
     [SerializeField]
     private GameObject areaPanel;
-    private SaveCity sc;
+    private Save sc;
     [SerializeField]
     private int index;
 
     private void Awake()
     {
-        sc = FindObjectOfType<SaveCity>();
+        sc = FindObjectOfType<Save>();
     }
 
 
@@ -31,7 +31,6 @@ public class Checkpoint : MonoBehaviour
         {
             GameManager.instance.character.SetCheckpoint(this);
             sc.SaveState();
-
             if (areaName != null)
             {
                 areaName.gameObject.SetActive(true);

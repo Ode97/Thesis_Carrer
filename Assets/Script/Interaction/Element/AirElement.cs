@@ -19,7 +19,6 @@ public class AirElement : MagicElement
     override
     public void ApplyEffect()
     {
-
         GameManager.instance.stopLogic = true;
         StartCoroutine(Wait());
         actualeffect = Instantiate(airEffect);

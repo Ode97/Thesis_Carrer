@@ -55,7 +55,9 @@ public class Character : MonoBehaviour
         initPosition = transform.position;
         initRotation = transform.rotation;
         textDiams = gems.GetComponentInChildren<TextMeshProUGUI>();
-        Reset();
+        lifeCanvas.transform.parent.SetParent(transform);
+        lifeCanvas.transform.parent.transform.localPosition = Vector3.zero;
+        Reset();                
     }
 
     public void NewGame()
@@ -207,6 +209,11 @@ public class Character : MonoBehaviour
             Destroy(activeAttack);
     }
 
+    public bool IsDead()
+    {
+        return dead;
+    }
+
     private IEnumerator Dead()
     {
         dead = true;
@@ -214,9 +221,9 @@ public class Character : MonoBehaviour
         animator.SetTrigger("Die");
         yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName("Die01_Stay_SwordAndShield"));
         animator.ResetTrigger("Die");
-        yield return new WaitForSeconds(3);
-        Reset();
+        yield return new WaitForSeconds(1);
         StartCoroutine(Respawn());
+        Reset();
         animator.Play("Idle_Battle_SwordAndShield");
         dead = false;
     }
@@ -316,7 +323,7 @@ public class Character : MonoBehaviour
         }
         else
         {
-            Debug.Log(obj.gameObject.name);
+            
             obj.Interaction();
         }
     }
@@ -324,12 +331,14 @@ public class Character : MonoBehaviour
     private GameObject activeAttack;
     public void Attack()
     {       
+
         if (activeElement && enemyTarget && !attacking && !activeAttack)
         {
             //StartCoroutine(AttackRoutine());
 
             activeAttack = Instantiate(actualElement.BaseAttack);
             
+            activeAttack.GetComponent<MagicAttack>().AudioCast();
 
             if (activeAttack.GetComponent<MagicAttack>().element != Element.Earth)
                 activeAttack.transform.position = transform.position + new Vector3(0, 3, 0) + transform.forward * 3;
@@ -485,7 +494,7 @@ public class Character : MonoBehaviour
     private bool platform = false;
     private IEnumerator Respawn()
     {
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(1);
         movment.DisableMove();
 
         if(platform)

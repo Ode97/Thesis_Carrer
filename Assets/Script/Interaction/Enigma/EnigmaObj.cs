@@ -85,15 +85,16 @@ public class EnigmaObj : MonoBehaviour
     private bool active = true;
     public void Interaction(Element interactionElement)
     {
-        //Debug.Log(active);
+        Debug.Log("activate");
         if (interactionElement == element && active) {
-            
+            Debug.Log("activate2");
             if (enigmaChecker.position)
                 enigmaChecker.ElementPositionCheck(value);
             if (enigmaChecker.order)
                 enigmaChecker.OrderCheck(value);
             if (enigmaChecker.activation)
             {
+                Debug.Log("activate3");
                 active = false;
                 enigmaChecker.ActiveAllCheck();
             }

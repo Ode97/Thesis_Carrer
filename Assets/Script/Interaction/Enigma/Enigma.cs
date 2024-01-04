@@ -39,8 +39,6 @@ public  class Enigma : MonoBehaviour
     private int i = 0;
     private EnigmaObj[] objs;
     
-
-
     private void Start()
     {
         EventManager.StartListening("Reset", Reset);
@@ -135,9 +133,10 @@ public  class Enigma : MonoBehaviour
     public void ActiveAllCheck()
     {
         i++;
-        //Debug.Log(i + " " + numbersOfElement);
+        Debug.Log(i + " " + numbersOfElement);
         if (i == numbersOfElement)
         {
+            
             complete = true;
         }
     }

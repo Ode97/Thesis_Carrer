@@ -17,7 +17,7 @@ public class Arrow : MonoBehaviour
 
     private IEnumerator Destroy()
     {
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(1.5f);
         Destroy(gameObject);
 
     }

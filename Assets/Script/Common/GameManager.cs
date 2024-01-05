@@ -65,7 +65,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
         Physics.Raycast(ray, out hit, Mathf.Infinity);
@@ -78,7 +78,7 @@ public class GameManager : MonoBehaviour
             {
                 //Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 //RaycastHit hit;
-                Physics.Raycast(ray, out hit, Mathf.Infinity);
+                Physics.Raycast(ray, out hit, Mathf.Infinity, ~ignoreLayer);
 
                 
                 if (hit.collider && hit.collider.gameObject.layer == Constants.enemyLayer)
@@ -115,6 +115,7 @@ public class GameManager : MonoBehaviour
                         if (interaction)
                         {
                             var intObj = hit.collider.GetComponent<InteractableObject>();
+                            
                             intObj.ResetTimer();
                             //cambiare con layer e vedere se si rompe tutto
                             if (intObj)

@@ -122,6 +122,7 @@ public class MenuManager : MonoBehaviour
         mapCanvas.SetActive(true);
         var p = GameManager.instance.character.transform.position;
         mapIcon.transform.position = new Vector3(p.x, mapIcon.transform.position.y, p.z);
+        
         renderCam.RenderMap();
         //mainCanvas.enabled = false;
 

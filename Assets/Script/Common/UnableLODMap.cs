@@ -7,33 +7,32 @@ public class UnableLODMap : MonoBehaviour
     public Camera specificCamera; // The specific camera
     //public string treeTag = "Tree"; // The tag for the type of tree
 
-    void Update()
+
+    public static void UnableCameraLOD()
     {
-        if (Camera.current == specificCamera)
+
+        
+        //GameObject[] trees = GameObject.FindGameObjectsWithTag(treeTag);
+        LODGroup[] trees = FindObjectsOfType<LODGroup>();
+        foreach (LODGroup tree in trees)
         {
-            //GameObject[] trees = GameObject.FindGameObjectsWithTag(treeTag);
-            LODGroup[] trees = FindObjectsOfType<LODGroup>();
-            foreach (LODGroup tree in trees)
+
+            if (tree != null)
             {
-                
-                if (tree != null)
-                {
-                    tree.enabled = false;
-                }
+                tree.enabled = false;
             }
         }
-        else
-        {
-            //GameObject[] trees = GameObject.FindGameObjectsWithTag(treeTag);
-            LODGroup[] trees = FindObjectsOfType<LODGroup>();
-            foreach (LODGroup tree in trees)
+    }
+
+    public static void EnableCameraLOD()
+    {
+        //GameObject[] trees = GameObject.FindGameObjectsWithTag(treeTag);
+        LODGroup[] trees = FindObjectsOfType<LODGroup>();
+        foreach (LODGroup tree in trees)
+        {               
+            if (tree != null)
             {
-               
-                
-                if (tree != null)
-                {
-                    tree.enabled = true;
-                }
+                tree.enabled = true;
             }
         }
     }

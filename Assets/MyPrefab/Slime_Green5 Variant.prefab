@@ -222,8 +222,7 @@ MonoBehaviour:
     m_Bits: 128
   distanceForAttack: 6
   rotationSpeed: 5
-  idlePositions:
-  - {x: 461.304, y: 15.1, z: 494.9662}
+  idlePositions: []
 --- !u!54 &2000504525682294518
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -233,8 +232,8 @@ Rigidbody:
   m_GameObject: {fileID: 2150967221420226727}
   serializedVersion: 4
   m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
+  m_Drag: 0.3
+  m_AngularDrag: 0.5
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}

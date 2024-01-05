@@ -5,31 +5,38 @@ using UnityEngine;
 public class TreeManager : MonoBehaviour
 {
     
-    public GameObject treePrefab; // The tree prefab with various LODs
-    public Terrain terrain; // The terrain
+    //public GameObject treePrefab; // The tree prefab with various LODs
+    public Terrain[] terrains; // The terrain
 
     void Start()
     {
+        TreeInstance[] treeInstances;
         // Get the tree instances from the terrain
-        TreeInstance[] treeInstances = terrain.terrainData.treeInstances;
-
-        // Loop through each tree instance
-        foreach (TreeInstance treeInstance in treeInstances)
+        foreach (var terrain in terrains)
         {
-            // Calculate the world position of the tree instance
-            Vector3 position = Vector3.Scale(treeInstance.position, terrain.terrainData.size) + terrain.transform.position;
+            treeInstances = terrain.terrainData.treeInstances;
 
-            // Instantiate the tree prefab at the position of the tree instance
-            GameObject tree = Instantiate(treePrefab, position, Quaternion.identity);
+            // Loop through each tree instance
+            foreach (TreeInstance treeInstance in treeInstances)
+            {
+                TreePrototype treePrototype = terrain.terrainData.treePrototypes[treeInstance.prototypeIndex];
 
-            // Set the scale of the tree
-            tree.transform.localScale = Vector3.one * treeInstance.widthScale;
+                // Ora treePrototype.prototype contiene l'asset dell'albero
+                GameObject treeAsset = treePrototype.prefab;
+                // Calculate the world position of the tree instance
+                Vector3 position = Vector3.Scale(treeInstance.position, terrain.terrainData.size) + terrain.transform.position;
+
+                // Instantiate the tree prefab at the position of the tree instance
+                GameObject tree = Instantiate(treeAsset, position, Quaternion.identity);
+
+                // Set the scale of the tree
+                tree.transform.localScale = Vector3.one * treeInstance.widthScale;
+            }
+
+            // Remove the tree instances from the terrain
+            terrain.terrainData.treeInstances = new TreeInstance[0];
+
         }
-
-        // Remove the tree instances from the terrain
-        terrain.terrainData.treeInstances = new TreeInstance[0];
-
-        GetComponent<UnableLODMap>().enabled = true;
     }
 }
 

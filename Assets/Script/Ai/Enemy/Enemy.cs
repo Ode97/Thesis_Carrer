@@ -73,16 +73,26 @@ public class Enemy : MonoBehaviour
         attack.AddTransition(isDead, dead);
 
         fsm = new FSM(idle);
+
+        character = FindObjectOfType<Character>();
+        agent = GetComponent<NavMeshAgent>();
+
+        if (idlePositions.Length > 0)
+        {
+            agent.isStopped = false;
+            agent.SetDestination(idlePositions[0]);
+        }else
+            agent.isStopped = false;
+
         fsm.StartFSM();
     }
 
     private void Start()
     {
-        character = FindObjectOfType<Character>();
-        agent = GetComponent<NavMeshAgent>();
+        
 
         
-       
+
     }
 
     public void SetEnigma()
@@ -109,9 +119,9 @@ public class Enemy : MonoBehaviour
 
     private void MoveAnim()
     {
-        Debug.Log("walk");
+        //Debug.Log("walk");
         
-        animator.SetTrigger("Walk");
+        //animator.SetTrigger("Walk");
     }
 
     private void ResetMoveAnim()
@@ -256,7 +266,7 @@ public class Enemy : MonoBehaviour
             else
                 detected = false;
 
-            Debug.Log(fsm.currentState.name);
+            //Debug.Log(fsm.currentState.name);
             fsm.UpdateFSM();
             
         }else
@@ -296,22 +306,26 @@ public class Enemy : MonoBehaviour
         }*/
 
         
-        if (idlePositions.Length > 1 &&  Vector3.Distance(transform.position, idlePositions[i]) < 1f)
-        {            
-            i += 1;
-            if (i >= idlePositions.Length)
-                i = 0;
-            /*RotateCharacter(idlePositions[i]);
-
-            Vector3 moveDirection = (idlePositions[i] - transform.position).normalized;
-
-
-            Vector3 move = moveDirection * speed * Time.deltaTime;
-            transform.position = Vector3.MoveTowards(transform.position, idlePositions[i], move.magnitude);*/
-            //Debug.Log(Vector3.Distance(transform.position, idlePositions[i]));
-
+        if (idlePositions.Length > 1)
+        {
             agent.isStopped = false;
-            agent.SetDestination(idlePositions[i]);
+            if (Vector3.Distance(transform.position, idlePositions[i]) < 1f)
+            {
+                i += 1;
+                if (i >= idlePositions.Length)
+                    i = 0;
+                /*RotateCharacter(idlePositions[i]);
+
+                Vector3 moveDirection = (idlePositions[i] - transform.position).normalized;
+
+
+                Vector3 move = moveDirection * speed * Time.deltaTime;
+                transform.position = Vector3.MoveTowards(transform.position, idlePositions[i], move.magnitude);*/
+                //Debug.Log(Vector3.Distance(transform.position, idlePositions[i]));
+
+
+                agent.SetDestination(idlePositions[i]);
+            }
         }
        
     }

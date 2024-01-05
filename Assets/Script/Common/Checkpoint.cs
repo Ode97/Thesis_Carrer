@@ -39,7 +39,10 @@ public class Checkpoint : MonoBehaviour
 
                 if(!show)
                     StartCoroutine(ShowAreaName());
+
+                
             }
+            GetComponent<DialogueTrigger>()?.TriggerDialogue();
         }
     }
 
@@ -71,11 +74,12 @@ public class Checkpoint : MonoBehaviour
             areanNameMainCanvas.transform.position = v;
             increaseScale = true;
             show = true;
-            yield return new WaitForSeconds(5);
+            yield return new WaitForSeconds(3);
             
             increaseScale = false;
             Destroy(areanNameMainCanvas.gameObject);
             show = false;
+            
         }
         
     }

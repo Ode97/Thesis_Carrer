@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -19,6 +20,7 @@ public class Golem : MonoBehaviour
     private NavMeshAgent agent;
     [SerializeField]
     private GameObject sphere;
+    private Vector3 sphereInitPos;
 
     void Awake()
     {
@@ -103,6 +105,7 @@ public class Golem : MonoBehaviour
         character = FindObjectOfType<Character>();
         agent = GetComponent<NavMeshAgent>();
         target = character.transform.position;
+        sphereInitPos = sphere.transform.localPosition;
         ChangeElement();
     }
 
@@ -212,7 +215,7 @@ public class Golem : MonoBehaviour
 
     private bool IsNear()
     {
-        
+        target = character.transform.position;
         if (distanceToCharacter < distanceForAttack)
         {
             return true;
@@ -267,7 +270,7 @@ public class Golem : MonoBehaviour
     private bool change = false;
     private bool stop = false;
     private Vector3 target;
-
+    private bool sphereReposition = false;
     private void Update()
     {
         if (!stop)
@@ -286,6 +289,21 @@ public class Golem : MonoBehaviour
         { 
             StartCoroutine(WaitActive(10));
         }
+
+        if (sphereReposition)
+        {
+            Vector3 moveDirection = (sphereInitPos - sphere.transform.localPosition).normalized;
+
+            sphere.transform.localPosition = Vector3.MoveTowards(sphere.transform.localPosition, sphereInitPos, 10 * moveDirection.magnitude * Time.deltaTime);
+
+            Debug.Log(sphere.transform.localPosition);
+            if(Vector3.Distance(sphere.transform.localPosition, sphereInitPos) < 1)
+            {
+                sphereReposition = false;
+                sphere.GetComponent<Rigidbody>().isKinematic = false;
+            }
+        }
+
         fsm.UpdateFSM();
         //Debug.Log(fsm.currentState.name);
     }
@@ -401,6 +419,8 @@ public class Golem : MonoBehaviour
             {
                 hit = false;
                 health -= 1;
+                sphereReposition = true;
+                sphere.GetComponent<Rigidbody>().isKinematic = true;
                 Debug.Log("particle" + name);
             }
         }
@@ -413,23 +433,28 @@ public class Golem : MonoBehaviour
         hit = false;
         active = true;
         wait = false;
+        sphereHit = false;
     }
 
     private void OnCollisionEnter(Collision collision)
     {
+        Debug.Log(collision.gameObject.name);
         if (collision.gameObject.layer == LayerMask.NameToLayer("BossTrigger") && !sphereHit)
         {
             Debug.Log(collision.gameObject.name + " mi ha colpito");
             hit = true;
             sphereHit = true;
+            
             agent.SetDestination(sphere.transform.position);
             target = sphere.transform.position;
             StopAllCoroutines();
             StartCoroutine(EndStun());
+            
         }else if (sphereHit)
         {
             agent.SetDestination(character.transform.position);
             target = character.transform.position;
+            
         }
     }
 }

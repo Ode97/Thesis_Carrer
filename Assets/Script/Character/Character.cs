@@ -405,6 +405,8 @@ public class Character : MonoBehaviour
 
     private Checkpoint checkpoint;
     private GameObject airObj;
+    [SerializeField]
+    private AudioSource hitted;
     private void OnCollisionEnter(Collision collision)
     {
 
@@ -429,7 +431,7 @@ public class Character : MonoBehaviour
 
         if (collision.gameObject.layer == Constants.enemyLayer && health > 0)
         {
-            Debug.Log("colpito");
+            hitted.Play();
             health -= 1;
             
             Life();
@@ -438,7 +440,12 @@ public class Character : MonoBehaviour
         }else if(collision.gameObject.layer == Constants.diamondLayer)
         {
             diamond++;
-            collision.gameObject.SetActive(false);
+            
+            collision.gameObject.GetComponent<AudioSource>().Play();
+            collision.gameObject.GetComponent<MeshRenderer>().enabled = false;
+            collision.collider.enabled = false;
+            //collision.gameObject.SetActive(false);
+
         }
     }
 

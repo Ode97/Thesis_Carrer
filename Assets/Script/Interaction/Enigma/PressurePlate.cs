@@ -54,6 +54,10 @@ public class PressurePlate : MonoBehaviour
         }
         else if(returnBack)
         {
+            if(stopWhenComplete && enim.enigmaChecker.IsComplete()[0])
+            {
+                return;
+            }
 
             ComeBack();
             back = false;
@@ -68,7 +72,7 @@ public class PressurePlate : MonoBehaviour
             obstacle.transform.localPosition = Vector3.MoveTowards(obstacle.transform.localPosition, initPosition, animSpeed * moveDirection.magnitude * Time.deltaTime);
 
 
-            if (back)
+            if (back && enim)
             {
 
                 enim.GetComponent<InteractableObject>()?.Reset();

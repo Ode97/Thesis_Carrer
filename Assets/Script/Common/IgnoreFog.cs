@@ -25,10 +25,12 @@ public class IgnoreFog : MonoBehaviour
     {
         
         gameObject.SetActive(true);
+        UnableLODMap.UnableCameraLOD();
         OnPreRender();
         camera.Render();
         OnPostRender();
         gameObject.SetActive(false);
+        UnableLODMap.EnableCameraLOD();
     }
 }
 

@@ -14,6 +14,7 @@ public class Checkpoint : MonoBehaviour
     private Save sc;
     [SerializeField]
     private int index;
+    public bool discovered = false;
 
     private void Awake()
     {
@@ -27,23 +28,31 @@ public class Checkpoint : MonoBehaviour
         {            
             Destroy(areanNameMainCanvas);
         }*/
+        
+        
         if (other.gameObject.layer == Constants.protagonistLayer)
         {
-            GameManager.instance.character.SetCheckpoint(this);
             sc.SaveState();
-            if (areaName != null)
+            if (!discovered)
             {
-                areaName.gameObject.SetActive(true);
-                areaName.transform.parent.GetComponent<CheckpointTeleport>().pos = transform.position;
-                areaName.transform.parent.GetComponent<Button>().enabled = true;
+                GameManager.instance.character.SetCheckpoint(this);
 
-                if(!show)
-                    StartCoroutine(ShowAreaName());
+                if (areaName != null)
+                {
+                    areaName.gameObject.SetActive(true);
+                    areaName.transform.parent.GetComponent<CheckpointTeleport>().pos = transform.position;
+                    areaName.transform.parent.GetComponent<Button>().enabled = true;
 
-                
+                    if (!show)
+                        StartCoroutine(ShowAreaName());
+
+
+                }
+                GetComponent<DialogueTrigger>()?.TriggerDialogue();
+                discovered = true;
             }
-            GetComponent<DialogueTrigger>()?.TriggerDialogue();
         }
+        
     }
 
     private bool increaseScale = false;
@@ -79,6 +88,7 @@ public class Checkpoint : MonoBehaviour
             increaseScale = false;
             Destroy(areanNameMainCanvas.gameObject);
             show = false;
+            
             
         }
         

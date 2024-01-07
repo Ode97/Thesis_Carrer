@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class EarthPlant : InventoryObject
 {
@@ -11,12 +12,22 @@ public class EarthPlant : InventoryObject
     public override void Chosen()
     {
         EarthElement.earthObject = gameObject;
+        EventManager.TriggerEvent("Unselected");
+        GetComponentInParent<Image>().color = Color.green;
+        
     }
 
     // Start is called before the first frame update
     void Start()
     {
         EventManager.StartListening("Reset", Reset);
+        EventManager.StartListening("Unselected", Unselected);
+    }
+
+    private void Unselected()
+    {
+        if(gameObject.layer == Constants.UILayer)
+            GetComponentInParent<Image>().color = Color.white;
     }
 
     // Update is called once per frame
@@ -38,7 +49,7 @@ public class EarthPlant : InventoryObject
 
     private void Reset()
     {
-        if (gameObject.layer == Constants.intObjLayer)
+        if (gameObject.GetComponent<EnigmaObj>())
         {
             
             Destroy(gameObject);

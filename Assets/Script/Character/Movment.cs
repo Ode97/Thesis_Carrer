@@ -53,7 +53,7 @@ public class Movment : MonoBehaviour
                 if (Physics.Raycast(origin, transform.forward, out hit, 4))
                 {
                     // Do something to prevent movement along the wall or mountain.
-                    if (hit.collider.gameObject.layer != LayerMask.NameToLayer("Checkpoint") && hit.collider.gameObject.layer != LayerMask.NameToLayer("Diamond"))
+                    if (hit.collider.gameObject.layer != LayerMask.NameToLayer("Checkpoint") && hit.collider.gameObject.layer != LayerMask.NameToLayer("Diamond") && hit.collider.gameObject.layer != LayerMask.NameToLayer("Plants"))
                     {
                         
                         return;

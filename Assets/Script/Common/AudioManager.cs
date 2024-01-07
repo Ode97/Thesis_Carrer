@@ -4,12 +4,36 @@ using UnityEngine;
 
 public class AudioManager : MonoBehaviour
 {
-    
+    // Start is called before the first frame update
+    public static AudioManager instance = null;
     public AudioSource forest;
-    public AudioSource lake;
+    public AudioSource boss;
+
+
+    void Awake()
+    {
+
+        if (instance == null)
+            instance = this;
+        else if (instance != this)
+            Destroy(gameObject);
+    }
 
     void Start()
     {
+        forest.Play();
+    }
+
+    public void PlayBossMusic()
+    {
+        forest.Stop();
+        boss.Play();
+
+    }
+
+    public void PlayForestMusic()
+    {
+        boss.Stop();
         forest.Play();
     }
 }

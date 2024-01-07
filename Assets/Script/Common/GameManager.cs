@@ -110,21 +110,24 @@ public class GameManager : MonoBehaviour
                     {
                        
                         
-                        var layer = hit.collider.gameObject.layer;
+                        
 
                         if (interaction)
                         {
                             var intObj = hit.collider.GetComponent<InteractableObject>();
                             
-                            intObj.ResetTimer();
+                            
                             //cambiare con layer e vedere se si rompe tutto
                             if (intObj)
                             {
+                                intObj.ResetTimer();
                                 character.Interaction(hit);
                                 
                             }
                             return;
                         }
+
+                        var layer = hit.collider.gameObject.layer;
 
                         if (actualMode == CameraMode.Strategica)
                         {

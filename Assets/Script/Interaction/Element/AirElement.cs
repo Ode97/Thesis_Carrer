@@ -31,12 +31,13 @@ public class AirElement : MagicElement
 
     private void FixedUpdate()
     {
+        
         if (clicked)
         {
             Vector3 pos = interactableObject.transform.position;
             actualeffect.transform.position = new Vector3(pos.x, pos.y - 0.5f, pos.z);
-            
 
+            
             if (!interactableObject.AirInteraction())
             {               
                 clicked = false;
@@ -52,6 +53,7 @@ public class AirElement : MagicElement
                 clicked = false;
                 StartCoroutine(Wait2());
                 Destroy(actualeffect);
+                
             }                       
         }
     }
@@ -66,5 +68,12 @@ public class AirElement : MagicElement
     {
         yield return new WaitForSeconds(0.3f);
         GameManager.instance.stopLogic = false;
+    }
+
+    private void OnDisable()
+    {
+        clicked = false;
+        GameManager.instance.stopLogic = false;
+        Destroy(actualeffect);
     }
 }

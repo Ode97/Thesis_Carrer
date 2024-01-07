@@ -38,7 +38,7 @@ public class MagicAttack : MonoBehaviour
                 hitPoint = hit.collider.transform.position;
             }
             
-            transform.position = Vector3.MoveTowards(transform.position, hitPoint, Time.deltaTime * 50);
+            transform.position = Vector3.MoveTowards(transform.position, hitPoint, Time.deltaTime * 30);
             if (!destroy)
             {
                 StartCoroutine(DestroyBullet());

@@ -17,7 +17,6 @@ public class IgnoreFog : MonoBehaviour
     }
     public void OnPostRender()
     {
-        Debug.Log("bb");
         RenderSettings.fog = true;
     }
 

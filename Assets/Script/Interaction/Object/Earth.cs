@@ -52,7 +52,7 @@ public class Earth : InteractableObject
         var c = GameManager.instance.character.transform.position;
         t.transform.LookAt(new Vector3(c.x, t.transform.position.y, c.z));
         
-        t.layer = Constants.intObjLayer;
+        t.layer = Constants.plantLayer;
         
         transform.GetComponent<Spot>()?.EnigmaSolve(t);
 

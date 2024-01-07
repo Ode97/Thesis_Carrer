@@ -138,14 +138,6 @@ public class Air : InteractableObject
         }        
     }
 
-    /*private void DisablePlatform()
-    {
-        if(movingPlatform)
-        {
-            GameManager.instance.character.transform.SetParent(transform);
-        }else
-            GameManager.instance.character.transform.SetParent(null);
-    }*/
 
     private void OnCollisionExit(Collision collision)
     {

@@ -10,32 +10,35 @@ public class TreeManager : MonoBehaviour
 
     void Start()
     {
-        TreeInstance[] treeInstances;
-        // Get the tree instances from the terrain
-        foreach (var terrain in terrains)
+        if (!Application.isEditor)
         {
-            treeInstances = terrain.terrainData.treeInstances;
-
-            // Loop through each tree instance
-            foreach (TreeInstance treeInstance in treeInstances)
+            TreeInstance[] treeInstances;
+            // Get the tree instances from the terrain
+            foreach (var terrain in terrains)
             {
-                TreePrototype treePrototype = terrain.terrainData.treePrototypes[treeInstance.prototypeIndex];
+                treeInstances = terrain.terrainData.treeInstances;
 
-                // Ora treePrototype.prototype contiene l'asset dell'albero
-                GameObject treeAsset = treePrototype.prefab;
-                // Calculate the world position of the tree instance
-                Vector3 position = Vector3.Scale(treeInstance.position, terrain.terrainData.size) + terrain.transform.position;
+                // Loop through each tree instance
+                foreach (TreeInstance treeInstance in treeInstances)
+                {
+                    TreePrototype treePrototype = terrain.terrainData.treePrototypes[treeInstance.prototypeIndex];
 
-                // Instantiate the tree prefab at the position of the tree instance
-                GameObject tree = Instantiate(treeAsset, position, Quaternion.identity);
+                    // Ora treePrototype.prototype contiene l'asset dell'albero
+                    GameObject treeAsset = treePrototype.prefab;
+                    // Calculate the world position of the tree instance
+                    Vector3 position = Vector3.Scale(treeInstance.position, terrain.terrainData.size) + terrain.transform.position;
 
-                // Set the scale of the tree
-                tree.transform.localScale = Vector3.one * treeInstance.widthScale;
+                    // Instantiate the tree prefab at the position of the tree instance
+                    GameObject tree = Instantiate(treeAsset, position, Quaternion.identity);
+
+                    // Set the scale of the tree
+                    tree.transform.localScale = Vector3.one * treeInstance.widthScale;
+                }
+
+                // Remove the tree instances from the terrain
+                terrain.terrainData.treeInstances = new TreeInstance[0];
+
             }
-
-            // Remove the tree instances from the terrain
-            terrain.terrainData.treeInstances = new TreeInstance[0];
-
         }
     }
 }

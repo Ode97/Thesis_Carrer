@@ -44,7 +44,7 @@ public class ChangeGameMode : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         if (interaction)
             text.text = "Magia attiva";
         else
-            text.text = "Magia disattiva";
+            text.text = "Magia disattivata";
 
         GameManager.instance.SetInteraction(interaction);
         

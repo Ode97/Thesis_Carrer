@@ -8,6 +8,8 @@ public class MenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 {
     private float timer = 0;
     public GameObject menu;
+    public DialogueManager dialogueManager;
+    public bool dialogue = false;
     private bool start = false;
     public bool activateMainCanvas = false;
     public bool activateStartCanvas = false;
@@ -24,6 +26,9 @@ public class MenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             if (timer > GameManager.instance.fixingTime)
             {
                 Reset();
+
+                if (dialogue)
+                    DialogueContinue();
 
                 if (newGame)
                 {
@@ -135,10 +140,18 @@ public class MenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         timer = 0;
     }
 
+    public void DialogueContinue()
+    {
+        dialogueManager.DisplayNext();
+    }
+
     
     public void OnPointerClick(PointerEventData eventData)
     {
         Reset();
+
+        if (dialogue)
+            DialogueContinue();
 
         if (activateMainCanvas)
             MenuManager.instance.EnableMainCanvas();

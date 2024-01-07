@@ -5,6 +5,12 @@ using UnityEngine;
 public class DialogueTrigger : MonoBehaviour
 {
     private DialogueManager manager;
+    [SerializeField]
+    private GameObject[] fairies;
+    [SerializeField]
+    private Vector3[] target;
+    [SerializeField]
+    private DialogueTrigger nextDialogue;
     private void Start()
     {
         manager = FindObjectOfType<DialogueManager>();
@@ -14,7 +20,13 @@ public class DialogueTrigger : MonoBehaviour
 
     public void TriggerDialogue()
     {
-        
-        manager.StartDialogue(dialogue);
+        if (fairies.Length > 0)
+        {
+            manager.StartDialogue(dialogue, fairies, target);
+        }
+        else
+            manager.StartDialogue(dialogue);
     }
+
+    
 }

@@ -49,12 +49,13 @@ public class Character : MonoBehaviour
     {
         animator = GetComponent<Animator>();
         movment = GetComponent<Movment>();
-        hearts = new GameObject[health];
+        
         rb = GetComponent<Rigidbody>();
         lastPos = transform.position;
         initPosition = transform.position;
         initRotation = transform.rotation;
         textDiams = gems.GetComponentInChildren<TextMeshProUGUI>();
+        hearts = new GameObject[health];
         lifeCanvas.transform.parent.SetParent(transform);
         lifeCanvas.transform.parent.transform.localPosition = Vector3.zero;
         Reset();                
@@ -373,25 +374,7 @@ public class Character : MonoBehaviour
         }
     }
 
-    public float bulletVelocity = 10;
-    public float attackSpeed = 5;
-    private IEnumerator AttackRoutine()
-    {
-        attacking = true;
-        yield return new WaitForSeconds(10 / attackSpeed);
-        if (activeElement && enemyTarget)
-        {
-            Vector3 velocityBullet = enemyTarget.transform.position - transform.position;
-            var b = Instantiate(actualElement.BaseAttack, transform.position + new Vector3(0, 3, 0), Quaternion.identity);
-            b.transform.localScale = new Vector3(1f, 1f, 1f);
-            Quaternion desiredRotation = Quaternion.LookRotation(velocityBullet.normalized, Vector3.up) * Quaternion.Euler(90, 0, 0);
-            b.transform.localRotation = desiredRotation;
 
-            b.GetComponent<Rigidbody>().velocity = velocityBullet.normalized * bulletVelocity;
-
-        }
-        attacking = false;
-    }
 
     public int GetDiamonds()
     {

@@ -11,7 +11,7 @@ public class Golem : MonoBehaviour
     private bool hit = false;
     private bool wait = false;
     private Animator animator;
-    public float health = 1;
+    public int health = 1;
     private Character character;
     public Element lowElement;
     private GameObject aurea;
@@ -21,6 +21,7 @@ public class Golem : MonoBehaviour
     [SerializeField]
     private GameObject sphere;
     private Vector3 sphereInitPos;
+    private Vector3 initPos;
 
     void Awake()
     {
@@ -97,15 +98,22 @@ public class Golem : MonoBehaviour
         
 
         fsm = new FSM(idle);
-        fsm.StartFSM();
+        
     }
 
     private void Start()
     {
+        health = 2;
+        hearts = new GameObject[health];
+        lifeCanvas.transform.parent.SetParent(transform);
+        lifeCanvas.transform.parent.transform.localPosition = Vector3.zero;
+        Reset();
+
         character = FindObjectOfType<Character>();
         agent = GetComponent<NavMeshAgent>();
         target = character.transform.position;
         sphereInitPos = sphere.transform.localPosition;
+        initPos = transform.localPosition;
         ChangeElement();
     }
 
@@ -181,6 +189,7 @@ public class Golem : MonoBehaviour
     private IEnumerator DestroyAfterDeath()
     {
         //Destroy(collider);
+        AudioManager.instance.PlayForestMusic();
         yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName("Die"));
         animator.ResetTrigger("Hit");
         yield return new WaitForSeconds(5);
@@ -194,6 +203,7 @@ public class Golem : MonoBehaviour
 
     private void AttackAnim()
     {
+        agent.isStopped = true;
         animator.SetTrigger("Attack");
     }
 
@@ -273,39 +283,64 @@ public class Golem : MonoBehaviour
     private bool sphereReposition = false;
     private void Update()
     {
-        if (!stop)
-            StartCoroutine(Change());
-
-        if (change)
-        {            
-           ChangeElement();
-        }
-
-        distanceToCharacter = Vector3.Distance(transform.position, target);
-        if (active && !wait)
+        if (!MenuManager.instance.isMenuOpen())
         {
-            StartCoroutine(WaitInactive(10));
-        } else if (!active && !wait)
-        { 
-            StartCoroutine(WaitActive(10));
-        }
 
-        if (sphereReposition)
-        {
-            Vector3 moveDirection = (sphereInitPos - sphere.transform.localPosition).normalized;
+            if (!stop)
+                StartCoroutine(Change());
 
-            sphere.transform.localPosition = Vector3.MoveTowards(sphere.transform.localPosition, sphereInitPos, 10 * moveDirection.magnitude * Time.deltaTime);
-
-            Debug.Log(sphere.transform.localPosition);
-            if(Vector3.Distance(sphere.transform.localPosition, sphereInitPos) < 1)
+            if (change)
             {
-                sphereReposition = false;
-                sphere.GetComponent<Rigidbody>().isKinematic = false;
+                ChangeElement();
             }
-        }
 
-        fsm.UpdateFSM();
-        //Debug.Log(fsm.currentState.name);
+            distanceToCharacter = Vector3.Distance(transform.position, target);
+            if (active && !wait)
+            {
+                StartCoroutine(WaitInactive(10));
+            }
+            else if (!active && !wait)
+            {
+                StartCoroutine(WaitActive(10));
+            }
+
+            if (sphereReposition)
+            {
+                Vector3 moveDirection = (sphereInitPos - sphere.transform.localPosition).normalized;
+
+                sphere.transform.localPosition = Vector3.MoveTowards(sphere.transform.localPosition, sphereInitPos, 10 * moveDirection.magnitude * Time.deltaTime);
+
+                Debug.Log(sphere.transform.localPosition);
+                if (Vector3.Distance(sphere.transform.localPosition, sphereInitPos) < 1)
+                {
+                    sphereReposition = false;
+                    sphere.GetComponent<Rigidbody>().isKinematic = false;
+                }
+            }
+
+            if (health > 0)
+            {
+                if (heartAnim && hearts[0].transform.localScale != Vector3.one)
+                {
+                    for (int i = 0; i < health; i++)
+                    {
+                        hearts[i].transform.localScale = Vector3.Lerp(hearts[i].transform.localScale, Vector3.one, Time.deltaTime * 5);
+                    }
+                }
+                else if (hearts[0].transform.localScale != Vector3.zero)
+                {
+                    for (int i = 0; i < health; i++)
+                    {
+                        hearts[i].transform.localScale = Vector3.Lerp(hearts[i].transform.localScale, Vector3.zero, Time.deltaTime * 5);
+                    }
+                }
+            }
+
+            fsm.UpdateFSM();
+            //Debug.Log(fsm.currentState.name);
+        }
+        else
+            agent.isStopped = true;
     }
 
     private IEnumerator Change()
@@ -394,9 +429,16 @@ public class Golem : MonoBehaviour
 
         Vector3 move = moveDirection * speed * Time.deltaTime;
         transform.position = Vector3.MoveTowards(transform.position, character.transform.position, move.magnitude);*/
-
         agent.isStopped = false;
-        agent.SetDestination(character.transform.position);
+        if (character.IsDead())
+        {
+            agent.SetDestination(initPos);
+            health = 2;
+            
+        }
+        else
+            agent.SetDestination(character.transform.position);
+
     }
 
     private void RotateTowardsCharacter()
@@ -411,6 +453,86 @@ public class Golem : MonoBehaviour
         transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * rotationSpeed);
     }
 
+
+    private GameObject[] hearts;
+    [SerializeField]
+    private Canvas lifeCanvas;
+    [SerializeField]
+    private GameObject lives;
+    private bool heartAnim = false;
+
+    private void Reset()
+    {
+
+        var h = Resources.Load<GameObject>("life");
+        health = 2;
+
+
+        for (int i = 0; i < health; i++)
+        {
+            GameObject heart = Instantiate(h, Vector3.zero, Quaternion.identity);
+
+            // Posiziona il Canvas sopra la testa del personaggio
+            //lifeCanvas.transform.SetParent(transform);
+
+            lifeCanvas.transform.localPosition = Vector3.up * 3; // Puoi regolare questa posizione a seconda delle tue esigenze
+
+            // Aggiungi il cuore all'array hearts
+            hearts[i] = heart;
+
+            heart.transform.SetParent(lives.transform);
+
+            // Scala del cuore
+            heart.transform.localScale = new Vector3(0, 0, 0);
+            heart.SetActive(false);
+        }
+    }
+
+    public void Life()
+    {
+        // Assicurati che hearts non sia nullo e health sia maggiore di zero
+
+        // Calcola il numero di cuori attivi
+        if (health > 0)
+        {
+            int activeHearts = health;
+
+            // Ottieni le dimensioni del canvas
+            RectTransform canvasRect = hearts[0].transform.parent.GetComponent<RectTransform>();
+            Vector2 canvasSize = canvasRect.sizeDelta;
+
+            // Calcola lo spazio tra i cuori
+            float spacing = 100f;
+
+            // Calcola la larghezza totale dei cuori e dello spaziamento
+            float totalWidth = (activeHearts - 1) * spacing;
+
+            // Calcola la posizione iniziale per centrare i cuori
+            float startX = 0 - totalWidth / 2;
+
+            lifeCanvas.transform.rotation = transform.rotation;
+            // Posiziona i cuori
+            for (int i = 0; i < activeHearts; i++)
+            {
+                Vector3 heartPosition = new Vector3(startX + i * spacing, canvasSize.y / 2f, 0f);
+                hearts[i].transform.localPosition = heartPosition;
+                hearts[i].transform.LookAt(Camera.main.transform);
+                hearts[i].SetActive(true);
+                heartAnim = true;
+            }
+
+        }
+    }
+
+    private IEnumerator DisableLife()
+    {
+        yield return new WaitForSeconds(1.5f);
+        for (int i = 0; i < health; i++)
+        {
+            heartAnim = false;
+        }
+    }
+
     private void OnParticleCollision(GameObject other)
     {
         if (other.layer == LayerMask.NameToLayer("Bullet") && hit)
@@ -421,7 +543,10 @@ public class Golem : MonoBehaviour
                 health -= 1;
                 sphereReposition = true;
                 sphere.GetComponent<Rigidbody>().isKinematic = true;
-                Debug.Log("particle" + name);
+
+                Life();
+
+                Destroy(hearts[health]);
             }
         }
     }
@@ -456,5 +581,10 @@ public class Golem : MonoBehaviour
             target = character.transform.position;
             
         }
+    }
+
+    public void StartFSM()
+    {
+        fsm.StartFSM();
     }
 }

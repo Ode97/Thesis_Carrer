@@ -171,7 +171,7 @@ public class Enemy : MonoBehaviour
     private void AttackAnim()
     {
         agent.isStopped = true;
-        Debug.Log("attack");
+        
         animator.SetTrigger("Attack");
     }
 

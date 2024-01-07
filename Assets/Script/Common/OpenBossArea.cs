@@ -11,6 +11,8 @@ public class OpenBossArea : MonoBehaviour
     private GameObject obstacle;
     [SerializeField]
     private Vector3 targetPos;
+    [SerializeField]
+    private Golem boss;
 
     private bool move = false;
     private void Update()
@@ -30,6 +32,8 @@ public class OpenBossArea : MonoBehaviour
             if (other.gameObject.GetComponent<Character>().GetDiamonds() >= requiredDiamonds)
             {
                 move = true;
+                boss.StartFSM();
+                AudioManager.instance.PlayBossMusic();
             }
         }
     }

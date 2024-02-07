@@ -85,14 +85,13 @@ public class PressurePlate : MonoBehaviour
 
     private void OnCollisionEnter(Collision other)
     {
-        
         if (!physics)
         {
             var g = other.gameObject;
-            Debug.Log("bbbbbbb");
+            
             if (g.GetComponent<Rigidbody>() && g.GetComponent<Rigidbody>().mass > 0.5f && !stop)
             {
-                Debug.Log("cccccc");
+                
                 i++;
                 if (enigma)
                 {
@@ -118,14 +117,14 @@ public class PressurePlate : MonoBehaviour
         if (!physics)
         {
             var g = other.gameObject;
-            if (g.GetComponent<Rigidbody>() && g.GetComponent<Rigidbody>().mass > 0.5f && !stop)
+            if (g.GetComponent<Rigidbody>() && g.GetComponent<Rigidbody>().mass > 0.5f)
             {
                 i++;
                 if (enigma)
                 {
                     Debug.Log(other.gameObject.name + " " + transform.name);
                     enim.Interaction(Element.None);
-                    stop = true;
+                    
 
                 }
                 else
@@ -141,8 +140,12 @@ public class PressurePlate : MonoBehaviour
     private void OnTriggerExit(Collider collision)
     {
         var g = collision.gameObject;
-        if (g.GetComponent<Rigidbody>() && g.GetComponent<Rigidbody>().mass > 0.5f && !stop)
+        
+        if (g.GetComponent<Rigidbody>() && g.GetComponent<Rigidbody>().mass > 0.5f)
         {
+
+            enim.ExitTriggerPlate();
+
             i--;
 
             if (i == 0)

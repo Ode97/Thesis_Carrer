@@ -13,13 +13,21 @@ public class ChangeGameMode : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     private TextMeshProUGUI text;
     private bool interaction = false;
     public bool mode = false;
+    [SerializeField]
+    private RawImage magicImage;
+    [SerializeField]
+    private RawImage walkingImage;
+    [SerializeField]
+    private RawImage TDImage;
+    [SerializeField]
+    private RawImage FPImage;
     // Start is called before the first frame update
     void Start()
     {
         modes[0] = CameraMode.Strategica;
         //modes[1] = GameMode.Interaction;
         modes[1] = CameraMode.Vista;
-        text = GetComponentInChildren<TextMeshProUGUI>();
+        //text = GetComponentInChildren<TextMeshProUGUI>();
     }
 
     // Update is called once per frame
@@ -34,17 +42,37 @@ public class ChangeGameMode : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         if (i == modes.Length) {
             i = 0;
         }
+
+        if (i == 1)
+        {
+            FPImage.enabled = true;
+            TDImage.enabled = false;
+        }
+        else
+        {
+            TDImage.enabled = true;
+            FPImage.enabled = false;
+        }
+
         GameManager.instance.SetMode(modes[i]);
-        text.text = modes[i].ToString();
+        //text.text = modes[i].ToString();
     }
 
     public void InteractionMode()
     {
         interaction = !interaction;
         if (interaction)
-            text.text = "Magia attiva";
+        {
+            magicImage.enabled = true;
+            walkingImage.enabled = false;
+            //text.text = "Magia attiva";
+        }
         else
-            text.text = "Magia disattivata";
+        {
+            magicImage.enabled = false;
+            walkingImage.enabled = true;
+        }
+        //text.text = "Magia disattivata";
 
         GameManager.instance.SetInteraction(interaction);
         

@@ -14,13 +14,13 @@ public class Checkpoint : MonoBehaviour
     private Save sc;
     [SerializeField]
     private int index;
-    public bool discovered = false;
+    private bool discovered = false;
 
     private void Awake()
     {
         sc = FindObjectOfType<Save>();
+        EventManager.StartListening("Reset", Reset);
     }
-
 
     private void OnTriggerEnter(Collider other)
     {
@@ -28,10 +28,12 @@ public class Checkpoint : MonoBehaviour
         {            
             Destroy(areanNameMainCanvas);
         }*/
-        
-        
-        if (other.gameObject.layer == Constants.protagonistLayer)
+
+        if (other.gameObject.layer == Constants.protagonistLayer && GameManager.instance.character.IsGameStart())
         {
+            if (!AudioManager.instance.forest.isPlaying)
+                AudioManager.instance.PlayForestMusic();
+
             sc.SaveState();
             if (!discovered)
             {
@@ -78,7 +80,7 @@ public class Checkpoint : MonoBehaviour
 
             var v = screenSize / 2;
 
-            v.y += 100;
+            v.y += 300;
 
             areanNameMainCanvas.transform.position = v;
             increaseScale = true;
@@ -90,6 +92,32 @@ public class Checkpoint : MonoBehaviour
             show = false;
             
             
+        }
+        
+    }
+
+    public bool IsDiscovered()
+    {
+        return discovered;
+    }
+
+    public void SetDiscovered(bool d)
+    {
+        discovered = d;
+        if (areaName && discovered) {
+            areaName.gameObject.SetActive(true);
+            areaName.transform.parent.GetComponent<CheckpointTeleport>().pos = transform.position;
+            areaName.transform.parent.GetComponent<Button>().enabled = true;
+        }
+    }
+
+    private void Reset()
+    {
+        discovered = false;
+        if (areaName)
+        {
+            areaName.gameObject.SetActive(false);
+            areaName.transform.parent.GetComponent<Button>().enabled = false;
         }
         
     }

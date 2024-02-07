@@ -15,6 +15,7 @@ public class CheckEnemyDeath : MonoBehaviour
     {
         init = enemies.Length;
         i = enemies.Length;
+        EventManager.StartListening("Reset", Reset);
     }
 
     // Update is called once per frame
@@ -24,7 +25,7 @@ public class CheckEnemyDeath : MonoBehaviour
         {
             foreach (Enemy enemy in enemies)
             {
-                if (enemy.IsDestroyed())
+                if (!enemy.gameObject.activeSelf)
                     i--;
             }
             if (i == 0)
@@ -36,4 +37,22 @@ public class CheckEnemyDeath : MonoBehaviour
                 i = init;
         }
     }
+
+    private void Reset()
+    {
+        i = init;
+        finish = false;
+    }
+
+    public bool IsFinish()
+    {
+        
+        return finish;
+    }
+    public void SetFinish(bool f)
+    {
+        finish = f;
+    }
+
+
 }

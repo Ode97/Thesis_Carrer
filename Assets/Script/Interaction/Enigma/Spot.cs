@@ -1,13 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Spot : MonoBehaviour
 {
-    public Enigma enigmaChecker;
+    //public Enigma enigmaChecker;
+    public Enigma[] enigmaCheckers;
     
     private bool ok = false;
-    public int code;
+    public int[] code;
+    
 
     private void Awake()
     {
@@ -56,17 +59,21 @@ public class Spot : MonoBehaviour
     {
         actual = g;
         var eo = actual.GetComponent<EnigmaObj>();
-        if (eo.value == code)
+        for (int i = 0; i < code.Length; i++)
         {
-            ok = true;
-            
-            eo.SetEnigmaChecker(enigmaChecker);
-            eo.Interaction(eo.element);
-        }
-        else
-        {
+            if (code[i] == eo.value)
+            {
 
-            StartCoroutine(Wait());
-        }           
+                ok = true;
+                eo.SetEnigmaChecker(enigmaCheckers[i]);
+                eo.Interaction(eo.element);
+            }
+            else
+            {
+
+                StartCoroutine(Wait());
+            }
+
+        }
     }
 }

@@ -25,6 +25,11 @@ public class MagicAttack : MonoBehaviour
         impactAudio.Play();
     }
 
+    public bool IsImpactPlaying()
+    {
+        return impactAudio.isPlaying;
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -52,4 +57,6 @@ public class MagicAttack : MonoBehaviour
         yield return new WaitForSeconds(5);
         Destroy(gameObject);
     }
+
+ 
 }

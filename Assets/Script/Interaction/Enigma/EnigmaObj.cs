@@ -36,18 +36,15 @@ public class EnigmaObj : MonoBehaviour
         {
             Debug.Log(Vector3.Distance(water.transform.position, transform.position));
             water = null;
-            Debug.Log("distance");
             return;
         }
 
         if (transform.position.y < water.transform.position.y - 5)
         {
-            Debug.Log("waterRespawn");
             StartCoroutine(Respawn());
         }
         else if (transform.position.y > water.transform.position.y + 4)
         {
-            Debug.Log("over");
             water = null;
         }
     }
@@ -56,7 +53,6 @@ public class EnigmaObj : MonoBehaviour
     {
         if (other.gameObject.GetComponent<WaterObj>())
         {
-            Debug.Log("water");
             water = other.gameObject;
         }
     }
@@ -99,6 +95,17 @@ public class EnigmaObj : MonoBehaviour
                 enigmaChecker.ActiveAllCheck();
             }
         }
+    }
+
+    public void ExitTriggerPlate()
+    {
+          
+        if (enigmaChecker.activation)
+        {
+
+            active = true;
+            enigmaChecker.Deactivate();
+        }        
     }
 
 }

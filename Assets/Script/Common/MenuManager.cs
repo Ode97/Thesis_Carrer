@@ -87,10 +87,12 @@ public class MenuManager : MonoBehaviour
     public void OpenMenuStart()
     {
         startMenu.SetActive(true);
+        mainButtons.SetActive(false);
         GameManager.instance.ResetGame();
         Camera.main.GetComponent<MainCameraFollow>().enabled = false;
         Camera.main.transform.position = initCameraPos;
         Camera.main.transform.rotation = initCameraRot;
+        AudioManager.instance.PlayForestMusic();
         menuOpen = false;
         start = false;
         Time.timeScale = 1f;
@@ -98,6 +100,7 @@ public class MenuManager : MonoBehaviour
 
     public void CloseGame()
     {
+        GameManager.instance.csvBuilder.EndCSV();
         try 
         {
             GameManager.instance.p.Kill();
@@ -198,6 +201,7 @@ public class MenuManager : MonoBehaviour
         firstStart = true;
         menuOpen = false;
         start = true;
+        
     }
 
     public bool IsFirstStart()

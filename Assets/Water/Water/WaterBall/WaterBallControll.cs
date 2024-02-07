@@ -47,6 +47,7 @@ public class WaterBallControll : MonoBehaviour
         {
             if (waterBall != null)
             {
+                
                 ThrowWaterBall(hit.point);
             }
         }

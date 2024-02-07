@@ -23,6 +23,18 @@ PrefabInstance:
       propertyPath: _Speed
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 4712071451133095680, guid: b55a00a167eb0444fa62a8fffb8a81c9,
+        type: 3}
+      propertyPath: _SpillPrefab
+      value: 
+      objectReference: {fileID: 4954851124802848034, guid: df75ee8e0e3d65f458f1a4a88da70741,
+        type: 3}
+    - target: {fileID: 4712071451133095680, guid: b55a00a167eb0444fa62a8fffb8a81c9,
+        type: 3}
+      propertyPath: _SplashPrefab
+      value: 
+      objectReference: {fileID: 6876778356391156485, guid: 6ff2de3fd96781b45a72c2e0d51693a9,
+        type: 3}
     - target: {fileID: 5122495324394048962, guid: b55a00a167eb0444fa62a8fffb8a81c9,
         type: 3}
       propertyPath: m_Name
@@ -46,7 +58,7 @@ PrefabInstance:
     - target: {fileID: 5122495324394048964, guid: b55a00a167eb0444fa62a8fffb8a81c9,
         type: 3}
       propertyPath: TriggerModule.enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5122495324394048964, guid: b55a00a167eb0444fa62a8fffb8a81c9,
         type: 3}
@@ -76,7 +88,7 @@ PrefabInstance:
     - target: {fileID: 5122495324394048967, guid: b55a00a167eb0444fa62a8fffb8a81c9,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 2.81
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5122495324394048967, guid: b55a00a167eb0444fa62a8fffb8a81c9,
         type: 3}

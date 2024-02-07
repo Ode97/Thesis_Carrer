@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using TMPro;
 using UnityEngine;
@@ -47,7 +48,6 @@ public class WaterObj : InteractableObject
     {
         //water.SetActive(true);
         //animator.SetTrigger("rise");
-
         if (!rise)
         {
 
@@ -89,9 +89,12 @@ public class WaterObj : InteractableObject
 
     public override void Reset()
     {
+        
         rise = false;
-        if(!isActiveWater)
+        if (!isActiveWater)
+        {
             water.SetActive(false);
+        }
     }
 
     public bool IsRise()

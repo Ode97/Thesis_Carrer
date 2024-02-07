@@ -18,8 +18,8 @@ public class Air : InteractableObject
     {
         color = Color.grey;
         rb = GetComponent<Rigidbody>();
-        initPos = transform.position;
-        initRot = transform.rotation;
+        initPos = transform.localPosition;
+        initRot = transform.localRotation;
     }
 
     private bool remove = false;
@@ -50,7 +50,7 @@ public class Air : InteractableObject
         {
             transform.position = initPos;
             rb.velocity = Vector3.zero;
-        }
+        } 
     }
 
     public bool onlyUp = false;
@@ -122,8 +122,25 @@ public class Air : InteractableObject
 
     public override void Reset()
     {
-        transform.position = initPos;
-        transform.rotation = initRot;
+        
+        transform.localPosition = initPos;
+        transform.localRotation = initRot;
+    }
+
+    public void SetInitPos(Vector3 p, Quaternion q)
+    {
+        initPos = p;
+        initRot = q;
+    }
+
+    public Vector3 GetInitPos()
+    {
+        return initPos;
+    }
+
+    public Quaternion GetInitRot()
+    {
+        return initRot;
     }
 
     private void OnCollisionEnter(Collision collision)

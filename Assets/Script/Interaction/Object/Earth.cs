@@ -53,7 +53,8 @@ public class Earth : InteractableObject
         t.transform.LookAt(new Vector3(c.x, t.transform.position.y, c.z));
         
         t.layer = Constants.plantLayer;
-        
+
+        //Debug.Log(name);
         transform.GetComponent<Spot>()?.EnigmaSolve(t);
 
         scaleTrigger = true;

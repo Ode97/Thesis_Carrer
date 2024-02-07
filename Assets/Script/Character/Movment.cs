@@ -42,6 +42,7 @@ public class Movment : MonoBehaviour
             Vector2 targetPos = new Vector2(targetPosition.x, targetPosition.z);
             if (Vector2.Distance(character, targetPos) < 0.5 && isWalking)
             {
+                
                 DisableMove();
             }           
 
@@ -90,6 +91,7 @@ public class Movment : MonoBehaviour
     {
         targetPosition = point;
         isWalking = true;
+        characterAnimator.ResetTrigger("Idle");
         characterAnimator.SetTrigger("Move");
         targetIndicator.SetActive(true);
         targetIndicator.transform.position = targetPosition;

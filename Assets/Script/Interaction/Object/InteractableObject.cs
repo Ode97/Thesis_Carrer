@@ -9,7 +9,6 @@ public abstract class InteractableObject : MonoBehaviour
     private float timer = 0;
     private bool start = false;
     protected Color color;
-    public int index = 0;
 
     // Start is called before the first frame update
     void Awake()
@@ -40,7 +39,7 @@ public abstract class InteractableObject : MonoBehaviour
 
             if (IsOnView() && !GetComponent<Earth>())
             {
-
+                Debug.Log(name);
                 if (!GameManager.instance.stopLogic)
                     GameManager.instance.fixing = true;
                 start = false;
@@ -80,8 +79,7 @@ public abstract class InteractableObject : MonoBehaviour
     public static bool click = false;
     void OnMouseEnter()
     {
-        if (!GameManager.instance.stopLogic)
-        {
+        
             if (!MenuManager.instance.isMenuOpen())
             {
                 if (!click)
@@ -97,15 +95,17 @@ public abstract class InteractableObject : MonoBehaviour
                     GameManager.instance.SetObject(this);
                 }
 
-                GameManager.instance.outlineEffect.SetActive(true);
-                ParticleSystem.MainModule main = GameManager.instance.outlineEffect.GetComponent<ParticleSystem>().main;
-                main.startColor = color;
-                //outline.SetActive(true);
-
+                if (!GameManager.instance.airEffect)
+                {
+                    GameManager.instance.outlineEffect.SetActive(true);
+                    ParticleSystem.MainModule main = GameManager.instance.outlineEffect.GetComponent<ParticleSystem>().main;
+                    main.startColor = color;
+                    //outline.SetActive(true);
+                }
                 //if (outline)
                 //    outline.enabled = true;
             }
-        }
+        
     }
 
     private void OnMouseOver()
@@ -136,7 +136,7 @@ public abstract class InteractableObject : MonoBehaviour
     private IEnumerator EndSelection()
     {
         onView = false;
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(0.1f);
         if (!onView)
         {
             /*if (outline)

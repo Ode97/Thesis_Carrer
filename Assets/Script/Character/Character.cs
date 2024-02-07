@@ -32,12 +32,24 @@ public class Character : MonoBehaviour
     [SerializeField]
     private GameObject lives;
     private float space = 110;
-    private GameObject water;
+    //private GameObject water;
     private Rigidbody rb;
     private int diamond = 0;
     private bool moving = false;
     private Vector3 initPosition;
     private Quaternion initRotation;
+    private bool gameStart = false;
+
+    //avoid to trigger checkpoint save before the start of the game
+    public void GameStart()
+    {
+        gameStart = true;
+    }
+
+    public bool IsGameStart()
+    {
+        return gameStart;
+    }
 
     public bool IsAttacking()
     {
@@ -58,17 +70,29 @@ public class Character : MonoBehaviour
         hearts = new GameObject[health];
         lifeCanvas.transform.parent.SetParent(transform);
         lifeCanvas.transform.parent.transform.localPosition = Vector3.zero;
-        Reset();                
+        EventManager.StartListening("Reset", Reset);
+        ResetLife();                
     }
 
     public void NewGame()
     {
         transform.position = initPosition;
         transform.rotation = initRotation;
+        diamond = 0;
         checkpoint = null;
     }
 
     private void Reset()
+    {
+        gameStart = false;
+    }
+
+    public void SetHealth(int h)
+    {
+        health = h;
+    }
+
+    private void ResetLife()
     {
 
         var h = Resources.Load<GameObject>("life");
@@ -190,10 +214,6 @@ public class Character : MonoBehaviour
             }
         }
 
-        if (water)
-        {
-            WaterRespawn();
-        }
 
         if(health <= 0 && !dead)
         {
@@ -203,12 +223,26 @@ public class Character : MonoBehaviour
 
         if (enemyTarget)
         {
-            Attack();
+            child = enemyTarget;
+            while (child.transform.parent != null)
+            {
+                child = child.transform.parent.gameObject;
+            }            
+            
+            if (!child.activeSelf)
+            {
+                enemyTarget = null;
+                Destroy(activeAttack);           
+            }
+            else
+                Attack();
         }
-        else
-            if (activeAttack)
-            Destroy(activeAttack);
+        
+        
+        
     }
+
+    private GameObject child;
 
     public bool IsDead()
     {
@@ -224,7 +258,7 @@ public class Character : MonoBehaviour
         animator.ResetTrigger("Die");
         yield return new WaitForSeconds(1);
         StartCoroutine(Respawn());
-        Reset();
+        ResetLife();
         animator.Play("Idle_Battle_SwordAndShield");
         dead = false;
     }
@@ -240,11 +274,12 @@ public class Character : MonoBehaviour
         if (aurea != null)
         {
             Destroy(aurea.gameObject);
-            activeElement = false;
+            DisableElement();
         }
 
-        if(activeAttack) 
+        if (activeAttack)        
             Destroy(activeAttack);
+        
     }
 
     public bool IsMoving()
@@ -427,6 +462,7 @@ public class Character : MonoBehaviour
             collision.gameObject.GetComponent<AudioSource>().Play();
             collision.gameObject.GetComponent<MeshRenderer>().enabled = false;
             collision.collider.enabled = false;
+            GameManager.instance.Save();
             //collision.gameObject.SetActive(false);
 
         }
@@ -438,13 +474,13 @@ public class Character : MonoBehaviour
         platform = true;
     }
 
-    private void OnTriggerEnter(Collider other)
+    /*private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.GetComponent<WaterObj>())
         {
             water = other.gameObject;
         }
-    }
+    }*/
 
     public void SetCheckpoint(Checkpoint cP)
     {
@@ -460,8 +496,17 @@ public class Character : MonoBehaviour
         return x;
     }
 
-    private void WaterRespawn()
+    /*private void WaterRespawn()
     {
+
+        
+
+        if (transform.position.y < water.transform.position.y - 5)
+        {
+            
+            StartCoroutine(Respawn());
+        }
+        
 
         if (Vector3.Distance(water.transform.position, transform.position) > 80)
         {
@@ -470,14 +515,35 @@ public class Character : MonoBehaviour
             return;
         }
 
-        if (transform.position.y < water.transform.position.y - 5)
-        {
-            
-            StartCoroutine(Respawn());
-        }
-        else if(transform.position.y > water.transform.position.y + 2)
+        if (transform.position.y > water.transform.position.y + 2)
         {
             water = null;
+        }
+    }*/
+
+    private float waterTimer = 0;
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.gameObject.GetComponent<WaterObj>())
+        {
+            if (transform.position.y < other.transform.position.y - 5)
+            {
+                waterTimer += Time.deltaTime;
+                //water = other.gameObject;
+                if (waterTimer > 2)
+                {
+                    waterTimer = 0;
+                    StartCoroutine(Respawn());
+                }
+            }
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.GetComponent<WaterObj>())
+        {
+            waterTimer = 0;
         }
     }
 
@@ -485,6 +551,7 @@ public class Character : MonoBehaviour
     private IEnumerator Respawn()
     {
         yield return new WaitForSeconds(1);
+        
         movment.DisableMove();
 
         if(platform)

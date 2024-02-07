@@ -216,13 +216,16 @@ MonoBehaviour:
   health: 1
   lowElement: 2
   viewAngle: 100
-  viewRadius: 50
+  viewRadius: 70
   targetMask:
     serializedVersion: 2
     m_Bits: 128
   distanceForAttack: 6
   rotationSpeed: 5
   idlePositions: []
+  terainMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!54 &2000504525682294518
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -245,11 +248,11 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 0
+  m_UseGravity: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!195 &3290000151088804644
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -260,7 +263,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 1479372276
   m_Radius: 0.01
-  m_Speed: 3.5
+  m_Speed: 5
   m_Acceleration: 10
   avoidancePriority: 50
   m_AngularSpeed: 120

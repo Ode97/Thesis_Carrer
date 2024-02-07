@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine.EventSystems;
 using UnityEngine;
 using System.Diagnostics;
-using Unity.VisualScripting;
 using System.Linq;
 using System;
 
@@ -26,13 +25,14 @@ public class GameManager : MonoBehaviour
     public InteractableObject initTerrain;
     private Save save;
     public LayerMask ignoreLayer;
+    public bool airEffect = false;
 
 
     // Start is called before the first frame update
     public static GameManager instance = null;
 
 
-    private CreateCSV csvBuilder = new CreateCSV();
+    public CreateCSV csvBuilder = new CreateCSV();
 
     public void Save()
     {
@@ -61,6 +61,14 @@ public class GameManager : MonoBehaviour
         save = GetComponent<Save>();
     }
 
+    void FixedUpdate()
+    {
+        long timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        //UnityEngine.Debug.Log(timestamp + ";" + actualMode.ToString() + ";" + character.GetObject() + ";" + character.getActualElement() + ";" + character.IsMoving() + ";" + character.IsAttacking() + ";" + Input.mousePosition.x + ";" + Input.mousePosition.y);
+        csvBuilder.AddData(timestamp + ";" + actualMode.ToString() + ";" + character.GetObject().name + ";" + character.getActualElement() + ";" + character.IsMoving() + ";" + character.IsAttacking() + ";" + Input.mousePosition.x + ";" + Input.mousePosition.y);
+
+    }
+
 
     // Update is called once per frame
     void Update()
@@ -68,9 +76,7 @@ public class GameManager : MonoBehaviour
         
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
-        Physics.Raycast(ray, out hit, Mathf.Infinity);
-        long timestamp = (long)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalMilliseconds;
-        csvBuilder.AddData(timestamp + ";" + actualMode.ToString() + ";" + character.GetObject() + ";" + character.getActualElement() + ";" + character.IsMoving() + ";" + character.IsAttacking() + ";" + Input.mousePosition.x + ";" + Input.mousePosition.y);
+                
         //UnityEngine.Debug.Log(stopLogic + " " + MenuManager.instance.isMenuOpen());
         if (!stopLogic)
         {
@@ -93,6 +99,7 @@ public class GameManager : MonoBehaviour
                 {
                     fixing = false;
 
+                    //sopra UI non faccio nulla
                     if (EventSystem.current.IsPointerOverGameObject())
                     {
 
@@ -108,9 +115,7 @@ public class GameManager : MonoBehaviour
                     // Cast a ray from the mouse position into the scene
                     if (hit.collider != null)
                     {
-                       
-                        
-                        
+                                        
 
                         if (interaction)
                         {
@@ -120,6 +125,8 @@ public class GameManager : MonoBehaviour
                             //cambiare con layer e vedere se si rompe tutto
                             if (intObj)
                             {
+                                //UnityEngine.Debug.Log(intObj.name);
+                                //UnityEngine.Debug.Log(character.GetObject());
                                 intObj.ResetTimer();
                                 character.Interaction(hit);
                                 
@@ -132,7 +139,7 @@ public class GameManager : MonoBehaviour
                         if (actualMode == CameraMode.Strategica)
                         {
 
-
+                           
                             if (layer == Constants.terrainLayer)
                             {
                                 character.MoveToDestination(hit.point);
@@ -158,7 +165,8 @@ public class GameManager : MonoBehaviour
             if (!justChanged)
             {
                 justChanged = true;
-                
+
+                //UnityEngine.Debug.Log("actual: " + obj.name);
                 character.SetObject(obj);
                 //StartCoroutine(EndSelect());
             }
@@ -204,6 +212,7 @@ public class GameManager : MonoBehaviour
         {
             //UnityEngine.Debug.Log(objs.Count);
             //UnityEngine.Debug.Log(objs[objs.Count - 1].name);
+            //UnityEngine.Debug.Log("actual: " + objs[objs.Count - 1].name);
             character.SetObject(objs[objs.Count - 1]);
             objs.Clear();            
         }
@@ -224,41 +233,81 @@ public class GameManager : MonoBehaviour
         cameraHandler.SetMode(mode);
     }
 
-    public void SetLoad(int d, float[] pPos, float[] pRot, float[,] pE, float[,] rE, float[,] aP, float[,] aR, int[] fD, bool[] wD, int cP, bool[,] enigmasComplete)
+    public void SetLoad(int diamond, int life, float[,] fairiesPos, float[] pPos, float[] pRot, float[,] pE, float[,] rE, float[,] aP, float[,] aR, int[] fD, bool[] wD, bool[] bD, int[] enemyData, bool[] checkpoints, int cP, bool[,] enigmasComplete, bool enemyCheck)
     {
-        character.SetDiamonds(d);
+        character.SetDiamonds(diamond);
+        character.SetHealth(life);
 
-        character.transform.position = new Vector3(pPos[0], pPos[1], pPos[2]);
         character.transform.rotation = new Quaternion(pRot[0], pRot[1], pRot[2], pRot[3]);
+        character.transform.position = new Vector3(pPos[0], pPos[1], pPos[2]);
 
-        var x = FindObjectsOfType<Air>();
-        var i = 0;
-        foreach (Air a in x)
-        { 
-            a.gameObject.transform.position = new Vector3(aP[i, 0], aP[i, 1], aP[i, 2]);
-            a.gameObject.transform.rotation = new Quaternion(aR[i, 0], aR[i, 1], aR[i, 2], 1);
+        var fairies = FindObjectsOfType<Fairy>();
+        Array.Sort(fairies, (a, b) => a.gameObject.name.CompareTo(b.gameObject.name));
+        int i = 0;
+
+        foreach (var fai in fairies)
+        {
+            fai.transform.position = new Vector3(fairiesPos[i, 0], fairiesPos[i, 1], fairiesPos[i, 2]);
+            i++;
+        }
+
+        var air = FindObjectsOfType<Air>();
+        Array.Sort(air, (a, b) => a.gameObject.name.CompareTo(b.gameObject.name));
+        i = 0;
+        UnityEngine.Debug.Log("load: ");
+        foreach (Air a in air)
+        {
+            var w = Instantiate(a.gameObject, new Vector3(aP[i, 0], aP[i, 1], aP[i, 2]), new Quaternion(aR[i, 0], aR[i, 1], aR[i, 2], 1), a.transform.parent);
+
+            StartCoroutine(Wait(a, w));
             i++;
         }
 
         var fires = FindObjectsOfType<Fire>();
-        //Fire[] filteredArray = fires.Where(obj => obj.GetComponent<EnigmaObj>() == null).ToArray();
-        var z = fires.OrderBy(fire => fire.GetComponent<EnigmaObj>()?.value).ToArray();
-        
+        //fires = fires.OrderBy(fire => fire.GetComponent<EnigmaObj>()?.value).ToArray();
+        fires = fires.Where(fire => fire.gameObject.layer == Constants.intObjLayer && !fire.GetComponent<EarthPlant>()).ToArray();
+        Array.Sort(fires, (x, y) => {
+            // Ottieni i componenti EnigmaObj
+
+
+            EnigmaObj ex = x.GetComponent<EnigmaObj>();
+            EnigmaObj ey = y.GetComponent<EnigmaObj>();
+
+            if (ex == null || ey == null)
+            {
+                // Se uno dei componenti non esiste, confronta i nomi dei GameObjects
+                return x.name.CompareTo(y.name);
+            }
+
+            // Confronta i valori
+            int valueComparison = ex.value.CompareTo(ey.value);
+            if (valueComparison != 0)
+            {
+                // Se i valori non sono uguali, ritorna il risultato del confronto
+                return valueComparison;
+            }
+            else
+            {
+                // Se i valori sono uguali, confronta i nomi
+                return x.name.CompareTo(y.name);
+            }
+        });
 
         i = 0;
-        foreach (Fire f in z)
+        foreach (Fire f in fires)
         {
+            
             if (fD[i] == 1)
             {
                 
                 if (f.distructible)
                 {
-                    //UnityEngine.Debug.Log("destroy " + f.name);
+                    
                     f.LoadDestroy();
                 }
                 else
                 {
-                    //UnityEngine.Debug.Log("open " + f.name);
+                    
                     f.FireInteraction();
                 }
             }
@@ -269,9 +318,10 @@ public class GameManager : MonoBehaviour
 
         if (MenuManager.instance.IsFirstStart())
         {
-            var p = FindObjectsOfType<WaterObj>();
+            var waters = FindObjectsOfType<WaterObj>();
+            Array.Sort(waters, (a, b) => a.gameObject.name.CompareTo(b.gameObject.name));
             i = 0;
-            foreach (WaterObj w in p)
+            foreach (WaterObj w in waters)
             {
                 if (wD[i])
                 {
@@ -281,37 +331,69 @@ public class GameManager : MonoBehaviour
             }
         }
         
-        var r = FindObjectsOfType<Checkpoint>();      
-
-        foreach (Checkpoint c in r)
+        var checks = FindObjectsOfType<Checkpoint>();
+        Array.Sort(checks, (a, b) => a.gameObject.name.CompareTo(b.gameObject.name));
+        i = 0;
+        foreach (Checkpoint c in checks)
         {
+            c.SetDiscovered(checkpoints[i]);
             if(c.GetIndex() == cP)
             {
                 character.SetCheckpoint(c);
             }
+            i++;
         }
 
-        var t = FindObjectsOfType<EarthPlant>(includeInactive:true);
-        
-        
+        var ep = FindObjectsOfType<EarthPlant>(includeInactive:true);
+        i = 0;
         for (int plant = 0; plant < pE.GetLength(0); plant++)
         {
             
-            foreach (EarthPlant earthPlant in t)
+            foreach (EarthPlant earthPlant in ep)
             {
                 if (earthPlant.GetIndex() == pE[plant, 3])
                 {
-                                        
+
                     var a = Instantiate(earthPlant, new Vector3(pE[plant, 0], pE[plant, 1], pE[plant, 2]), new Quaternion(rE[plant, 0], rE[plant, 1], rE[plant, 2], rE[plant, 3]));
-                    UnityEngine.Debug.Log(a.name);
+                    //UnityEngine.Debug.Log(a.name);
                     a.transform.localScale = earthPlant.GetScale();
-                    a.gameObject.layer = Constants.intObjLayer;
+                    a.gameObject.layer = Constants.plantLayer;
                 }               
             }
         }
 
-        var en = FindObjectsOfType<Enigma>();
+        var books = FindObjectsOfType<Book>(includeInactive: true);
+        Array.Sort(books, (a, b) => a.gameObject.name.CompareTo(b.gameObject.name));
+        i = 0;
+        foreach (Book b in books)
+        {
+            
+            if (bD[i])
+            {
+                books[i].Taken();
+            }
+            i++;
+        }
 
+        var enemyCheker = FindObjectOfType<CheckEnemyDeath>();
+
+        enemyCheker.SetFinish(enemyCheck);
+
+        var enemies = FindObjectsOfType<Enemy>(includeInactive: true);
+        Array.Sort(enemies, (a, b) => a.gameObject.name.CompareTo(b.gameObject.name));
+        i = 0;
+        foreach (Enemy e in enemies)
+        {
+            e.SetHealth(enemyData[i]);
+            i++;
+        }
+        
+
+        var tutorialEnd = FindObjectOfType<CheckEnemyDeath>();
+
+
+        var en = FindObjectsOfType<Enigma>();
+        Array.Sort(en, (a, b) => a.gameObject.name.CompareTo(b.gameObject.name));
         i = 0;
         //UnityEngine.Debug.Log(en.Length + " " + enigmasComplete.Length);
         foreach (Enigma enigma in en)
@@ -320,6 +402,25 @@ public class GameManager : MonoBehaviour
             enigma.Complete(enigmasComplete[i,0], enigmasComplete[i,1]);
             i++;
         }
+
+        
+
+        StartCoroutine(WaitGameStart());
+    }
+
+    public IEnumerator Wait(Air a, GameObject w)
+    {
+        yield return new WaitForEndOfFrame();
+        w.GetComponent<Air>().SetInitPos(a.GetInitPos(), a.GetInitRot());
+        Destroy(a.gameObject);
+    }
+
+    public IEnumerator WaitGameStart()
+    {
+        yield return new WaitForEndOfFrame();
+        FindObjectOfType<CheckEnemyDeath>().IsFinish();
+        yield return new WaitForSeconds(0.5f);
+        character.GameStart();
     }
 
     public void ResetGame()

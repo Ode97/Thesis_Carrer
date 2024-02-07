@@ -12,17 +12,20 @@ public class Enemy : MonoBehaviour
     private bool detected = false;
     private bool hit = false;
     private Animator animator;
-    public float health = 1;
+    public int health = 1;
     private Character character;
     public Element lowElement;
     private NavMeshAgent agent;
-    
+    private Vector3 initPos;
+    private Quaternion initRot;
     private bool enigma;
 
 
     // Start is called before the first frame update
     void Awake()
     {
+        initPos = transform.localPosition;
+        initRot = transform.localRotation;
         animator = GetComponent<Animator>();
 
         FSMState idle = new FSMState("idle");
@@ -84,13 +87,15 @@ public class Enemy : MonoBehaviour
         }else
             agent.isStopped = false;
 
+
+        
         fsm.StartFSM();
     }
 
     private void Start()
     {
-        
 
+        EventManager.StartListening("Reset", Reset);
         
 
     }
@@ -131,7 +136,7 @@ public class Enemy : MonoBehaviour
 
     private void StartCombatAnim()
     {
-        Debug.Log("combat e goto");
+        Debug.Log("combat e goto" + gameObject.name);
         animator.SetTrigger("Combat");
         animator.SetTrigger("GoTo");
     }
@@ -160,7 +165,7 @@ public class Enemy : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         if (enigma)
             transform.parent.GetComponentInParent<Enigma>().ActiveAllCheck();
-        Destroy(gameObject);
+        gameObject.SetActive(false);
     }
 
     private void ResetDeadAnim()
@@ -266,7 +271,7 @@ public class Enemy : MonoBehaviour
             else
                 detected = false;
 
-            //Debug.Log(fsm.currentState.name);
+
             fsm.UpdateFSM();
             
         }else
@@ -305,7 +310,6 @@ public class Enemy : MonoBehaviour
             velocity.y = -2f;
         }*/
 
-        
         if (idlePositions.Length > 1)
         {
             agent.isStopped = false;
@@ -388,10 +392,11 @@ public class Enemy : MonoBehaviour
             Gizmos.DrawLine(transform.position, transform.position + directionToCharacter.normalized * viewRadius);
         }
     }
-    #endif
+#endif
 
-    /*private void OnCollisionEnter(Collision collision)
+    private void OnCollisionEnter(Collision collision)
     {
+        Debug.Log(collision.gameObject.name);
         if (collision.collider.gameObject.layer == LayerMask.NameToLayer("Bullet"))
         {
             if (lowElement == collision.collider.gameObject.GetComponent<MagicAttack>().element)
@@ -404,15 +409,31 @@ public class Enemy : MonoBehaviour
 
             Debug.Log("collision");
         }
-    }*/
+    }
 
+    private bool audio = false;
     private void OnParticleCollision(GameObject other)
     {
-        
+        Debug.Log(other.gameObject.name);
         if (other.layer == LayerMask.NameToLayer("Bullet"))
         {
+            WaterBall w;
+            if (other.TryGetComponent<WaterBall>(out w))
+                w.DestroyBall();
+
             var attk = other.GetComponent<MagicAttack>();
-            attk.AudioImpact();
+
+            if (!audio)
+            {
+                attk.AudioImpact();
+                audio = true;
+            }
+
+            if (!attk.IsImpactPlaying())
+            {
+                audio = false;
+            }
+
             if (lowElement == attk.element && health > 0)
             {
                 hit = true;
@@ -423,6 +444,26 @@ public class Enemy : MonoBehaviour
                 //Debug.Log("particle" + name);
             }
         }
+    }
+
+    public int GetHealth()
+    {
+        return health;
+    }
+
+    public void SetHealth(int h)
+    {
+        health = h;
+        if(h <= 0)
+            gameObject.SetActive(false);
+    }
+
+    private void Reset()
+    {
+        transform.localPosition = initPos;
+        transform.localRotation = initRot;
+        health = 1;
+        gameObject.SetActive(true);
     }
 
 
@@ -438,4 +479,6 @@ public class Enemy : MonoBehaviour
             }
         }
     }*/
+
+
 }

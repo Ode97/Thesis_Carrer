@@ -31,8 +31,11 @@ public class TreeManager : MonoBehaviour
                     // Instantiate the tree prefab at the position of the tree instance
                     GameObject tree = Instantiate(treeAsset, position, Quaternion.identity);
 
-                    // Set the scale of the tree
-                    tree.transform.localScale = Vector3.one * treeInstance.widthScale;
+                    //if(treeInstance.prototypeIndex != 0)
+                    if(tree.gameObject.name.Contains("PT_Pine_Tree_03_green(Clone)"))
+                        tree.transform.localScale = Vector3.one * treeInstance.widthScale * 3;
+                    else
+                        tree.transform.localScale = Vector3.one * treeInstance.widthScale;
                 }
 
                 // Remove the tree instances from the terrain

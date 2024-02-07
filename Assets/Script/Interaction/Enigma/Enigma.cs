@@ -42,8 +42,10 @@ public  class Enigma : MonoBehaviour
     private void Start()
     {
         EventManager.StartListening("Reset", Reset);
-        if(disableObstacle)
+        if (disableObstacle)
+        {
             initPosition = obstacle.transform.localPosition;
+        }
         else
             diam = objReward.activeSelf;
 
@@ -57,6 +59,7 @@ public  class Enigma : MonoBehaviour
     private bool end = false;
     private void Update()
     {
+        
         if (!end)
         {
             if (complete && disableObstacle)
@@ -75,8 +78,9 @@ public  class Enigma : MonoBehaviour
             if (reward && complete)
             {
                 objReward.SetActive(true);
-                diam = true;
+                objReward.GetComponent<MeshRenderer>().enabled = true;
                 end = true;
+                reward = false;
             }
         }
     }
@@ -115,9 +119,9 @@ public  class Enigma : MonoBehaviour
   
     public void ElementPositionCheck(int code)
     {
-        
         foreach (var s in spots)
         {
+            Debug.Log(s.name);
             if (s.isCorrect())
             {
                 i++;
@@ -133,7 +137,7 @@ public  class Enigma : MonoBehaviour
     public void ActiveAllCheck()
     {
         i++;
-        Debug.Log(i + " " + numbersOfElement);
+       
         if (i == numbersOfElement)
         {
             
@@ -141,19 +145,29 @@ public  class Enigma : MonoBehaviour
         }
     }
 
+    public void Deactivate()
+    {
+        i--;
+        
+    }
+
     public void Reset()
     {
         i = 0;
-        var x = GetComponentsInChildren<InteractableObject>();
+        /*var x = GetComponentsInChildren<InteractableObject>();
         foreach (InteractableObject io in x)
         {
             io.WaterInteraction();
             
-        }
+        }*/
         foreach (EnigmaObj eo in objs)
             eo.SetActiveObj(true);
 
         complete = false;
+        if (reward)
+        {
+            objReward.GetComponent<MeshRenderer>().enabled = diam;
+        }
     }
 
     public bool[] IsComplete()
@@ -161,8 +175,8 @@ public  class Enigma : MonoBehaviour
         var x = new bool[2];
         if (reward)
         {
-            diam = objReward.activeSelf;
-            x[1] = diam;
+            
+            x[1] = objReward.GetComponent<MeshRenderer>().enabled;
         }
         else
         {
@@ -175,11 +189,24 @@ public  class Enigma : MonoBehaviour
 
     public void Complete(bool c, bool d)
     {
+        //Debug.Log(gameObject.name + " completato: " + c + " statoReward: " + d);
         complete = c;
         if (reward)
-        {
-            diam = d;
-            objReward.SetActive(d);
+        {                      
+            if (c)
+            {
+                end = true;
+                //objReward.SetActive(true);
+                //Debug.Log(objReward.activeSelf);
+
+                objReward.SetActive(d);
+                objReward.GetComponent<MeshRenderer>().enabled = d;
+                
+
+            }
+
+           
+            
         }
     }
 }

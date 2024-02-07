@@ -49,7 +49,7 @@ public class EarthPlant : InventoryObject
 
     private void Reset()
     {
-        if (gameObject.GetComponent<EnigmaObj>())
+        if (gameObject.GetComponent<EnigmaObj>() && gameObject.layer != Constants.UILayer)
         {
             
             Destroy(gameObject);

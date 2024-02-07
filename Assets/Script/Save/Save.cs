@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,16 +19,36 @@ public class Save : MonoBehaviour
         float[,] rotAir;
         int[] fireData;
         bool[] waterData;
+        bool[] bookData;
         float[] playerPos;
         float[] playerRot;
+        float[,] fairiesPos;
+        int life;
+        int[] enemies;
         bool[,] enigmasComplete;
+        bool[] checkpoints;
         int checkpoint;
-        
+
+        fairiesPos = new float[3, 3];
+
+        var fairies = FindObjectsOfType<Fairy>();
+
+        int i = 0;
+        Array.Sort(fairies, (a, b) => a.gameObject.name.CompareTo(b.gameObject.name));
+        foreach (var fai in fairies)
+        {
+            fairiesPos[i, 0] = fai.GetTarget().x;
+            fairiesPos[i, 1] = fai.GetTarget().y;
+            fairiesPos[i, 2] = fai.GetTarget().z;
+            i++;
+        }
 
         playerPos = new float[3];
         playerRot = new float[4];
 
         diams = GameManager.instance.character.GetDiamonds();
+
+        life = GameManager.instance.character.health;
 
         var p = GameManager.instance.character.transform.position;
         playerPos[0] = p.x;
@@ -40,7 +61,7 @@ public class Save : MonoBehaviour
         playerRot[2] = r.z;
         playerRot[3] = r.w;
 
-        int i = 0;
+        i = 0;
 
         var x = FindObjectsOfType<EarthPlant>();
 
@@ -49,6 +70,7 @@ public class Save : MonoBehaviour
 
         foreach (EarthPlant e in x)
         {
+            
             posEarth[i, 0] = e.transform.position.x;
             posEarth[i, 1] = e.transform.position.y;
             posEarth[i, 2] = e.transform.position.z;
@@ -64,6 +86,8 @@ public class Save : MonoBehaviour
 
         var y = FindObjectsOfType<Air>();
 
+        Array.Sort(y, (a, b) => a.gameObject.name.CompareTo(b.gameObject.name));
+        //Debug.Log("save: " + y.ToString());
         posAir = new float[y.Length, 3];
         rotAir = new float[y.Length, 3];
 
@@ -71,6 +95,7 @@ public class Save : MonoBehaviour
 
         foreach (Air a in y)
         {
+            //Debug.Log(a.name);
             posAir[i, 0] = a.transform.position.x;
             posAir[i, 1] = a.transform.position.y;
             posAir[i, 2] = a.transform.position.z;
@@ -83,14 +108,41 @@ public class Save : MonoBehaviour
         }
 
         var fires = FindObjectsOfType<Fire>(includeInactive:true);
-        var z = fires.OrderBy(fire => fire.GetComponent<EnigmaObj>()?.value).Where(fire => fire.gameObject.layer == Constants.intObjLayer && !fire.GetComponent<EarthPlant>()).ToArray();
+        fires = fires.Where(fire => fire.gameObject.layer == Constants.intObjLayer && !fire.GetComponent<EarthPlant>()).ToArray();
+        //var z = fires.OrderBy(fire => fire.GetComponent<EnigmaObj>()?.value).Where(fire => fire.gameObject.layer == Constants.intObjLayer && !fire.GetComponent<EarthPlant>()).ToArray();
+        Array.Sort(fires, (x, y) => {
+            // Ottieni i componenti EnigmaObj
+            EnigmaObj ex = x.GetComponent<EnigmaObj>();
+            EnigmaObj ey = y.GetComponent<EnigmaObj>();
+
+            if (ex == null || ey == null)
+            {
+                // Se uno dei componenti non esiste, confronta i nomi dei GameObjects
+                return x.name.CompareTo(y.name);
+            }
+
+            // Confronta i valori
+            int valueComparison = ex.value.CompareTo(ey.value);
+            if (valueComparison != 0)
+            {
+                // Se i valori non sono uguali, ritorna il risultato del confronto
+                return valueComparison;
+            }
+            else
+            {
+                // Se i valori sono uguali, confronta i nomi
+                return x.name.CompareTo(y.name);
+            }
+        });
+
         
+
+        var z = fires;
         fireData = new int[z.Length];        
 
         i = 0;
         foreach (Fire f in z)
-        {
-            //Debug.Log(i + " " + f.name + " " + f.GetFire());
+        {           
             fireData[i] = f.GetFire();
 
             //if (f.GetFire() == 1)
@@ -100,7 +152,7 @@ public class Save : MonoBehaviour
         }
 
         var s = FindObjectsOfType<WaterObj>();
-
+        Array.Sort(s, (a, b) => a.gameObject.name.CompareTo(b.gameObject.name));
         i = 0;
 
         waterData = new bool[s.Length];
@@ -112,10 +164,48 @@ public class Save : MonoBehaviour
             i++;
         }
 
+        var t = FindObjectsOfType<Book>(includeInactive: true);
+        Array.Sort(t, (a, b) => a.gameObject.name.CompareTo(b.gameObject.name));
+
+        i = 0;
+        bookData = new bool[t.Length];
+
+        foreach (Book b in t)
+        {
+            
+            bookData[i] = b.IsTaken();
+
+            i++;
+        }
+
+        var enem = FindObjectsOfType<Enemy>(includeInactive: true);
+        Array.Sort(enem, (a, b) => a.gameObject.name.CompareTo(b.gameObject.name));
+        i = 0;
+        enemies = new int[enem.Length];
+
+        foreach (Enemy e in enem)
+        {
+            enemies[i] = e.GetHealth();
+
+            i++;
+        }
+
+        var checks = FindObjectsOfType<Checkpoint>();
+        Array.Sort(checks, (a, b) => a.gameObject.name.CompareTo(b.gameObject.name));
+        i = 0;
+        checkpoints = new bool[checks.Length];
+
+        foreach (Checkpoint c in checks)
+        {
+            checkpoints[i] = c.IsDiscovered();
+
+            i++;
+        }
+
         checkpoint = GameManager.instance.character.GetCheckpointIndex();
 
         var en = FindObjectsOfType<Enigma>();
-
+        Array.Sort(en, (a, b) => a.gameObject.name.CompareTo(b.gameObject.name));
         enigmasComplete = new bool[en.Length, 2];
         i = 0;
         foreach (Enigma obj in en)
@@ -126,7 +216,9 @@ public class Save : MonoBehaviour
             i++;
         }
 
-        Data d = new Data(diams, playerPos, playerRot, posEarth, rotEarth, posAir, rotAir, fireData, waterData, checkpoint, enigmasComplete);
+        var enemyCheck =  FindObjectOfType<CheckEnemyDeath>().IsFinish();
+
+        Data d = new Data(diams, life, fairiesPos, playerPos, playerRot, posEarth, rotEarth, posAir, rotAir, fireData, waterData, bookData, enemies, checkpoints, checkpoint, enigmasComplete, enemyCheck);
         
         DataManager.saveData(d);
         StartCoroutine(SaveText());

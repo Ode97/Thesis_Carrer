@@ -17,6 +17,12 @@ public class MenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     public bool newGame = false;
     public bool continueGame = false;
     public bool save = false;
+    public bool plant = false;
+
+    private void Start()
+    {
+        dialogueManager = FindObjectOfType<DialogueManager>();
+    }
 
     private void Update()
     {
@@ -29,6 +35,9 @@ public class MenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
                 if (dialogue)
                     DialogueContinue();
+
+                if(plant)
+                    Chosen();
 
                 if (newGame)
                 {
@@ -62,8 +71,9 @@ public class MenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     MenuManager.instance.EnableMainCanvas();
                 else if (activateStartCanvas)
                 {
-                    Debug.Log("a");
+                    dialogueManager.EndDialogue();
                     MenuManager.instance.OpenMenuStart();
+                    
                 }
             }
         }
@@ -98,7 +108,9 @@ public class MenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     private void NewGame()
     {
         GetComponent<DialogueTrigger>().TriggerDialogue();
+        GameManager.instance.character.GameStart();
         MenuManager.instance.StartNewGame();
+        
     }
 
     private void ContinueGame()
@@ -145,6 +157,11 @@ public class MenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         dialogueManager.DisplayNext();
     }
 
+    public void Chosen()
+    {
+        GetComponentInChildren<EarthPlant>().Chosen();
+    }
+
     
     public void OnPointerClick(PointerEventData eventData)
     {
@@ -152,7 +169,10 @@ public class MenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
         if (dialogue)
             DialogueContinue();
-
+        
+        if (plant)
+            Chosen();
+        
         if (activateMainCanvas)
             MenuManager.instance.EnableMainCanvas();
 
@@ -185,6 +205,7 @@ public class MenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             MenuManager.instance.EnableMainCanvas();
         else if (activateStartCanvas)
         {
+            dialogueManager.EndDialogue();
             MenuManager.instance.OpenMenuStart();
         }
     }

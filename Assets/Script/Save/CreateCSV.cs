@@ -4,12 +4,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using UnityEngine;
+using static UnityEngine.Rendering.DebugUI.Table;
 
 public class CreateCSV
 {
     //private StringBuilder csv;
-    string csvFilePath = Path.Combine(Application.dataPath, "output.csv");
-
+    string csvFilePath = Path.Combine(Application.dataPath, "output2.csv");
+    private List<string> rows = new List<string>();
 
     public CreateCSV()
     {
@@ -24,13 +25,18 @@ public class CreateCSV
 
     public void AddData(string row)
     {
-
-        using (StreamWriter writer = new StreamWriter(csvFilePath, true))
-        {
-            writer.WriteLine(row);
-        }
+        rows.Add(row);
+        
     }
 
-    
-
+    public void EndCSV()
+    {
+        using (StreamWriter writer = new StreamWriter(csvFilePath, true))
+        {
+            foreach (string row in rows)
+            {
+                writer.WriteLine(row);
+            }
+        }
+    }
 }

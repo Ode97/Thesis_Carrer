@@ -19,7 +19,8 @@ public class AirElement : MagicElement
     override
     public void ApplyEffect()
     {
-        GameManager.instance.stopLogic = true;
+        //GameManager.instance.stopLogic = true;
+        GameManager.instance.airEffect = true;
         StartCoroutine(Wait());
         actualeffect = Instantiate(airEffect);
         Vector3 scale = interactableObject.transform.localScale;
@@ -68,12 +69,14 @@ public class AirElement : MagicElement
     {
         yield return new WaitForSeconds(0.3f);
         GameManager.instance.stopLogic = false;
+        GameManager.instance.airEffect = false;
     }
 
     private void OnDisable()
     {
         clicked = false;
         GameManager.instance.stopLogic = false;
+        GameManager.instance.airEffect = false;
         Destroy(actualeffect);
     }
 }

@@ -10,7 +10,9 @@ public class DataManager : MonoBehaviour {
     public static void saveData(Data g){
 
         string destination = Application.persistentDataPath + "/" + "_game.dat";
-        
+
+        //Debug.Log(destination);
+
         FileStream file;
 
         if(File.Exists(destination)) 
@@ -42,37 +44,21 @@ public class DataManager : MonoBehaviour {
         
         file.Close();
 
-        GameManager.instance.SetLoad(data.diamonds, data.playerPos, data.playerRot, data.earthPos, data.earthRot, data.airPos, data.airRot, data.fireData, data.waterData, data.checkpoint, data.enigmasComplete);
+        GameManager.instance.SetLoad(data.diamonds, data.life, data.fairiesPos, data.playerPos, data.playerRot, data.earthPos, data.earthRot, data.airPos, data.airRot, data.fireData, data.waterData, data.bookData, data.enemies, data.checkpoints, data.checkpoint, data.enigmasComplete, data.endEnemyCheck);
         //GameManager.GM().data = data;
         return data;        
     }
-    
 
-    public static void DeleteFile(){
+
+    public static void DeleteFile()
+    {
         string destination = Application.persistentDataPath + "/save.dat";
 
-        if(File.Exists(destination)) File.Delete(destination);
+        if (File.Exists(destination)) File.Delete(destination);
         else
         {
             //Debug.LogError("File not found");
             return;
-        }
-    }
-
-    public static bool MainMessage(){
-        string destination = Application.persistentDataPath + "/openedOnce.dat";
-
-        if(File.Exists(destination)) {
-            return true;
-        }
-        else {
-            FileStream file;
-            file = File.Create(destination);
-            bool data = true;
-            BinaryFormatter bf = new BinaryFormatter();
-            bf.Serialize(file, data);
-            file.Close();
-            return false;
         }
     }
 }

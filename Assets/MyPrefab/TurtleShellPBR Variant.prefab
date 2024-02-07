@@ -332,7 +332,7 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1330407187645236, guid: e2aafa8770d34a9591b41bedf4e318ba,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 4968336291949914998}
+      addedObject: {fileID: 6160395829932768513}
   m_SourcePrefab: {fileID: 100100000, guid: e2aafa8770d34a9591b41bedf4e318ba, type: 3}
 --- !u!1 &5601046413881854518 stripped
 GameObject:
@@ -340,8 +340,8 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 5602007303096420610}
   m_PrefabAsset: {fileID: 0}
---- !u!136 &4968336291949914998
-CapsuleCollider:
+--- !u!135 &6160395829932768513
+SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -358,11 +358,9 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.41448125
-  m_Height: 1.280496
-  m_Direction: 0
-  m_Center: {x: -0.48841754, y: 0.3283163, z: 0}
+  serializedVersion: 3
+  m_Radius: 0.6039723
+  m_Center: {x: -0.526805, y: 0.42283615, z: -0.0000013756338}
 --- !u!1 &5601133816716643198 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1524411113276028, guid: e2aafa8770d34a9591b41bedf4e318ba,
@@ -384,13 +382,16 @@ MonoBehaviour:
   health: 1
   lowElement: 1
   viewAngle: 100
-  viewRadius: 50
+  viewRadius: 70
   targetMask:
     serializedVersion: 2
     m_Bits: 128
   distanceForAttack: 15
   rotationSpeed: 5
   idlePositions: []
+  terainMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!54 &6163694231018315057
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -413,8 +414,8 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 0
+  m_UseGravity: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 1

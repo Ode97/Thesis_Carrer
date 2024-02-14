@@ -44,7 +44,7 @@ public class DataManager : MonoBehaviour {
         
         file.Close();
 
-        GameManager.instance.SetLoad(data.diamonds, data.life, data.fairiesPos, data.playerPos, data.playerRot, data.earthPos, data.earthRot, data.airPos, data.airRot, data.fireData, data.waterData, data.bookData, data.enemies, data.checkpoints, data.checkpoint, data.enigmasComplete, data.endEnemyCheck);
+        GameManager.instance.SetLoad(data.diamonds, data.life, data.fairiesPos, data.playerPos, data.playerRot, data.earthPos, data.earthRot, data.airPos, data.airRot, data.fireData, data.waterData, data.bookData, data.enemies, data.sheepPos, data.sheepRot, data.checkpoints, data.checkpoint, data.enigmasComplete, data.spotsOK, data.endEnemyCheck);
         //GameManager.GM().data = data;
         return data;        
     }

@@ -85,6 +85,7 @@ public class Character : MonoBehaviour
     private void Reset()
     {
         gameStart = false;
+        ResetLife();
     }
 
     public void SetHealth(int h)
@@ -186,7 +187,6 @@ public class Character : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
         if (lastPos != transform.position)
         {
             moving = true;
@@ -256,10 +256,11 @@ public class Character : MonoBehaviour
         animator.SetTrigger("Die");
         yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName("Die01_Stay_SwordAndShield"));
         animator.ResetTrigger("Die");
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(0.3f);
         StartCoroutine(Respawn());
         ResetLife();
         animator.Play("Idle_Battle_SwordAndShield");
+        AudioManager.instance.PlayForestMusic();
         dead = false;
     }
 
@@ -294,46 +295,58 @@ public class Character : MonoBehaviour
 
     public void SetActualElement(MagicElement element)
     {
-        if(aurea != null)
-            Destroy(aurea.gameObject);
-
-
-        if (activeAttack)
+        if (!GameManager.instance.airEffect)
         {
-            
-            Destroy(activeAttack);
+            if (aurea != null)
+                Destroy(aurea.gameObject);
+
+
+            if (activeAttack)
+            {
+
+                Destroy(activeAttack);
+            }
+
+            if (activeElement && element == actualElement)
+            {
+                //actualElement = null;
+                activeElement = false;
+                enemyTarget = null;
+                return;
+            }
+
+
+
+            activeElement = true;
+
+            aurea = Instantiate(element.aurea, transform);
+            actualElement = element;
         }
-
-        if (actualElement != null && element == actualElement)
-        {
-            actualElement = null;
-            activeElement = false;
-            enemyTarget = null;
-            return;
-        }
-
-        
-
-        activeElement = true;
-
-        aurea = Instantiate(element.aurea, transform);
-        actualElement = element;
     }
 
     public void DisableElement()
     {
         Destroy(aurea.gameObject);
-        actualElement = null;
+        //actualElement = null;
         activeElement = false;
+        enemyTarget = null;
         return;
     }
 
-    public bool isActiveElement()
+    public bool IsActiveElement()
     {
         return activeElement;
     }
 
-    public MagicElement getActualElement()
+    public Element GetActualElement()
+    {
+        if (activeElement)
+            return actualElement.element;
+        else
+            return Element.None;
+    }
+
+    public MagicElement GetMagicElement()
     {
         return actualElement;
     }
@@ -350,9 +363,10 @@ public class Character : MonoBehaviour
 
     public void Interaction(RaycastHit hit)
     {
+
         if (activeElement)
         {
-            //Debug.Log(obj.name);
+            Debug.Log(obj.name + " " + obj.gameObject.activeSelf);
             actualElement.SetObject(obj);
             actualElement.SetPosition(hit.point);
             actualElement.ApplyEffect();
@@ -485,6 +499,7 @@ public class Character : MonoBehaviour
     public void SetCheckpoint(Checkpoint cP)
     {
         checkpoint = cP;
+        Debug.Log(checkpoint.GetIndex());
         platform = false;
     }
 
@@ -559,6 +574,7 @@ public class Character : MonoBehaviour
         else
             transform.position = checkpoint.transform.position;
 
+        Debug.Log(checkpoint.GetIndex());
         GameManager.instance.stopLogic = false;
     }
 

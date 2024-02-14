@@ -10,12 +10,13 @@ public class Spot : MonoBehaviour
     
     private bool ok = false;
     public int[] code;
-    
+    public bool bossBattle = false;
+    public GameObject boss;
 
     private void Awake()
     {
         //enigmaChecker = transform.parent.GetComponent<Enigma>();
-
+        EventManager.StartListening("Reset", Reset);
     }
 
     private void Update()
@@ -53,6 +54,11 @@ public class Spot : MonoBehaviour
         return ok;
     }
 
+    public void SetOk(bool b)
+    {
+        ok = b;
+    }
+
     private bool disappear = false;
     private GameObject actual;
     public void EnigmaSolve(GameObject g)
@@ -75,5 +81,13 @@ public class Spot : MonoBehaviour
             }
 
         }
+
+        if(bossBattle)
+            boss.GetComponent<Golem>().AddPlants(actual.GetComponent<EarthPlant>(), this);
+    }
+
+    public void Reset()
+    {
+        ok = false;
     }
 }

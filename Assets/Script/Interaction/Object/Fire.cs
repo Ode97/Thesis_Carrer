@@ -22,7 +22,8 @@ public class Fire : InteractableObject
             isFireActive = fireParticle.activeSelf;
         }
 
-        color = Color.red;            
+        color = Color.red;
+        element = Element.Fire;
     }
 
     /*override
@@ -107,7 +108,6 @@ public class Fire : InteractableObject
         else if (!isFireActive)
         {
             fireParticle.SetActive(false);
-            //Debug.Log(name + " spento");
         }
 
     }

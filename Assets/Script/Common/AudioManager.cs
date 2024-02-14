@@ -8,6 +8,8 @@ public class AudioManager : MonoBehaviour
     public static AudioManager instance = null;
     public AudioSource forest;
     public AudioSource boss;
+    public AudioSource bossActivation;
+    public AudioSource bossStun;
 
 
     void Awake()
@@ -35,5 +37,15 @@ public class AudioManager : MonoBehaviour
     {
         boss.Stop();
         forest.Play();
+    }
+
+    public void PlayBossAcivation()
+    {
+        bossActivation.Play();
+    }
+
+    public void PlayBossStunned()
+    {
+        bossStun.Play();
     }
 }

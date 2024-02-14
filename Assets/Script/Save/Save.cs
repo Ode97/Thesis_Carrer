@@ -25,8 +25,11 @@ public class Save : MonoBehaviour
         float[,] fairiesPos;
         int life;
         int[] enemies;
+        float[,] sheepPos;
+        float[,] sheepRot;
         bool[,] enigmasComplete;
         bool[] checkpoints;
+        bool[] spotsOK;
         int checkpoint;
 
         fairiesPos = new float[3, 3];
@@ -190,6 +193,27 @@ public class Save : MonoBehaviour
             i++;
         }
 
+        var sheeps = FindObjectsOfType<Sheep>();
+
+        Array.Sort(sheeps, (a, b) => a.gameObject.name.CompareTo(b.gameObject.name));
+        i = 0;
+        sheepPos = new float[sheeps.Length, 3];
+        sheepRot = new float[sheeps.Length, 4];
+        foreach (Sheep sh in sheeps)
+        {
+            sheepPos[i, 0] = sh.transform.localPosition.x;
+            sheepPos[i, 1] = sh.transform.localPosition.y;
+            sheepPos[i, 2] = sh.transform.localPosition.z;
+
+            sheepRot[i, 0] = sh.transform.localRotation.x;
+            sheepRot[i, 1] = sh.transform.localRotation.y;
+            sheepRot[i, 2] = sh.transform.localRotation.z;
+            sheepRot[i, 3] = sh.transform.localRotation.w;
+
+            i++;
+        }
+
+
         var checks = FindObjectsOfType<Checkpoint>();
         Array.Sort(checks, (a, b) => a.gameObject.name.CompareTo(b.gameObject.name));
         i = 0;
@@ -204,13 +228,28 @@ public class Save : MonoBehaviour
 
         checkpoint = GameManager.instance.character.GetCheckpointIndex();
 
+        var spots = FindObjectsOfType<Spot>();
+        Array.Sort(spots, (a, b) => a.gameObject.name.CompareTo(b.gameObject.name));
+        i = 0;
+        spotsOK = new bool[spots.Length];
+        foreach (Spot sp in spots)
+        {        
+            spotsOK[i] = sp.isCorrect();
+            i++;
+        }
+
+
         var en = FindObjectsOfType<Enigma>();
         Array.Sort(en, (a, b) => a.gameObject.name.CompareTo(b.gameObject.name));
         enigmasComplete = new bool[en.Length, 2];
         i = 0;
+        
+
         foreach (Enigma obj in en)
         {
+            
             var enigma = obj.IsComplete();
+            
             enigmasComplete[i, 0] = enigma[0];
             enigmasComplete[i, 1] = enigma[1];
             i++;
@@ -218,7 +257,7 @@ public class Save : MonoBehaviour
 
         var enemyCheck =  FindObjectOfType<CheckEnemyDeath>().IsFinish();
 
-        Data d = new Data(diams, life, fairiesPos, playerPos, playerRot, posEarth, rotEarth, posAir, rotAir, fireData, waterData, bookData, enemies, checkpoints, checkpoint, enigmasComplete, enemyCheck);
+        Data d = new Data(diams, life, fairiesPos, playerPos, playerRot, posEarth, rotEarth, posAir, rotAir, fireData, waterData, bookData, enemies, sheepPos, sheepRot, checkpoints, checkpoint, enigmasComplete, spotsOK, enemyCheck);
         
         DataManager.saveData(d);
         StartCoroutine(SaveText());
@@ -227,7 +266,7 @@ public class Save : MonoBehaviour
     public IEnumerator SaveText()
     {
         saveIcon.gameObject.SetActive(true);
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(2);
         saveIcon.gameObject.SetActive(false);
     }
 }

@@ -17,8 +17,13 @@ public class Icon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         {
             GameManager.instance.SetElement(element);
 
+
             if (element.GetComponent<EarthElement>())
+            {
                 start = true;
+                GameManager.instance.SetSliderTime(0);
+                GameManager.instance.selectionSlider.SetActive(true);
+            }
         }
         
     }
@@ -27,13 +32,18 @@ public class Icon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     {
         t = 0;
         start = false;
+        GameManager.instance.SetSliderTime(0);
+        GameManager.instance.selectionSlider.SetActive(false);
     }
 
     private void Update()
     {
         if(start)
         {
+            
             t += Time.deltaTime;
+
+            GameManager.instance.SetSliderTime(t);
             if (t >= GameManager.instance.fixingTime)
             {
                 MenuManager.instance.OpenEarthMenu();

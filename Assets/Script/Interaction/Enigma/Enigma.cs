@@ -39,7 +39,7 @@ public  class Enigma : MonoBehaviour
     private int i = 0;
     private EnigmaObj[] objs;
     
-    private void Start()
+    private void Awake()
     {
         EventManager.StartListening("Reset", Reset);
         if (disableObstacle)
@@ -80,7 +80,7 @@ public  class Enigma : MonoBehaviour
                 objReward.SetActive(true);
                 objReward.GetComponent<MeshRenderer>().enabled = true;
                 end = true;
-                reward = false;
+                //reward = false;
             }
         }
     }
@@ -119,9 +119,9 @@ public  class Enigma : MonoBehaviour
   
     public void ElementPositionCheck(int code)
     {
+        i = 0;
         foreach (var s in spots)
         {
-            Debug.Log(s.name);
             if (s.isCorrect())
             {
                 i++;
@@ -129,9 +129,6 @@ public  class Enigma : MonoBehaviour
                     complete = true;
             }
         }
-
-        i = 0;
-
     }
 
     public void ActiveAllCheck()
@@ -154,18 +151,16 @@ public  class Enigma : MonoBehaviour
     public void Reset()
     {
         i = 0;
-        /*var x = GetComponentsInChildren<InteractableObject>();
-        foreach (InteractableObject io in x)
-        {
-            io.WaterInteraction();
-            
-        }*/
+        
         foreach (EnigmaObj eo in objs)
             eo.SetActiveObj(true);
 
         complete = false;
+        end = false;
         if (reward)
         {
+            Debug.Log(name + " " + diam);
+            objReward.SetActive(diam);
             objReward.GetComponent<MeshRenderer>().enabled = diam;
         }
     }
@@ -177,13 +172,14 @@ public  class Enigma : MonoBehaviour
         {
             
             x[1] = objReward.GetComponent<MeshRenderer>().enabled;
+            //Debug.Log(x[1]);
         }
         else
         {
             x[1] = false;
         }
         x[0] = complete;
-        
+        //Debug.Log(name + " " + x[0] + " " + x[1]);
         return x;
     }
 
@@ -201,12 +197,13 @@ public  class Enigma : MonoBehaviour
 
                 objReward.SetActive(d);
                 objReward.GetComponent<MeshRenderer>().enabled = d;
+                Debug.Log(name + " " + d);
                 
 
             }
 
-           
-            
+
+
         }
     }
 }

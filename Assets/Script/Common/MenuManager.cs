@@ -107,10 +107,11 @@ public class MenuManager : MonoBehaviour
         }
         catch 
         {
-            Application.Quit();
+            //Application.Quit();
+            System.Diagnostics.Process.GetCurrentProcess().Kill();
         }
-        
-        Application.Quit();
+
+        System.Diagnostics.Process.GetCurrentProcess().Kill();
     }
 
     public void OpenEarthMenu()
@@ -127,10 +128,6 @@ public class MenuManager : MonoBehaviour
         mapIcon.transform.position = new Vector3(p.x, mapIcon.transform.position.y, p.z);
         
         renderCam.RenderMap();
-        //mainCanvas.enabled = false;
-
-        //menuOpen = true;
-        //RenderSettings.fog = false;
 
 
     }
@@ -192,11 +189,11 @@ public class MenuManager : MonoBehaviour
 
     public void StartNewGame()
     {
-        startMenu.gameObject.SetActive(false);
+        //startMenu.gameObject.SetActive(false);
         GameManager.instance.outlineEffect.SetActive(true);
         GameManager.instance.stopLogic = false;
         mainCamera.GetComponent<MainCameraFollow>().enabled = true;
-        mainCanvas.gameObject.SetActive(true);
+        //mainCanvas.gameObject.SetActive(true);
         mainButtons.SetActive(true);
         firstStart = true;
         menuOpen = false;

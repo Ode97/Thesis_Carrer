@@ -107,6 +107,7 @@ public class Checkpoint : MonoBehaviour
         if (areaName && discovered) {
             areaName.gameObject.SetActive(true);
             areaName.transform.parent.GetComponent<CheckpointTeleport>().pos = transform.position;
+            areaName.transform.parent.gameObject.SetActive(true);
             areaName.transform.parent.GetComponent<Button>().enabled = true;
         }
     }

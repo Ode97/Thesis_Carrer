@@ -7,13 +7,14 @@ public class Earth : InteractableObject
 {
     private Vector3 scaleTarget;
     private GameObject t;
+    
 
     void Start()
     {        
         color = Color.green;
-        
+        element = Element.Earth;
 
-    }
+}
 
     override
     protected void Update()

@@ -4,7 +4,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class MenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
+public class MenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler, IPointerUpHandler
 {
     private float timer = 0;
     public GameObject menu;
@@ -18,6 +18,16 @@ public class MenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     public bool continueGame = false;
     public bool save = false;
     public bool plant = false;
+    public bool restart = false;
+    public bool map = false;
+    public bool changeCursorModality = false;
+    public bool changeInteractionModality = false;
+    public bool chaingMainButton = false;
+    public bool changingMagicModality = false;
+    public bool timerButton = false;
+    public bool increaseAtt = false;
+    public bool decreaseAtt = false;
+    public bool teleport = false;
 
     private void Start()
     {
@@ -27,64 +37,91 @@ public class MenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     private void Update()
     {
         if (start)
-        {          
+        {
             timer += Time.unscaledDeltaTime;
+            GameManager.instance.SetSliderTime(timer);
             if (timer > GameManager.instance.fixingTime)
             {
-                Reset();
+                Reset();                
 
                 if (dialogue)
                     DialogueContinue();
 
-                if(plant)
+                if (plant)
                     Chosen();
 
                 if (newGame)
                 {
                     NewGame();
-                }else if (continueGame)
+                }
+                if (continueGame)
                 {
                     ContinueGame();
-                }else if (save)
+                }
+                if (save)
                 {
                     GameManager.instance.Save();
                 }
-                else
-                {
-
-                    if (!closeGame)
-                    {
-                        if (menu)
-                        {
-                            if (menu.activeSelf)
-                                CloseMenu();
-                            else
-                                OpenMenu();
-                        }
-                    }
-                    else
-                    {
-                        CloseGame();
-                    }
-                }
                 if (activateMainCanvas)
+                {
                     MenuManager.instance.EnableMainCanvas();
-                else if (activateStartCanvas)
+                }
+                if (activateStartCanvas)
                 {
                     dialogueManager.EndDialogue();
                     MenuManager.instance.OpenMenuStart();
-                    
+
                 }
+                if (changeCursorModality)
+                {
+                    GameSettings.instance.ChangeCursor();
+                }
+                if (changeInteractionModality)
+                {
+                    GameSettings.instance.ChangeInteraction();
+                }
+                if (chaingMainButton)
+                {
+                    GameSettings.instance.ChangeCam();
+                }
+                if (changingMagicModality)
+                {
+                    GameSettings.instance.ChangeMagic();
+                }
+                if(decreaseAtt)
+                    GameSettings.instance.DecreaseAttentionTime();
+
+                if(increaseAtt)
+                    GameSettings.instance.IncreseAttentionTime();
+
+                if (teleport)
+                {
+                    GetComponent<CheckpointTeleport>().Teleport();
+                }
+
+                if (menu)
+                {
+                    
+                    if (menu.activeSelf)
+                    {
+                        CloseMenu();
+                    }
+                    else
+                        OpenMenu();
+                }
+
+                if (closeGame)
+                {
+                    CloseGame();
+                }
+
             }
         }
     }
-
-    public bool restart = false;
-    public bool map = false;
+    
     private void CloseMenu()
     {
         Reset();
-
         if (restart)
         {
             Time.timeScale = 1f;
@@ -138,11 +175,19 @@ public class MenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     {
         start = true;
         timer = 0;
+        GameManager.instance.SetSliderTime(0);
+        GameManager.instance.selectionSlider.SetActive(true);
+    }
+
+    public void OnPointerUp(PointerEventData pointerEventData)
+    {
+        GameManager.instance.selectionSlider.SetActive(true);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
         Reset();
+        GameManager.instance.selectionSlider.SetActive(false);
     }
 
     public void Reset()
@@ -150,6 +195,7 @@ public class MenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         
         start = false;
         timer = 0;
+        GameManager.instance.SetSliderTime(0);
     }
 
     public void DialogueContinue()
@@ -162,51 +208,90 @@ public class MenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         GetComponentInChildren<EarthPlant>().Chosen();
     }
 
-    
+    public void IncreaseAttentionTime()
+    {
+        GameSettings.instance.IncreseAttentionTime();
+    }
+
+    public void DecreaseAttentionTime()
+    {
+        GameSettings.instance.DecreaseAttentionTime();
+    }
+
+
     public void OnPointerClick(PointerEventData eventData)
     {
         Reset();
 
         if (dialogue)
             DialogueContinue();
-        
+
         if (plant)
             Chosen();
-        
-        if (activateMainCanvas)
-            MenuManager.instance.EnableMainCanvas();
 
         if (newGame)
         {
             NewGame();
         }
-        else if (continueGame)
+        if (continueGame)
         {
             ContinueGame();
         }
-        else if (save)
+        if (save)
         {
             GameManager.instance.Save();
         }
-        else
-        {
-            if (menu)
-            {
-
-
-                if (!menu.activeSelf)
-                    OpenMenu();
-                else
-                    CloseMenu();
-            }
-        }
-
         if (activateMainCanvas)
+        {
             MenuManager.instance.EnableMainCanvas();
-        else if (activateStartCanvas)
+        }
+        if (activateStartCanvas)
         {
             dialogueManager.EndDialogue();
             MenuManager.instance.OpenMenuStart();
+
         }
+        if (changeCursorModality)
+        {
+            GameSettings.instance.ChangeCursor();
+        }
+        if (changeInteractionModality)
+        {
+            GameSettings.instance.ChangeInteraction();
+        }
+        if (chaingMainButton)
+        {
+            GameSettings.instance.ChangeCam();
+        }
+        if (changingMagicModality)
+        {
+            GameSettings.instance.ChangeMagic();
+        }
+        if (decreaseAtt)
+            GameSettings.instance.DecreaseAttentionTime();
+
+        if (increaseAtt)
+            GameSettings.instance.IncreseAttentionTime();
+
+
+        if (menu)
+        {
+            if (menu.activeSelf)
+            {
+                CloseMenu();
+            }
+            else
+            {
+                OpenMenu();
+            }
+        }
+
+        if (closeGame)
+        {
+            CloseGame();
+        }
+
+
+
     }
 }

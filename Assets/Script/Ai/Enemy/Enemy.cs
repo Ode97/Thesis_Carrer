@@ -124,9 +124,9 @@ public class Enemy : MonoBehaviour
 
     private void MoveAnim()
     {
-        //Debug.Log("walk");
         
-        //animator.SetTrigger("Walk");
+        
+        animator.SetTrigger("Walk");
     }
 
     private void ResetMoveAnim()
@@ -296,7 +296,7 @@ public class Enemy : MonoBehaviour
 
         Vector3 move = moveDirection * speed * Time.deltaTime;
         transform.position = Vector3.MoveTowards(transform.position, character.transform.position, move.magnitude);*/
-
+        Debug.Log(gameObject.name + " chase");
         agent.isStopped = false;
         agent.SetDestination(character.transform.position);
     }
@@ -327,7 +327,7 @@ public class Enemy : MonoBehaviour
                 transform.position = Vector3.MoveTowards(transform.position, idlePositions[i], move.magnitude);*/
                 //Debug.Log(Vector3.Distance(transform.position, idlePositions[i]));
 
-
+                
                 agent.SetDestination(idlePositions[i]);
             }
         }

@@ -53,6 +53,7 @@ public class Book : InteractableObject
         }
         taken = true;
         gameObject.SetActive(false);
+        
         return true;
 
     }

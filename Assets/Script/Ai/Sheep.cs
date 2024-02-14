@@ -17,10 +17,15 @@ public class Sheep : MonoBehaviour
     private bool enigma;
     [SerializeField]
     private EarthPlant target;
+    private Vector3 initPos;
+    private Quaternion initRot;
 
     // Start is called before the first frame update
     void Awake()
     {
+        EventManager.StartListening("Reset", Reset);
+        initPos = transform.localPosition;
+        initRot = transform.localRotation;
         animator = GetComponent<Animator>();
 
         FSMState idle = new FSMState("idle");
@@ -52,6 +57,12 @@ public class Sheep : MonoBehaviour
 
         fsm = new FSM(idle);
         fsm.StartFSM();
+    }
+
+    private void Reset()
+    {
+        transform.localPosition = initPos;
+        transform.localRotation = initRot;
     }
 
     private void Start()
@@ -149,6 +160,12 @@ public class Sheep : MonoBehaviour
         startEat = false;
         Destroy(plant);
         
+    }
+
+    public void SetPosAndRot(Vector3 pos, Quaternion rot) { 
+    
+        transform.position = pos;
+        transform.rotation = rot;
     }
 
 }

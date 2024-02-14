@@ -9,6 +9,8 @@ public abstract class InteractableObject : MonoBehaviour
     private float timer = 0;
     private bool start = false;
     protected Color color;
+    //private bool isTerrain = false;
+    protected Element element;
 
     // Start is called before the first frame update
     void Awake()
@@ -28,18 +30,24 @@ public abstract class InteractableObject : MonoBehaviour
         }*/
         EventManager.StartListening("WrongEnigma" + gameObject.name, EnigmaFail);
         EventManager.StartListening("Reset", Reset);
+        //Earth earth;
+        //isEarth = TryGetComponent<Earth>(out earth);
+        //isTerrain = gameObject.layer;
     }
 
     // Update is called once per frame
     protected virtual void Update()
-    {
-        if (start && GameManager.instance.IsInteraction())
+    {       
+        if (start && GameManager.instance.IsInteraction() && gameObject.layer != Constants.terrainLayer && (GameManager.instance.character.GetActualElement() == element || (GameManager.instance.airEffect && gameObject == GameManager.instance.character.GetMagicElement().GetObject().gameObject)))
         {
+            
+            GameManager.instance.selectionSlider.SetActive(true);
             timer += Time.deltaTime;
+            GameManager.instance.SetSliderTime(timer);
 
-            if (IsOnView() && !GetComponent<Earth>())
+            if (IsOnView())
             {
-                Debug.Log(name);
+                
                 if (!GameManager.instance.stopLogic)
                     GameManager.instance.fixing = true;
                 start = false;
@@ -48,8 +56,9 @@ public abstract class InteractableObject : MonoBehaviour
         }
     }
 
-    public void ResetTimer()
+    public IEnumerator ResetTimer()
     {
+        yield return new WaitForFixedUpdate();
         timer = 0;
     }
 
@@ -73,64 +82,75 @@ public abstract class InteractableObject : MonoBehaviour
 
     protected virtual void EnigmaFail()
     {
-        Debug.Log("a");
+        Debug.Log("aa");
     }
 
     public static bool click = false;
-    void OnMouseEnter()
+
+    private void OnMouseEnter()
     {
         
-            if (!MenuManager.instance.isMenuOpen())
+        if (!MenuManager.instance.isMenuOpen())
+        {
+            if (!click)
             {
-                if (!click)
-                {
-                    start = true;
-                }
-
-                timer = 0;
-                if (GameManager.instance.IsInteraction() && !onView)
-                {
-
-                    onView = true;
-                    GameManager.instance.SetObject(this);
-                }
-
-                if (!GameManager.instance.airEffect)
-                {
-                    GameManager.instance.outlineEffect.SetActive(true);
-                    ParticleSystem.MainModule main = GameManager.instance.outlineEffect.GetComponent<ParticleSystem>().main;
-                    main.startColor = color;
-                    //outline.SetActive(true);
-                }
-                //if (outline)
-                //    outline.enabled = true;
+                start = true;
             }
-        
+            if (gameObject.layer != Constants.terrainLayer && GameManager.instance.IsInteraction())
+            {
+                //GameManager.instance.selectionSlider.SetActive(true);
+                    
+                timer = 0;
+                GameManager.instance.SetSliderTime(timer);
+            }
+            if (GameManager.instance.IsInteraction() && !onView)
+            {
+                    
+                onView = true;
+                GameManager.instance.SetObject(this);
+            }
+
+            if (!GameManager.instance.airEffect)
+            {
+                GameManager.instance.outlineEffect.SetActive(true);
+                ParticleSystem.MainModule main = GameManager.instance.outlineEffect.GetComponent<ParticleSystem>().main;
+                main.startColor = color;
+                //outline.SetActive(true);
+            }
+        }      
     }
 
     private void OnMouseOver()
     {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-        Physics.Raycast(ray, out hit, Mathf.Infinity);
-        GameManager.instance.outlineEffect.transform.position = hit.point + new Vector3(0, 2, 0);
-        
+        if (!MenuManager.instance.isMenuOpen() && GameManager.instance.IsInteraction())
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            Physics.Raycast(ray, out hit, Mathf.Infinity);
+            GameManager.instance.outlineEffect.transform.position = hit.point + new Vector3(0, 2, 0);
+            /*if (!isTerrain)
+            {
+                //GameManager.instance.selectionSlider.SetActive(true);                
+            }*/
+        }else
+            GameManager.instance.outlineEffect.SetActive(false);
     }
 
     void OnMouseExit()
     {
-        start = false;
-        GameManager.instance.fixing = false;
-        timer = 0;
-        GameManager.instance.outlineEffect.SetActive(false);
-        if (GameManager.instance.IsInteraction())
-            StartCoroutine(EndSelection());
-        //else if (outline)
-        //{
-        //    outline.SetActive(false);
-        //}
-        //else if(outline)
-        //    outline.enabled = false;
+        if (!MenuManager.instance.isMenuOpen())
+        {
+            GameManager.instance.selectionSlider.SetActive(false);
+            
+            start = false;
+            GameManager.instance.fixing = false;
+            timer = 0;
+            GameManager.instance.SetSliderTime(timer);
+            GameManager.instance.outlineEffect.SetActive(false);
+            if (GameManager.instance.IsInteraction())
+                StartCoroutine(EndSelection());
+        }
+
     }
 
     private IEnumerator EndSelection()
@@ -151,6 +171,7 @@ public abstract class InteractableObject : MonoBehaviour
 
     public bool IsOnView()
     {
+        
         return timer > GameManager.instance.fixingTime;
     }
 

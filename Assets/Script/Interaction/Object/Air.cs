@@ -20,6 +20,13 @@ public class Air : InteractableObject
         rb = GetComponent<Rigidbody>();
         initPos = transform.localPosition;
         initRot = transform.localRotation;
+        element = Element.Air;
+
+        if(movingPlatform && onlyUp)
+        {
+            rb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezePositionZ| RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
+            
+        }
     }
 
     private bool remove = false;
@@ -60,7 +67,7 @@ public class Air : InteractableObject
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
 
-        if (Physics.Raycast(ray, out hit, Mathf.Infinity))
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity, ~GameManager.instance.ignoreLayer))
         {
             destination = hit.point;
             if (hit.collider.gameObject == gameObject)
@@ -85,7 +92,9 @@ public class Air : InteractableObject
 
                 if (movingPlatform)
                 {
-
+                    if(onlyUp)
+                        rb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
+                    
                     //transform.rotation = new Quaternion(0, r.y, 0, r.w);
                     foreach (GameObject go in onPlatform)
                     {
@@ -98,6 +107,14 @@ public class Air : InteractableObject
             }           
         }
         return true;
+    }
+
+    public void StopMove()
+    {
+        if(movingPlatform && onlyUp)
+        {
+            rb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
+        }
     }
 
     public override bool Interaction()

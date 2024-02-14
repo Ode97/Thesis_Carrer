@@ -15,5 +15,7 @@ public static class Constants
     public static int checkpointLayer = 11;
     public static int bossTriggerLayer = 12;
     public static int diamondLayer = 13;
+    public static int bossArenaLayer = 15;
+    public static int woodStoneLayer = 17;
 
 }

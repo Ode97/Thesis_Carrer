@@ -260,6 +260,7 @@ public class GameSettings : MonoBehaviour
         attentionTime.GetComponentInChildren<TextMeshProUGUI>().text = attentionTime.value.ToString();
 
         GameManager.instance.fixingTime = attentionTime.value;
+        GameManager.instance.selectionSlider.GetComponent<Slider>().maxValue = attentionTime.value;
     }
 
     public void DecreaseAttentionTime()
@@ -270,5 +271,6 @@ public class GameSettings : MonoBehaviour
         attentionTime.GetComponentInChildren<TextMeshProUGUI>().text = attentionTime.value.ToString();
 
         GameManager.instance.fixingTime = attentionTime.value;
+        GameManager.instance.selectionSlider.GetComponent<Slider>().maxValue = attentionTime.value;
     }
 }

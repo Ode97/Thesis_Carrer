@@ -21,12 +21,15 @@ public class Data
     public bool[] waterData;
     public bool[] bookData;
     public int[] enemies;
+    public float[,] sheepPos;
+    public float[,] sheepRot;
     public bool[] checkpoints;
     public int checkpoint;
     public bool[,] enigmasComplete;
+    public bool[] spotsOK;
     public bool endEnemyCheck;
 
-    public Data(int d, int l, float[,] fP,float[] pPos, float[] pRot, float[,] pE, float[,] rE, float[,] aP, float[,] aR, int[] fD, bool[] wD, bool[] bD, int[]E, bool[] checks, int cP, bool[,] enigmaC, bool eC)
+    public Data(int d, int l, float[,] fP,float[] pPos, float[] pRot, float[,] pE, float[,] rE, float[,] aP, float[,] aR, int[] fD, bool[] wD, bool[] bD, int[]E, float[,] sP, float[,] sR, bool[] checks, int cP, bool[,] enigmaC, bool[] sOk, bool eC)
     {
 
         earthPos = pE;
@@ -42,9 +45,12 @@ public class Data
         waterData = wD;
         bookData = bD;
         enemies = E;
+        sheepPos = sP;
+        sheepRot = sR;
         checkpoints = checks;
         checkpoint = cP;
         enigmasComplete = enigmaC;
+        spotsOK = sOk;
         endEnemyCheck = eC;
 
     }

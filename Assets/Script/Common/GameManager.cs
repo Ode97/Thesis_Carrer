@@ -5,6 +5,7 @@ using UnityEngine;
 using System.Diagnostics;
 using System.Linq;
 using System;
+using UnityEngine.UI;
 
 public enum CameraMode {Strategica, Vista}
 
@@ -26,6 +27,7 @@ public class GameManager : MonoBehaviour
     private Save save;
     public LayerMask ignoreLayer;
     public bool airEffect = false;
+    [SerializeField] public GameObject selectionSlider;
 
 
     // Start is called before the first frame update
@@ -51,6 +53,12 @@ public class GameManager : MonoBehaviour
         outlineEffect.SetActive(false);
         SetObject(initTerrain);
         stopLogic = true;
+        selectionSlider.GetComponent<Slider>().maxValue = fixingTime;
+    }
+
+    public void SetSliderTime(float t)
+    {
+        selectionSlider.GetComponent<Slider>().value = t;
     }
 
 
@@ -65,36 +73,51 @@ public class GameManager : MonoBehaviour
     {
         long timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
         //UnityEngine.Debug.Log(timestamp + ";" + actualMode.ToString() + ";" + character.GetObject() + ";" + character.getActualElement() + ";" + character.IsMoving() + ";" + character.IsAttacking() + ";" + Input.mousePosition.x + ";" + Input.mousePosition.y);
-        csvBuilder.AddData(timestamp + ";" + actualMode.ToString() + ";" + character.GetObject().name + ";" + character.getActualElement() + ";" + character.IsMoving() + ";" + character.IsAttacking() + ";" + Input.mousePosition.x + ";" + Input.mousePosition.y);
-
+        csvBuilder.AddData(timestamp + ";" + actualMode.ToString() + ";" + character.GetObject().name + ";" + character.GetActualElement() + ";" + character.IsMoving() + ";" + character.IsAttacking() + ";" + Input.mousePosition.x + ";" + Input.mousePosition.y);
+        selectionSlider.transform.position = new Vector3(Input.mousePosition.x, Input.mousePosition.y + 25, Input.mousePosition.z);
     }
 
 
     // Update is called once per frame
     void Update()
     {
-        
+
+
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
-                
+        Physics.Raycast(ray, out hit, Mathf.Infinity, ~ignoreLayer);
+        
+        if (!character.GetObject().gameObject.activeSelf)
+        {
+            EndSelection();
+        }
+
         //UnityEngine.Debug.Log(stopLogic + " " + MenuManager.instance.isMenuOpen());
         if (!stopLogic)
         {
-            if (character.isActiveElement())
-            {
-                //Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                //RaycastHit hit;
-                Physics.Raycast(ray, out hit, Mathf.Infinity, ~ignoreLayer);
 
-                
-                if (hit.collider && hit.collider.gameObject.layer == Constants.enemyLayer)
-                {
-                    character.SetEnemy(hit.collider.gameObject);
-                }
-            }
+            
             //if (!stopLogic && !MenuManager.instance.isMenuOpen()) {
             if (!MenuManager.instance.isMenuOpen())
             {
+                if (character.IsActiveElement())
+                {
+                    
+                    //Physics.Raycast(ray, out hit, Mathf.Infinity, ~ignoreLayer);
+                    //selectionSlider.transform.position = hit.point;
+
+                    if (hit.collider && hit.collider.gameObject.layer == Constants.enemyLayer)
+                    {
+                        if (hit.collider.gameObject.TryGetComponent<Golem>(out Golem golem))
+                        {
+                            if (golem.IsStun())
+                                character.SetEnemy(hit.collider.gameObject);
+                        }
+                        else
+                            character.SetEnemy(hit.collider.gameObject);
+                    }
+                }
+
                 if (Input.GetMouseButtonDown(0) || fixing)
                 {
                     fixing = false;
@@ -106,16 +129,14 @@ public class GameManager : MonoBehaviour
                         return;
                     }
 
-                    //Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                    //RaycastHit hit;
-
-                    Physics.Raycast(ray, out hit, Mathf.Infinity, ~ignoreLayer);
+                    //Physics.Raycast(ray, out hit, Mathf.Infinity, ~ignoreLayer);
+                    //selectionSlider.transform.position = hit.point;
 
                     //UnityEngine.Debug.Log(hit.collider.gameObject.layer);
                     // Cast a ray from the mouse position into the scene
+                    
                     if (hit.collider != null)
                     {
-                                        
 
                         if (interaction)
                         {
@@ -127,7 +148,7 @@ public class GameManager : MonoBehaviour
                             {
                                 //UnityEngine.Debug.Log(intObj.name);
                                 //UnityEngine.Debug.Log(character.GetObject());
-                                intObj.ResetTimer();
+                                StartCoroutine(intObj.ResetTimer());
                                 character.Interaction(hit);
                                 
                             }
@@ -140,7 +161,7 @@ public class GameManager : MonoBehaviour
                         {
 
                            
-                            if (layer == Constants.terrainLayer)
+                            if (layer == Constants.terrainLayer || layer == Constants.woodStoneLayer)
                             {
                                 character.MoveToDestination(hit.point);
                                 return;
@@ -166,9 +187,7 @@ public class GameManager : MonoBehaviour
             {
                 justChanged = true;
 
-                //UnityEngine.Debug.Log("actual: " + obj.name);
                 character.SetObject(obj);
-                //StartCoroutine(EndSelect());
             }
             else if (!objs.Contains(obj))
             {
@@ -177,7 +196,6 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            
             objs.Add(obj);
         }
 
@@ -233,7 +251,7 @@ public class GameManager : MonoBehaviour
         cameraHandler.SetMode(mode);
     }
 
-    public void SetLoad(int diamond, int life, float[,] fairiesPos, float[] pPos, float[] pRot, float[,] pE, float[,] rE, float[,] aP, float[,] aR, int[] fD, bool[] wD, bool[] bD, int[] enemyData, bool[] checkpoints, int cP, bool[,] enigmasComplete, bool enemyCheck)
+    public void SetLoad(int diamond, int life, float[,] fairiesPos, float[] pPos, float[] pRot, float[,] pE, float[,] rE, float[,] aP, float[,] aR, int[] fD, bool[] wD, bool[] bD, int[] enemyData, float[,] sheepPos, float[,] sheepRot, bool[] checkpoints, int cP, bool[,] enigmasComplete, bool[] spotsOK, bool enemyCheck)
     {
         character.SetDiamonds(diamond);
         character.SetHealth(life);
@@ -254,12 +272,14 @@ public class GameManager : MonoBehaviour
         var air = FindObjectsOfType<Air>();
         Array.Sort(air, (a, b) => a.gameObject.name.CompareTo(b.gameObject.name));
         i = 0;
-        UnityEngine.Debug.Log("load: ");
         foreach (Air a in air)
         {
-            var w = Instantiate(a.gameObject, new Vector3(aP[i, 0], aP[i, 1], aP[i, 2]), new Quaternion(aR[i, 0], aR[i, 1], aR[i, 2], 1), a.transform.parent);
+            //var w = Instantiate(a.gameObject, new Vector3(aP[i, 0], aP[i, 1], aP[i, 2]), new Quaternion(aR[i, 0], aR[i, 1], aR[i, 2], 1), a.transform.parent);
 
-            StartCoroutine(Wait(a, w));
+            a.gameObject.transform.position = new Vector3(aP[i, 0], aP[i, 1], aP[i, 2]);
+            a.gameObject.transform.rotation = new Quaternion(aR[i, 0], aR[i, 1], aR[i, 2], 1);
+
+            //StartCoroutine(Wait(a, w));
             i++;
         }
 
@@ -387,7 +407,29 @@ public class GameManager : MonoBehaviour
             e.SetHealth(enemyData[i]);
             i++;
         }
-        
+
+        var sheeps = FindObjectsOfType<Sheep>();
+
+        Array.Sort(sheeps, (a, b) => a.gameObject.name.CompareTo(b.gameObject.name));
+        i = 0;
+        //sheepPos = new float[sheeps.Length, 3];
+        //sheepRot = new float[sheeps.Length, 4];
+        foreach (Sheep sh in sheeps)
+        {
+            sh.transform.localPosition = new Vector3(sheepPos[i, 0], sheepPos[i, 1], sheepPos[i, 2]);
+            sh.transform.localRotation = new Quaternion(sheepRot[i, 0], sheepRot[i, 1], sheepRot[i, 2], sheepRot[i, 3]);
+
+            i++;
+        }
+
+        var spots = FindObjectsOfType<Spot>();
+        Array.Sort(spots, (a, b) => a.gameObject.name.CompareTo(b.gameObject.name));
+        i = 0;
+        foreach (Spot spot in spots)
+        {
+            spot.SetOk(spotsOK[i]);
+            i++;
+        }
 
         var tutorialEnd = FindObjectOfType<CheckEnemyDeath>();
 

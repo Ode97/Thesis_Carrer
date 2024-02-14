@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -16,21 +17,27 @@ public class Golem : MonoBehaviour
     public Element lowElement;
     private GameObject aurea;
     private ParticleSystem aureaPS;
-    Material mat;
+    private Material mat;
     private NavMeshAgent agent;
     [SerializeField]
     private GameObject sphere;
+    public WaterObj waterObj;
+    public Fire[] fires;
+    public Enigma[] enigmas;
     private Vector3 sphereInitPos;
     private Vector3 initPos;
+    private List<EarthPlant> plants = new List<EarthPlant>();
+    [SerializeField]
+    private GameObject shield;
+    private SkinnedMeshRenderer skins;
+    private Material shieldMat;
 
     void Awake()
     {
-        /*aurea = Instantiate(Resources.Load<GameObject>("GolemEffect"), transform);
-        aurea.transform.localPosition = Vector3.zero;
-        aurea.transform.localScale = new Vector3(4,4,4);
-        aureaPS = aurea.GetComponent<ParticleSystem>();*/
-        mat = GetComponentInChildren<SkinnedMeshRenderer>().material;
-
+        
+        skins = GetComponentInChildren<SkinnedMeshRenderer>();
+        mat = skins.material;
+        shieldMat = shield.GetComponent<Renderer>().material;
         animator = GetComponent<Animator>();
 
         FSMState idle = new FSMState("idle");
@@ -98,11 +105,14 @@ public class Golem : MonoBehaviour
         
 
         fsm = new FSM(idle);
-        
+
+       
     }
 
     private void Start()
     {
+        sphereInitPos = sphere.transform.position;
+        
         health = 2;
         hearts = new GameObject[health];
         lifeCanvas.transform.parent.SetParent(transform);
@@ -112,7 +122,7 @@ public class Golem : MonoBehaviour
         character = FindObjectOfType<Character>();
         agent = GetComponent<NavMeshAgent>();
         target = character.transform.position;
-        sphereInitPos = sphere.transform.localPosition;
+        
         initPos = transform.localPosition;
         ChangeElement();
     }
@@ -193,6 +203,7 @@ public class Golem : MonoBehaviour
         yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName("Die"));
         animator.ResetTrigger("Hit");
         yield return new WaitForSeconds(5);
+        FindObjectOfType<OpenBossArea>().gameObject.SetActive(false);
         Destroy(gameObject);
     }
 
@@ -278,14 +289,15 @@ public class Golem : MonoBehaviour
     //public Vector3[] idlePositions;
     private int i = 0;
     private bool change = false;
-    private bool stop = false;
+    private bool stop = true;
     private Vector3 target;
     private bool sphereReposition = false;
+    public int timeActiveInactive = 10;
     private void Update()
     {
-        if (!MenuManager.instance.isMenuOpen())
+        if (!MenuManager.instance.isMenuOpen() && combat)
         {
-
+            
             if (!stop)
                 StartCoroutine(Change());
 
@@ -297,21 +309,23 @@ public class Golem : MonoBehaviour
             distanceToCharacter = Vector3.Distance(transform.position, target);
             if (active && !wait)
             {
-                StartCoroutine(WaitInactive(10));
+                Debug.Log("wait inactive");
+                StartCoroutine(WaitInactive(timeActiveInactive));
             }
             else if (!active && !wait)
             {
-                StartCoroutine(WaitActive(10));
+                Debug.Log("wait active");
+                StartCoroutine(WaitActive(timeActiveInactive));
             }
 
             if (sphereReposition)
             {
-                Vector3 moveDirection = (sphereInitPos - sphere.transform.localPosition).normalized;
+                Vector3 moveDirection = (sphereInitPos - sphere.transform.position).normalized;
 
-                sphere.transform.localPosition = Vector3.MoveTowards(sphere.transform.localPosition, sphereInitPos, 10 * moveDirection.magnitude * Time.deltaTime);
+                sphere.transform.position = Vector3.MoveTowards(sphere.transform.position, sphereInitPos, 10 * moveDirection.magnitude * Time.deltaTime);
 
-                Debug.Log(sphere.transform.localPosition);
-                if (Vector3.Distance(sphere.transform.localPosition, sphereInitPos) < 1)
+                //Debug.Log(sphere.transform.localPosition);
+                if (Vector3.Distance(sphere.transform.position, sphereInitPos) < 1)
                 {
                     sphereReposition = false;
                     sphere.GetComponent<Rigidbody>().isKinematic = false;
@@ -356,8 +370,8 @@ public class Golem : MonoBehaviour
     private int elem = 0;
     private void ChangeElement()
     {
-        
 
+        Color color = Color.gray;
         if (elem == 0)
         {
             if (mat.color == Color.gray)
@@ -367,8 +381,9 @@ public class Golem : MonoBehaviour
             }
 
             lowElement = Element.Earth;
-            //ps.startColor = Color.gray;            
-            mat.color = Color.Lerp(GetComponentInChildren<SkinnedMeshRenderer>().material.color, Color.gray, Time.deltaTime * 5);
+            //ps.startColor = Color.gray;
+            color = Color.Lerp(mat.color, Color.gray, Time.deltaTime * 5);
+           
         }
         else if (elem == 1)
         {
@@ -379,7 +394,9 @@ public class Golem : MonoBehaviour
             }
             lowElement = Element.Fire;
             //ps.startColor = Color.green;
-            mat.color = Color.Lerp(GetComponentInChildren<SkinnedMeshRenderer>().material.color, Color.green, Time.deltaTime * 5);
+
+            color = Color.Lerp(mat.color, Color.green, Time.deltaTime * 5);
+
         }
         else if (elem == 2)
         {
@@ -390,7 +407,8 @@ public class Golem : MonoBehaviour
             }
             lowElement = Element.Water;
             //ps.startColor = Color.red;
-            mat.color = Color.Lerp(GetComponentInChildren<SkinnedMeshRenderer>().material.color, Color.red, Time.deltaTime * 5);
+            color = Color.Lerp(mat.color, Color.red, Time.deltaTime * 5);
+
         }
         else if (elem == 3)
         {
@@ -400,15 +418,19 @@ public class Golem : MonoBehaviour
             }
             lowElement = Element.Air;
             //ps.startColor = Color.blue;
-            mat.color = Color.Lerp(GetComponentInChildren<SkinnedMeshRenderer>().material.color, Color.blue, Time.deltaTime * 5);
+            color = Color.Lerp(mat.color, Color.blue, Time.deltaTime * 5);
         }
 
+        mat.color = color;
+        shieldMat.color = new Color(color.r, color.g, color.b, 0);
     }
 
     private IEnumerator WaitActive(int t)
     {
         wait = true;
         yield return new WaitForSeconds(t);
+        
+        AudioManager.instance.PlayBossAcivation();
         wait = false;
         active = true;
     }
@@ -417,6 +439,8 @@ public class Golem : MonoBehaviour
     {
         wait = true;
         yield return new WaitForSeconds(t);
+        
+        AudioManager.instance.PlayBossAcivation();
         wait = false;
         active = false;
     }
@@ -486,6 +510,57 @@ public class Golem : MonoBehaviour
             heart.transform.localScale = new Vector3(0, 0, 0);
             heart.SetActive(false);
         }
+
+        sphere.transform.position = sphereInitPos;
+        transform.localPosition = initPos;
+        
+
+
+        if (waterObj.IsRise())
+        {
+            waterObj.WaterInteraction();
+        }
+
+        foreach (var f in fires)
+        {
+            f.Reset();
+        }
+
+        foreach (Enigma e in enigmas)
+        {
+            e.Reset();
+        }
+
+        if(plants.Count > 0)
+            foreach(EarthPlant p in plants)
+            {
+                if(!p.IsDestroyed())
+                    p.gameObject.SetActive(false);
+            }
+
+        if(spotList.Count > 0)
+        {
+            foreach(var sp in spotList)
+                sp.Reset();
+        }
+        //fsm.running = false;
+        combat = false;
+        StartCoroutine(StopFSM());
+    }
+
+    private IEnumerator StopFSM()
+    {
+        StopAllCoroutines();
+        animator.SetTrigger("Walk");
+        yield return new WaitForEndOfFrame();
+        animator.SetTrigger("idle");
+        Debug.Log("stop fsm");
+        fsm.running = false;
+    }
+
+    public bool IsStun()
+    {
+        return hit;
     }
 
     public void Life()
@@ -547,14 +622,16 @@ public class Golem : MonoBehaviour
                 Life();
 
                 Destroy(hearts[health]);
+                shield.SetActive(true);
             }
         }
     }
 
     private bool sphereHit = false;
+    public int stunTime = 10;
     private IEnumerator EndStun()
     {
-        yield return new WaitForSeconds(10);
+        yield return new WaitForSeconds(stunTime);
         hit = false;
         active = true;
         wait = false;
@@ -563,10 +640,8 @@ public class Golem : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        Debug.Log(collision.gameObject.name);
         if (collision.gameObject.layer == LayerMask.NameToLayer("BossTrigger") && !sphereHit)
         {
-            Debug.Log(collision.gameObject.name + " mi ha colpito");
             hit = true;
             sphereHit = true;
             
@@ -579,12 +654,35 @@ public class Golem : MonoBehaviour
         {
             agent.SetDestination(character.transform.position);
             target = character.transform.position;
+            shield.SetActive(false);
             
+            AudioManager.instance.PlayBossStunned();
+        }else if(collision.gameObject.layer == Constants.protagonistLayer)
+        {
+            if(collision.gameObject.GetComponent<Character>().health <= 0)
+            {
+                Reset();
+            }
         }
     }
 
+    private List<Spot> spotList = new List<Spot>();
+    public void AddPlants(EarthPlant p, Spot s)
+    {
+        plants.Add(p);
+        spotList.Add(s);
+    }
+
+    private bool combat = false;
     public void StartFSM()
     {
+        //StopAllCoroutines();
+        //Reset();
+        wait = false;
+        active = false;
+        combat = true;
+        stop = false;
         fsm.StartFSM();
+        agent.isStopped = false;
     }
 }

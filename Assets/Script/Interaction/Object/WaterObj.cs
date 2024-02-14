@@ -21,6 +21,7 @@ public class WaterObj : InteractableObject
         color = UnityEngine.Color.blue;
         initPosition = water.transform.localPosition;
         isActiveWater = water.activeSelf;
+        element = Element.Water;
     }
 
     override
@@ -50,7 +51,7 @@ public class WaterObj : InteractableObject
         //animator.SetTrigger("rise");
         if (!rise)
         {
-
+            
             rise = true;
             water.SetActive(true);
             GetComponent<EnigmaObj>()?.Interaction(Element.Water);

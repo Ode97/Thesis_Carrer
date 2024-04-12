@@ -283,9 +283,10 @@ public class GameManager : MonoBehaviour
             i++;
         }
 
-        var fires = FindObjectsOfType<Fire>();
+        var fires = FindObjectsOfType<Fire>(includeInactive:true);
         //fires = fires.OrderBy(fire => fire.GetComponent<EnigmaObj>()?.value).ToArray();
         fires = fires.Where(fire => fire.gameObject.layer == Constants.intObjLayer && !fire.GetComponent<EarthPlant>()).ToArray();
+        UnityEngine.Debug.Log(fires.Length);
         Array.Sort(fires, (x, y) => {
             // Ottieni i componenti EnigmaObj
 

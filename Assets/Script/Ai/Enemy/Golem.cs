@@ -265,7 +265,7 @@ public class Golem : MonoBehaviour
     private bool IsActive()
     {
         
-        if (active && !hit)
+        if (active)
             return true;
 
         return false;
@@ -351,7 +351,7 @@ public class Golem : MonoBehaviour
             }
 
             fsm.UpdateFSM();
-            //Debug.Log(fsm.currentState.name);
+            Debug.Log(fsm.currentState.name);
         }
         else
             agent.isStopped = true;
@@ -360,7 +360,7 @@ public class Golem : MonoBehaviour
     private IEnumerator Change()
     {
         stop = true;
-        yield return new WaitForSeconds(8);
+        yield return new WaitForSeconds(5);
         elem = Random.Range(0, 4);
         stop = false;
         change = !change;
@@ -370,7 +370,7 @@ public class Golem : MonoBehaviour
     private int elem = 0;
     private void ChangeElement()
     {
-
+        Debug.Log(change);
         Color color = Color.gray;
         if (elem == 0)
         {
@@ -614,15 +614,22 @@ public class Golem : MonoBehaviour
         {
             if (lowElement == other.GetComponent<MagicAttack>().element)
             {
-                hit = false;
                 health -= 1;
-                sphereReposition = true;
-                sphere.GetComponent<Rigidbody>().isKinematic = true;
-
                 Life();
+                if (health > 0)
+                {
+                    hit = false;
 
-                Destroy(hearts[health]);
-                shield.SetActive(true);
+                    sphereReposition = true;
+                    sphere.GetComponent<Rigidbody>().isKinematic = true;
+                    active = true;
+                    shield.SetActive(true);
+                    Destroy(hearts[health]);
+                }
+
+                
+                
+                
             }
         }
     }
@@ -644,19 +651,21 @@ public class Golem : MonoBehaviour
         {
             hit = true;
             sphereHit = true;
-            
+            active = false;
             agent.SetDestination(sphere.transform.position);
             target = sphere.transform.position;
+            shield.SetActive(false);
             StopAllCoroutines();
             StartCoroutine(EndStun());
-            
-        }else if (sphereHit)
+            AudioManager.instance.PlayBossStunned();
+        }
+        else if (sphereHit)
         {
-            agent.SetDestination(character.transform.position);
+            /*agent.SetDestination(character.transform.position);
             target = character.transform.position;
             shield.SetActive(false);
             
-            AudioManager.instance.PlayBossStunned();
+            AudioManager.instance.PlayBossStunned();*/
         }else if(collision.gameObject.layer == Constants.protagonistLayer)
         {
             if(collision.gameObject.GetComponent<Character>().health <= 0)

@@ -499,7 +499,6 @@ public class Character : MonoBehaviour
     public void SetCheckpoint(Checkpoint cP)
     {
         checkpoint = cP;
-        Debug.Log(checkpoint.GetIndex());
         platform = false;
     }
 

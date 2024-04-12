@@ -66,6 +66,7 @@ public class Fire : InteractableObject
 
     public void LoadDestroy()
     {
+        Debug.Log(gameObject.name);
         fire = 1;
         gameObject.SetActive(false);
     }

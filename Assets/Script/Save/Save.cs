@@ -139,18 +139,16 @@ public class Save : MonoBehaviour
         });
 
         
-
+        
         var z = fires;
+        Debug.Log(z.Length);
         fireData = new int[z.Length];        
 
         i = 0;
         foreach (Fire f in z)
         {           
             fireData[i] = f.GetFire();
-
-            //if (f.GetFire() == 1)
-            //    Debug.Log(f.name + " acceso");
-
+            
             i++;
         }
 

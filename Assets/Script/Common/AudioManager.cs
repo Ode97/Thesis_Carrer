@@ -35,17 +35,20 @@ public class AudioManager : MonoBehaviour
 
     public void PlayForestMusic()
     {
+        
         boss.Stop();
         forest.Play();
     }
 
     public void PlayBossAcivation()
     {
+        Debug.Log("boss_active");
         bossActivation.Play();
     }
 
     public void PlayBossStunned()
     {
+        Debug.Log("boss_stun");
         bossStun.Play();
     }
 }

@@ -70,8 +70,9 @@ public class Enemy : MonoBehaviour
 
         //movment.AddTransition(away, movment);
 
-        attack.AddTransition(getHit, attack);       
+        attack.AddTransition(getHit, attack);
         //attack.AddTransition(nearTo, attack);
+        attack.AddTransition(outOfView, idle);
         attack.AddTransition(away, movment);
         attack.AddTransition(isDead, dead);
 
@@ -87,7 +88,8 @@ public class Enemy : MonoBehaviour
         }else
             agent.isStopped = false;
 
-
+        if(idlePositions.Length > 0)
+            target = idlePositions[0];
         
         fsm.StartFSM();
     }
@@ -199,7 +201,7 @@ public class Enemy : MonoBehaviour
     {
         //Debug.Log("isNear");
         
-        if (detected && distanceToCharacter < distanceForAttack)
+        if (distanceToCharacter < distanceForAttack)
         {
             return true;
         }
@@ -258,6 +260,7 @@ public class Enemy : MonoBehaviour
     /*public Transform groundCheck;
     public float groundDistance = 0.4f;
     public LayerMask groundMask;*/
+    private Vector3 target;
 
     private void Update()
     {
@@ -296,9 +299,10 @@ public class Enemy : MonoBehaviour
 
         Vector3 move = moveDirection * speed * Time.deltaTime;
         transform.position = Vector3.MoveTowards(transform.position, character.transform.position, move.magnitude);*/
-        Debug.Log(gameObject.name + " chase");
+        
         agent.isStopped = false;
-        agent.SetDestination(character.transform.position);
+        target = character.transform.position;
+        agent.SetDestination(target);
     }
 
     private void Move()
@@ -310,10 +314,10 @@ public class Enemy : MonoBehaviour
             velocity.y = -2f;
         }*/
 
-        if (idlePositions.Length > 1)
+        if (idlePositions.Length >= 1)
         {
             agent.isStopped = false;
-            if (Vector3.Distance(transform.position, idlePositions[i]) < 1f)
+            if (Vector3.Distance(transform.position, target) < 1f)
             {
                 i += 1;
                 if (i >= idlePositions.Length)
@@ -327,8 +331,8 @@ public class Enemy : MonoBehaviour
                 transform.position = Vector3.MoveTowards(transform.position, idlePositions[i], move.magnitude);*/
                 //Debug.Log(Vector3.Distance(transform.position, idlePositions[i]));
 
-                
-                agent.SetDestination(idlePositions[i]);
+                target = idlePositions[i];
+                agent.SetDestination(target);
             }
         }
        
